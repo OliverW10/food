@@ -1,5 +1,5 @@
 # Food
 
-expo w/ rsc
-prisma
+expo w/ rsc (react server components)
+prisma (the ORM)
 
