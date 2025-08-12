@@ -1,4 +1,3 @@
-'use client';
 import renderInfo from "@/actions/render-info";
 import testServerFunc from "@/actions/test-server-func";
 import testServerFunc2 from "@/actions/test-server-func2";
@@ -12,7 +11,7 @@ export default function Index() {
         // The view that will render while the Server Function is awaiting data.
         <ActivityIndicator />
       }>
-      {renderInfo({ name: 'World' })}
+      {renderInfo()}
       <Text>{testServerFunc()}</Text>
       {testServerFunc2()}
       {/* <View
