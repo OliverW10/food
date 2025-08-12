@@ -1,6 +1,7 @@
 # Choppd
 
 Stack:
+
 - expo w/ rsc (react server components)
 - prisma orm + postgres
 
@@ -14,7 +15,11 @@ Install android studio, add ANDROID_HOME env var, and add /emulator & /platform-
 It looks like the gradle version that it's using (8.13) isn't supported by java 24 (min 8.14), installing jdk 21 (and fixing JAVA_HOME) seems to have fixed it.
 I also installed the previous version of sdk (15) when trying to fix "bad file version 68" error, but i think it was just fixed by using jdk 21
 
-With android emulator running, run `npx expo run:android` then press a
+Run the android emulator. It appears that it does not work while connected to the work VPN, i suspect because it creates a local network that conflicts.
+
+Run `npx expo run:android` then press a
+
+getting `TypeError: The "readableStream" argument must be an instance of ReadableStream. Received an instance of ReadableStream`
 
 ## Setup (IOS Dev build on phone)
 

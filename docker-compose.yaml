@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: choppd-db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password1234
+      POSTGRES_DB: ChoppdDB
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:
+    driver: local
