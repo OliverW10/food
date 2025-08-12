@@ -19,7 +19,7 @@ Run the android emulator. It appears that it does not work while connected to th
 
 Run `npx expo run:android` then press a
 
-getting `TypeError: The "readableStream" argument must be an instance of ReadableStream. Received an instance of ReadableStream`
+For some reason I get `TypeError: The "readableStream" argument must be an instance of ReadableStream. Received an instance of ReadableStream` when putting 'use server'; at the top of the file instead of in each server function/component
 
 ## Setup (IOS Dev build on phone)
 

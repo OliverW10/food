@@ -1,6 +1,9 @@
+'use client';
 import renderInfo from "@/actions/render-info";
+import testServerFunc from "@/actions/test-server-func";
+import testServerFunc2 from "@/actions/test-server-func2";
 import React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 
 export default function Index() {
   return (
@@ -10,6 +13,8 @@ export default function Index() {
         <ActivityIndicator />
       }>
       {renderInfo({ name: 'World' })}
+      <Text>{testServerFunc()}</Text>
+      {testServerFunc2()}
       {/* <View
         style={{
           flex: 1,
