@@ -28,6 +28,8 @@ It looks like its possible to setup a github action to create an ios build (`xco
 ### Todo
 
 - ~~get local android emulator dev cycle working~~
-- setup rsc
-- setup prisma and docker + compose (<https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-postgresql>)
+- ~~setup rsc~~
+- ~~setup prisma~~ and docker + compose (<https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-postgresql>)
+- auth
+    There is documented functionality to add middleware <https://docs.expo.dev/router/reference/middleware/> however it was only added literally a [couple days ago](https://github.com/expo/expo/pull/38330), so I think we should implement it as just a function we call in every server action, then swap to middleware when it gets released
 - get test deploy to ios working

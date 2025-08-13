@@ -1,4 +1,12 @@
 -- CreateTable
+CREATE TABLE "public"."SystemData" (
+    "key" VARCHAR(100) NOT NULL,
+    "value" TEXT NOT NULL,
+
+    CONSTRAINT "SystemData_pkey" PRIMARY KEY ("key")
+);
+
+-- CreateTable
 CREATE TABLE "public"."User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
