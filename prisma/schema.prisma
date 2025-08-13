@@ -13,3 +13,52 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model SystemData {
+  key String @id @db.VarChar(100)
+  value String @db.Text
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  posts     Post[]
+  Followers Follow[] @relation("Follower")
+  Following Follow[] @relation("Following")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  title     String   @db.VarChar(255)
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  food      Food?    @relation(fields: [foodId], references: [id])
+  foodId    Int?
+}
+
+model Follow {
+  id          Int  @id @default(autoincrement())
+  follower    User @relation("Follower", fields: [followerId], references: [id])
+  followerId  Int
+  following   User @relation("Following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@unique([followerId, followingId])
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(100)
+  foods Food[]
+}
+
+model Food {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  Posts      Post[]
+}

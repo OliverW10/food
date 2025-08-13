@@ -1,6 +1,7 @@
 import renderInfo from "@/actions/render-info";
 import testServerFunc from "@/actions/test-server-func";
 import testServerFunc2 from "@/actions/test-server-func2";
+import { readVersionClient, readVersionServer } from "@/actions/version-check";
 import React from "react";
 import { ActivityIndicator, Text } from "react-native";
 
@@ -14,6 +15,8 @@ export default function Index() {
       {renderInfo()}
       <Text>{testServerFunc()}</Text>
       {testServerFunc2()}
+      <Text>Version from server {readVersionServer()}</Text>
+      <Text>Version from client {readVersionClient()}</Text>
       {/* <View
         style={{
           flex: 1,

@@ -29,5 +29,5 @@ It looks like its possible to setup a github action to create an ios build (`xco
 
 - ~~get local android emulator dev cycle working~~
 - setup rsc
-- setup prisma and docker + compose
+- setup prisma and docker + compose (<https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-postgresql>)
 - get test deploy to ios working
