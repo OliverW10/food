@@ -25,6 +25,8 @@ For some reason I get `TypeError: The "readableStream" argument must be an insta
 
 It looks like its possible to setup a github action to create an ios build (`xcodebuild` on gh macos runner) and then run it with testflight. Will need to work out having multiple deployed versions, will probably get k8's running on my vps
 
+<https://docs.expo.dev/guides/local-app-development/#local-app-compilation>
+
 ### Todo
 
 - ~~get local android emulator dev cycle working~~

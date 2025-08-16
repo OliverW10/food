@@ -1,9 +1,6 @@
-import renderInfo from "@/actions/render-info";
-import testServerFunc from "@/actions/test-server-func";
-import testServerFunc2 from "@/actions/test-server-func2";
-import { readVersionClient, readVersionServer } from "@/actions/version-check";
+import { FetchUsers } from "@/components/test-rsc";
 import React from "react";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator } from "react-native";
 
 export default function Index() {
   return (
@@ -12,12 +9,11 @@ export default function Index() {
         // The view that will render while the Server Function is awaiting data.
         <ActivityIndicator />
       }>
-      {renderInfo()}
-      <Text>{testServerFunc()}</Text>
-      {testServerFunc2()}
-      <Text>Version from server {readVersionServer()}</Text>
+      {/* {renderInfo()} */}
+      <FetchUsers />
+      {/* <Text>Version from server {readVersionServer()}</Text>
       <Text>Version from client {readVersionClient()}</Text>
-      {/* <View
+      <View
         style={{
           flex: 1,
           justifyContent: "center",
