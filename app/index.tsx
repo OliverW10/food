@@ -1,16 +1,15 @@
 import { FetchUsers } from "@/components/test-rsc";
 import React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 
 export default function Index() {
   return (
-    <React.Suspense
-      fallback={
-        // The view that will render while the Server Function is awaiting data.
-        <ActivityIndicator />
-      }>
-      {/* {renderInfo()} */}
-      <FetchUsers />
+    <>
+      <Text>No load!</Text>
+      <React.Suspense fallback={ <ActivityIndicator /> }>
+        {FetchUsers()}
+      </React.Suspense>
+      
       {/* <Text>Version from server {readVersionServer()}</Text>
       <Text>Version from client {readVersionClient()}</Text>
       <View
@@ -22,6 +21,6 @@ export default function Index() {
         >
         <Text>Edit app/index.tsx to edit this screen.</Text>
       </View> */}
-    </React.Suspense>
+    </>
   );
 }
