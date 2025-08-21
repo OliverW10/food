@@ -11,6 +11,8 @@ Use docker compose to run the database, you cant install docker desktop on work 
 
 With podman compose installed I do `podman compose -f docker-compose up -d`, if you are using docker engine instead of podman (i.e. personal computer or wsl) then it would be the same command but with `docker` instead of `podman`
 
+Then run `npx prisma migrate dev` to apply the schema to the database
+
 ## Setup (Windows with Android enumlator/web)
 
 Follow: <https://docs.expo.dev/get-started/set-up-your-environment/?platform=android&device=simulated&mode=expo-go>
@@ -23,9 +25,7 @@ I also installed the previous version of sdk (15) when trying to fix "bad file v
 
 Run the android emulator. It appears that it does not work while connected to the work VPN, i suspect because it creates a local network that conflicts.
 
-Run `npx expo run:android`
-
-For some reason I get `TypeError: The "readableStream" argument must be an instance of ReadableStream. Received an instance of ReadableStream` when putting 'use server'; at the top of the file instead of in each server function/component
+Run `npx expo start`
 
 ## Setup (IOS Dev build on phone)
 
