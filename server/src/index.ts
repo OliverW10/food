@@ -23,5 +23,6 @@ export type AppRouter = typeof appRouter;
 const server = createHTTPServer({
   router: appRouter,
 });
-console.log("Started!");
-server.listen(3000);
+const port = 3000;
+console.log(`Started server on port ${port}!`);
+server.listen(port);
