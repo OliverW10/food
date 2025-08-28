@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { version } from "../../version";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
+import { postApi } from './service/post-api';
 import { publicProcedure, router } from "./trpc";
 
 // Load environment variables from .env.development
@@ -23,7 +24,8 @@ const appRouter = router({
       dbVersion,
       serverVersion: version
     }
-  })
+  }),
+  post: postApi,
 });
 
 export type AppRouter = typeof appRouter;
