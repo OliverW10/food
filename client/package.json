@@ -12,7 +12,8 @@
     "android": "DARK_MODE=media expo start -a",
     "ios": "DARK_MODE=media expo run:ios",
     "web": "DARK_MODE=media expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -70,6 +71,7 @@
     "jest-expo": "~53.0.10",
     "jscodeshift": "^0.15.2",
     "prisma": "^6.13.0",
+    "ts-jest": "^29.4.1",
     "tsx": "^4.20.3",
     "typescript": "~5.8.3"
   },
