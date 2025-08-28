@@ -1,13 +1,13 @@
 import trpc from "@/services/trpc";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
-import { User } from "../../server/src/generated/prisma";
 
 export default function Index() {
-  const [users, setUsers] = useState<User[] | null>(null);
+  const [versionInfo, setVersionInfo] = useState<{ dbVersion: { missingInDb: string[], missingInFiles: string[] }, serverVersion: string; } | null>(null);
+
   useEffect(() => {
     (async () => {
-      setUsers(await trpc.userList.query());
+      setVersionInfo(await trpc.versions.query());
     })();
     // Fetch users here
   }, []);
@@ -15,11 +15,15 @@ export default function Index() {
     <>
       <Text>No load!</Text>
       <React.Suspense fallback={ <ActivityIndicator /> }>
-        {
-          users?.map(user => {
-                return <Text key={user.id}>{user.name}</Text>
-            })
-        }
+      {versionInfo ? (
+        <>
+          <Text>Server version: {versionInfo.serverVersion}</Text>
+          {versionInfo.dbVersion.missingInDb.length ? <Text>Missing migrations in DB (server is ahead of database): {versionInfo.dbVersion.missingInDb.join(", ")}</Text> : "None"}
+          {versionInfo.dbVersion.missingInFiles.length ? <Text>Missing migrations in server (database is ahead of server): {versionInfo.dbVersion.missingInFiles.join(", ")}</Text> : "None"}
+        </>
+      ) : (
+        <ActivityIndicator />
+      )}
       </React.Suspense>
       
       {/* <Text>Version from server {readVersionServer()}</Text>
