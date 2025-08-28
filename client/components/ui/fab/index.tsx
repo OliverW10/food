@@ -1,15 +1,15 @@
 'use client';
-import React from 'react';
 import { createFab } from '@gluestack-ui/fab';
-import { Pressable, Text } from 'react-native';
+import { PrimitiveIcon, UIIcon } from '@gluestack-ui/icon';
+import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import {
-  withStyleContext,
   useStyleContext,
+  withStyleContext,
 } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import { cssInterop } from 'nativewind';
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
-import { PrimitiveIcon, UIIcon } from '@gluestack-ui/icon';
+import React from 'react';
+import { Pressable, Text } from 'react-native';
 
 const SCOPE = 'FAB';
 const Root = withStyleContext(Pressable, SCOPE);
@@ -33,20 +33,20 @@ cssInterop(PrimitiveIcon, {
 });
 
 const fabStyle = tva({
-  base: 'group/fab bg-primary-500 rounded-full z-20 p-4 flex-row items-center justify-center absolute hover:bg-primary-600 active:bg-primary-700 disabled:opacity-40 disabled:pointer-events-all disabled:cursor-not-allowed data-[focus=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[focus-visible=true]:web:ring-indicator-info shadow-hard-2',
+  base: 'group/fab bg-primary-500 rounded-full z-20 p-6 flex-row items-center justify-center absolute hover:bg-primary-600 active:bg-primary-700 disabled:opacity-40 disabled:pointer-events-all disabled:cursor-not-allowed data-[focus=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[focus-visible=true]:web:ring-indicator-info shadow-hard-2',
   variants: {
     size: {
-      sm: 'px-2.5 py-2.5',
-      md: 'px-3 py-3',
-      lg: 'px-4 py-4',
+      sm: 'px-4 py-4',
+      md: 'px-5 py-5',
+      lg: 'px-6 py-6',
     },
     placement: {
-      'top right': 'top-4 right-4',
-      'top left': 'top-4 left-4',
-      'bottom right': 'bottom-4 right-4',
-      'bottom left': 'bottom-4 left-4',
-      'top center': 'top-4 self-center',
-      'bottom center': 'bottom-4 self-center',
+      'top right': 'top-8 right-8',
+      'top left': 'top-8 left-8',
+      'bottom right': 'bottom-8 right-8',
+      'bottom left': 'bottom-8 left-8',
+      'top center': 'top-8 self-center',
+      'bottom center': 'bottom-8 self-center',
     },
   },
 });
@@ -221,4 +221,5 @@ Fab.displayName = 'Fab';
 FabLabel.displayName = 'FabLabel';
 FabIcon.displayName = 'FabIcon';
 
-export { Fab, FabLabel, FabIcon };
+export { Fab, FabIcon, FabLabel };
+

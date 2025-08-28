@@ -1,13 +1,25 @@
-import { FetchUsers } from "@/components/test-rsc";
-import React from "react";
+import trpc from "@/services/trpc";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
+import { User } from "../../server/src/generated/prisma";
 
 export default function Index() {
+  const [users, setUsers] = useState<User[] | null>(null);
+  useEffect(() => {
+    (async () => {
+      setUsers(await trpc.userList.query());
+    })();
+    // Fetch users here
+  }, []);
   return (
     <>
       <Text>No load!</Text>
       <React.Suspense fallback={ <ActivityIndicator /> }>
-        {FetchUsers()}
+        {
+          users?.map(user => {
+                return <Text key={user.id}>{user.name}</Text>
+            })
+        }
       </React.Suspense>
       
       {/* <Text>Version from server {readVersionServer()}</Text>
