@@ -8,7 +8,7 @@ async function getDbMigrations () {
 }
 
 async function getFileMigrations() {
-    const migrationsDir = path.join(process.cwd(), 'prisma', 'migrations');
+    const migrationsDir = path.join(process.cwd(), 'src', 'prisma', 'migrations');
     return fs.readdirSync(migrationsDir)
         .filter(file => fs.statSync(path.join(migrationsDir, file)).isDirectory());
 }
@@ -29,3 +29,4 @@ async function checkMigrations() {
 }
 
 export { checkMigrations };
+
