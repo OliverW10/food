@@ -32,7 +32,7 @@ model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   title     String   @db.VarChar(255)
-  desc      String   @db.Text
+  description      String   @db.Text
   published Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
