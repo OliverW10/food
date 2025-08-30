@@ -1,4 +1,4 @@
-import trpc from "@/services/trpc";
+import trpc, { serverUrl } from "@/services/trpc";
 import { version } from "@/version";
 import { Text } from "react-native";
 
@@ -6,6 +6,7 @@ export const VersionInfoComponent = () => {
   const [versionInfo, versionInfoQuery] = trpc.versions.useSuspenseQuery();
   return (
       <>
+        <Text>Server url: {serverUrl}</Text>
         <Text>Server version: {versionInfo?.serverVersion}</Text>
         <Text>Client version: {version}</Text>
         <Text>DB migrations: {versionInfo.dbMigrations.join(", ")}</Text>
