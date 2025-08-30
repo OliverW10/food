@@ -53,7 +53,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run lint
-        run: npx eslint src/**/*.ts
+        run: npm run lint
 
   test-server:
     runs-on: ubuntu-latest
