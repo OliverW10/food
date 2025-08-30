@@ -1,16 +1,16 @@
 import { TRPCError } from "@trpc/server";
+import { idInputSchema } from "../schema/app-schema";
+import {
+  createPostInputSchema,
+  postOutputSchema,
+  postsOutputSchema,
+} from "../schema/post-schemas";
 import { publicProcedure, router } from "../trpc";
 import {
-    createPostInputSchema,
-    idInputSchema,
-    postOutputSchema,
-    postsOutputSchema,
-} from "./post-schemas";
-import {
-    createPost,
-    deletePost,
-    getAllPosts,
-    getPostById,
+  createPost,
+  deletePost,
+  getAllPosts,
+  getPostById,
 } from "./post-service";
 
 export const postApi = router({

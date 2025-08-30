@@ -1,10 +1,11 @@
 import { db } from "../db";
-import { CreatePostInput } from "./post-schemas";
+import { CreatePostInput } from "../schema/post-schemas";
 
 export async function createPost(post: CreatePostInput) {
     return db.post.create({
         data: {
             title: post.title,
+            desc: post.description,
             ...(post.foodId && { food: { connect: { id: post.foodId } } }),
             author: { connect: { id: post.authorId } },
         },
