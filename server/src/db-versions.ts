@@ -24,7 +24,8 @@ async function checkMigrations() {
 
     return {
         missingInDb,
-        missingInFiles
+        missingInFiles,
+        dbMigrations
     }
 }
 

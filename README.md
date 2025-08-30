@@ -10,7 +10,7 @@ Expo client app, tRPC backend with prisma and postgreSql
     - Use the docker-compose.yml to run the database, you cant install docker desktop on work laptops so I use podman instead. You can also used docker through WSL, but had some issue with network access with that.
     - Install podman desktop and podman compose. PgAdmin is also helpful to have
     - Run `podman compose -f docker-compose.yaml up -d`
-1. Run `npx prisma migrate dev` to apply the schema to the database and generate prisma client files
+1. Run `npx prisma migrate dev` in `server/src/prisma/` to apply the schema to the database and generate prisma client files
 
 You should then be able to run `npm run dev` in both the server and client directories and use the website version of the app. To use an emulator follow the below instuctions.
 
