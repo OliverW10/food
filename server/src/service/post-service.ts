@@ -5,7 +5,7 @@ export async function createPost(post: CreatePostInput) {
     return db.post.create({
         data: {
             title: post.title,
-            desc: post.description,
+            description: post.description,
             ...(post.foodId && { food: { connect: { id: post.foodId } } }),
             author: { connect: { id: post.authorId } },
         },

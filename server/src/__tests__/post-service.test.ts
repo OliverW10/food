@@ -32,18 +32,18 @@ describe('post-service', () => {
   describe('createPost', () => {
     it('creates a post with foodId', async () => {
       (db.post.create as jest.Mock).mockResolvedValue(basePost);
-      const result = await createPost({ title: 'Hello', authorId: 10, foodId: 5 });
+      const result = await createPost({ title: 'Hello', authorId: 10, foodId: 5, description: 'A delicious meal' });
       expect(db.post.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } }, food: { connect: { id: 5 } } }),
+        data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } }, food: { connect: { id: 5 } }, description: 'A delicious meal' }),
       });
       expect(result).toEqual(basePost);
     });
 
     it('creates a post without foodId', async () => {
       (db.post.create as jest.Mock).mockResolvedValue({ ...basePost, foodId: null });
-      const result = await createPost({ title: 'Hello', authorId: 10 });
+      const result = await createPost({ title: 'Hello', authorId: 10, description: 'A delicious meal' });
       expect(db.post.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } } }),
+        data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } }, description: 'A delicious meal' }),
       });
       expect(result.foodId).toBeNull();
     });

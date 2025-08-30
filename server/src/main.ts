@@ -11,7 +11,7 @@ import { publicProcedure, router } from "./trpc";
 // Load environment variables from .env.development
 dotenv.config({ path: '.env.development' });
 
-const t = initTRPC.create();
+initTRPC.create();
 
 const appRouter = router({
   userList: publicProcedure.query(async () => {
