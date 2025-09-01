@@ -2,7 +2,7 @@ import { initTRPC } from '@trpc/server';
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { version } from "../version";
+import { version } from "../version.ts/version";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
 import { postApi } from './service/post-api';
