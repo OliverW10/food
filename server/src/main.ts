@@ -1,16 +1,15 @@
-import { initTRPC } from '@trpc/server';
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { version } from "../version";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
 import { postApi } from './service/post-api';
+import { profileApi } from "./service/profile-api";
 import { publicProcedure, router } from "./trpc";
 
 dotenv.config({ path: '.env.development' });
 
-initTRPC.create();
+//initTRPC.create();
 
 const appRouter = router({
   userList: publicProcedure.query(async () => {
@@ -22,10 +21,11 @@ const appRouter = router({
     const dbVersion = await checkMigrations();
     return {
       ...dbVersion,
-      serverVersion: version
+      serverVersion: 0.1
     }
   }),
   post: postApi,
+  profile: profileApi,
 });
 
 export type AppRouter = typeof appRouter;
