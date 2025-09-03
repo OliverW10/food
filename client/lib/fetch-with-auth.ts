@@ -5,6 +5,7 @@ const API_URL = 'http://localhost:3000/trpc';
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     const token = await getItemAsync('session');
     const refreshToken = await getItemAsync('refreshToken');
+    console.log("Fetching", endpoint, "with token", token ? 'yes' : 'no');
 
     let res = await fetch(`${API_URL}/${endpoint}`, {
         ...options,

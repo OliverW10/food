@@ -1,10 +1,19 @@
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 import jwt, { SignOptions } from 'jsonwebtoken';
+
+dotenv.config({ path: '.env' });
+
+console.log(process.env.DATABASE_URL);
+console.log(process.env.JWT_SECRET);
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES_IN: SignOptions['expiresIn'] = '15m';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 const REFRESH_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '7d';
+
+console.log("JWT_SECRET:", JWT_SECRET ? 'set' : 'NOT SET');
+console.log("REFRESH_TOKEN_SECRET:", REFRESH_TOKEN_SECRET ? 'set' : 'NOT SET');
 
 export function hashPassword(password: string) {
     // cost factor of 10 is a good balance between security and performance

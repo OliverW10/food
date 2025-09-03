@@ -1,41 +1,58 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import { FoodPost } from "../components/FoodPost";
-import { TopNav } from "../components/TopNav";
-import { fetchMyFeed } from "../lib/api";
-import type { FeedResponse } from "../lib/types";
+import { useSession } from "@/hooks/user-context";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
+import React, { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
 
-export default function Home() {
-  const [feed, setFeed] = useState<FeedResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+const stack = createNativeStackNavigator();
+
+export default function Index() {
+  const { session, isLoading } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
-    fetchMyFeed().then((res) => {
-      setFeed(res);
-      setLoading(false);
-    });
-  }, []);
+    if (!isLoading) {
+      if (session) {
+        router.replace("/HomeScreen");
+      } else {
+        router.replace("/AuthScreen");
+      }
+    }
+  }, [session, isLoading]);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator color="#fff" />
-        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading feed…</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
       </View>
-    );
+    )
   }
 
-  if (!feed) return null;
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <TopNav username={feed.user.name} />
-      <FlatList
-        data={feed.reviews}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <FoodPost review={item} />}
-        contentContainerStyle={{ padding: 12 }}
-      />
-    </View>
-  );
+  return null;
 }
+// function RootNavigator() {
+//   const { session, isLoading } = useSession();
+
+//   if (isLoading) {
+//     return null;
+//   }
+
+//   return (
+//     <stack.Navigator>
+//       {session ? (
+//         <>
+//           <stack.Screen name="Home" component={HomeScreen} />
+//         </>
+//         ) : (
+//           <stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }}/>
+//         )}
+//     </stack.Navigator>
+//   )
+// }
+
+// export default function App() {
+//   return (
+//     <SessionProvider>
+//       <Slot />
+//     </SessionProvider>);
+// }

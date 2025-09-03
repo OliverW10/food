@@ -1,6 +1,10 @@
+import { useRouter } from 'expo-router';
+import { jwtDecode } from 'jwt-decode';
 import { createContext, use, useEffect, useState, type PropsWithChildren } from 'react';
-import { useStorageState } from './use-storage-state.ts';
+import trpc from '../services/trpc';
+import { useStorageState } from './use-storage-state';
 
+const router = useRouter();
 type User = {
   id: string;
   email: string;
@@ -17,6 +21,7 @@ const AuthContext = createContext<{
   signOut: () => null,
   session: null,
   isLoading: false,
+  user: null,
 });
 
 // This hook can be used to access the user info.
@@ -34,6 +39,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [_, setRefreshToken] = useStorageState('refreshToken');
   const [user, setUser] = useState<User | null>(null);
 
+  const signInMutation = trpc.auth.login.useMutation();
+
   useEffect(() => {
     if (session) {
       try {
@@ -50,19 +57,20 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, [session]);
   
   const signIn = async (email: string, password: string) => {
-    const res = await fetch('http://localhost:3000/trpc/auth.login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const json = await res.json();
-    const { accessToken, refreshToken } = json.result.data;
-
-    setSession(accessToken);
-    setRefreshToken(refreshToken);
+    try {
+      console.log("Signing in", email);
+      
+      const res = await signInMutation.mutateAsync({ email, password });
+      const { accessToken, refreshToken } = res;
+  
+      setSession(accessToken);
+      setRefreshToken(refreshToken);
+      console.log("sign in success");
+      router.replace('/');;
+    } catch (err: any) {
+      console.log("sign in failed");
+      alert(err?.message || 'Error signing in');
+    }
   }
 
   const signOut = () => {
@@ -71,7 +79,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <AuthContext
+    <AuthContext.Provider
       value={{
         signIn,
         signOut,
@@ -80,6 +88,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
         user,
       }}>
       {children}
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
