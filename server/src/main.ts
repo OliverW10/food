@@ -3,13 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
+import { authApi } from "./service/auth-api";
 import { postApi } from './service/post-api';
 import { profileApi } from "./service/profile-api";
-import { publicProcedure, router } from "./trpc";
+import { createContext, publicProcedure, router } from "./trpc";
 
 dotenv.config({ path: '.env.development' });
-
-//initTRPC.create();
 
 const appRouter = router({
   userList: publicProcedure.query(async () => {
@@ -26,14 +25,17 @@ const appRouter = router({
   }),
   post: postApi,
   profile: profileApi,
+  auth: authApi,
 });
 
 export type AppRouter = typeof appRouter;
 
 const server = createHTTPServer({
   middleware: cors(),
+  createContext,
   router: appRouter
 });
+
 const port = 3000;
 console.log(`Started server on port ${port}!`);
 server.listen(port);
