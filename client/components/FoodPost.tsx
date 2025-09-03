@@ -1,9 +1,51 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import type { Review } from "../lib/types";
 import { Rating } from "./Rating";
 
-export function FoodPost({ review }: { review: Review }) {
+type Props = {
+  review: Review;
+  variant?: "card" | "tile";
+  onPress?: () => void;
+  showCaption?: boolean; 
+};
+
+export function FoodPost({ review, variant = "card", onPress, showCaption = false }: Props) {
+  if (variant === "tile") {
+    return (
+      <View>
+        <Pressable
+          onPress={onPress}
+          style={{
+            width: "100%",
+            aspectRatio: 1,
+            borderRadius: 10,
+            overflow: "hidden",
+            borderWidth: 1,
+            borderColor: "#1f2937",
+            backgroundColor: "#111827",
+          }}
+        >
+          {review.imageUrl ? (
+            <Image source={{ uri: review.imageUrl }} style={{ width: "100%", height: "100%" }} />
+          ) : (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ color: "#9ca3af", paddingHorizontal: 6 }} numberOfLines={2}>
+                {review.dish}
+              </Text>
+            </View>
+          )}
+        </Pressable>
+
+        {showCaption && (
+          <Text style={{ color: "#9ca3af", marginTop: 6 }} numberOfLines={1}>
+            {review.dish} @ {review.restaurant}
+          </Text>
+        )}
+      </View>
+    );
+  }
+  
   return (
     <View
       style={{
