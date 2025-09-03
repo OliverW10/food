@@ -1,0 +1,99 @@
+import { router } from "expo-router";
+import React from "react";
+import { Text, View } from "react-native";
+import { ProfileButton } from "../../components/profile/profile-button";
+import { StatBadge } from "../stat-badge";
+
+type Props = {
+  name?: string;
+  email?: string;
+  followers?: number;
+  following?: number;
+  postsCount?: number;
+};
+
+export function ProfileHeader({
+  name,
+  email,
+  followers = 0,
+  following = 0,
+  postsCount = 0,
+}: Props) {
+  const initials =
+    name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U";
+
+  return (
+    <View style={{ padding: 16, gap: 16 }}>
+      <View
+        style={{
+          backgroundColor: "#111827",
+          borderRadius: 14,
+          padding: 14,
+          borderWidth: 1,
+          borderColor: "#1f2937",
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: "#1f2937",
+                alignItems: "center",
+                justifyContent: "center",
+                borderWidth: 1,
+                borderColor: "#374151",
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>{initials}</Text>
+            </View>
+
+            <View>
+              <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>{name}</Text>
+              {!!email && <Text style={{ color: "#9ca3af" }}>{email}</Text>}
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <ProfileButton variant="ghost" icon="person-add" label="Add" onPress={() => router.push("/search")} />
+            <ProfileButton variant="ghost" icon="settings-outline" label="Settings" onPress={() => router.push("/settings")} />
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 14,
+            paddingTop: 14,
+            borderTopWidth: 1,
+            borderTopColor: "#1f2937",
+          }}
+        >
+          <StatBadge label="Posts" value={postsCount} />
+          <StatBadge label="Followers" value={followers} />
+          <StatBadge label="Following" value={following} />
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}>
+          <ProfileButton
+            icon="people-outline"
+            label={`Followers: ${followers}`}
+            onPress={() => router.push("/follows")}
+            style={{ flex: 1 }}
+          />
+          <ProfileButton
+            icon="person-outline"
+            label={`Following: ${following}`}
+            onPress={() => router.push("/follows")}
+            style={{ flex: 1 }}
+          />
+        </View>
+      </View>
+
+      <Text style={{ color: "#d1d5db", fontSize: 14, fontWeight: "600" }}>Posts</Text>
+    </View>
+  );
+}

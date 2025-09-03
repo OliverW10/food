@@ -5,7 +5,7 @@ import { getPostsByAuthor } from "./post-service";
 async function ensureUser1() {
   const u = await db.user.findUnique({ where: { id: 1 } });
   if (!u) {
-    await db.user.create({ data: { id: 1, email: "user1@example.com", name: "User One" } });
+    await db.user.create({ data: { id: 1, email: "joshua@roy.com", name: "J24" } });
   }
 }
 

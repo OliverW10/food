@@ -14,4 +14,3 @@ const trpc = createTRPCReact<AppRouter>({
 
 export default trpc;
 export { serverUrl };
-
