@@ -1,13 +1,13 @@
 import { createContext, use, type PropsWithChildren } from 'react';
-import { useStorageState } from './useStorageState';
+import { useStorageState } from './use-storage-state.js';
 
 const AuthContext = createContext<{
-  signIn: () => void;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
 }>({
-  signIn: () => null,
+  signIn: async () => {},
   signOut: () => null,
   session: null,
   isLoading: false,
@@ -26,16 +26,24 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
 
+  const signIn = async (email: string, password: string) => {
+    if (email === 'a' && password === 'a') {
+      const jwt = 'token';
+      setSession(jwt);
+    } else {
+      throw new Error("Invalid credentials")
+    }
+  }
+
+  const signOut = () => {
+    setSession(null);
+  }
+
   return (
     <AuthContext
       value={{
-        signIn: () => {
-          // Perform sign-in logic here
-          setSession('xxx');
-        },
-        signOut: () => {
-          setSession(null);
-        },
+        signIn,
+        signOut,
         session,
         isLoading,
       }}>

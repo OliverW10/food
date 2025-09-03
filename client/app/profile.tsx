@@ -2,8 +2,6 @@ import trpc from "@/services/trpc";
 import { router } from "expo-router";
 import { Button, FlatList, Image, Pressable, Text, View } from "react-native";
 
-import img from "../assets/images/pasta.png";
-
 export default function ProfilePage() {
   const { data, isLoading } = trpc.profile.get.useQuery();
 
@@ -34,7 +32,7 @@ export default function ProfilePage() {
             style={{ width: "33.33%", padding: 4 }}
           >
             <View style={{ width: "100%", aspectRatio: 1, backgroundColor: "#eee", overflow: "hidden" }}>
-              <Image source={img} style={{ width: "100%", height: "100%" }} />
+              <Image source={require("../assets/images/pasta.png")} style={{ width: "100%", height: "100%" }} />
             </View>
             <Text numberOfLines={1}>{item.title}</Text>
           </Pressable>
