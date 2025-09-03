@@ -1,10 +1,16 @@
-import { createContext, use, type PropsWithChildren } from 'react';
+import { createContext, use, useEffect, useState, type PropsWithChildren } from 'react';
 import { useStorageState } from './use-storage-state.ts';
+
+type User = {
+  id: string;
+  email: string;
+}
 
 const AuthContext = createContext<{
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   session?: string | null;
+  user?: User | null;
   isLoading: boolean;
 }>({
   signIn: async () => {},
@@ -26,9 +32,25 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
   const [_, setRefreshToken] = useStorageState('refreshToken');
+  const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    if (session) {
+      try {
+        const decoded = jwtDecode<any>(session);
+        setUser({ id: decoded.sub, email: decoded.email });
+      } catch (e) {
+        console.log("Invalid token");
+        console.log(e);
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  }, [session]);
+  
   const signIn = async (email: string, password: string) => {
-    const res = await fetch('http://localhost:3000/trpc/auth/login', {
+    const res = await fetch('http://localhost:3000/trpc/auth.login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -55,6 +77,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         signOut,
         session,
         isLoading,
+        user,
       }}>
       {children}
     </AuthContext>
