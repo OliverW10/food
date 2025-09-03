@@ -33,6 +33,16 @@ export async function fetchMyFeed(): Promise<FeedResponse> {
         imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80",
         tags: ["Spicy", "Casual"],
       },
+      {
+        id: "3",
+        restaurant: "Hot Bird",
+        dish: "Nashville Hot Chicken Burger",
+        rating: 4,
+        comment: "Elite crunch. Heat builds. More pickles next time.",
+        createdAt: new Date(Date.now() - 3.6e6).toISOString(),
+        imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80",
+        tags: ["Spicy", "Casual"],
+      },
     ],
   });
 }

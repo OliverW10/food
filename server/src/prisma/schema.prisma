@@ -24,6 +24,7 @@ model User {
   email     String   @unique
   name      String?
   posts     Post[]
+  passswordHash String
   Followers Follow[] @relation("Follower")
   Following Follow[] @relation("Following")
 }
