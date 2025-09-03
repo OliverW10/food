@@ -2,6 +2,7 @@ import CornerButton from "@/components/corner-button";
 import { router } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text } from "react-native";
+import Login from "./login";
 
 export default function Index() {
   return (
@@ -15,6 +16,7 @@ export default function Index() {
       <React.Suspense fallback={ <ActivityIndicator /> }>
         <Text>Home page</Text>
       </React.Suspense>
+      <Login></Login>
     </>
   );
 }
