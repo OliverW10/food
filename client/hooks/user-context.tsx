@@ -25,18 +25,27 @@ export function useSession() {
 
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
+  const [_, setRefreshToken] = useStorageState('refreshToken');
 
   const signIn = async (email: string, password: string) => {
-    if (email === 'a' && password === 'a') {
-      const jwt = 'token';
-      setSession(jwt);
-    } else {
-      throw new Error("Invalid credentials")
-    }
+    const res = await fetch('http://localhost:3000/trpc/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const json = await res.json();
+    const { accessToken, refreshToken } = json.result.data;
+
+    setSession(accessToken);
+    setRefreshToken(refreshToken);
   }
 
   const signOut = () => {
     setSession(null);
+    setRefreshToken(null);
   }
 
   return (

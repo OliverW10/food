@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { db } from '../db';
 import { publicProcedure, router } from '../trpc';
-import { comparePassword, createAccessToken, createRefreshToken, verifyRefreshToken } from './auth';
+import { comparePassword, createAccessToken, createRefreshToken, hashPassword, verifyRefreshToken } from './auth';
 
 export const authApi = router({
     login: publicProcedure
@@ -46,4 +46,39 @@ export const authApi = router({
                 accessToken: newAccessToken
             };
         }),
+    
+    register: publicProcedure
+    .input(z.object({
+        email: z.email(),
+        password: z.string().min(6),
+        name: z.string().optional()
+    }))
+    .mutation(async ({ input }) => {
+        const currentUser = await db.user.findUnique({ where: { email: input.email } });
+        if (currentUser) {
+            throw new Error('User already exists');
+        }
+
+        const passwordHash = await hashPassword(input.password);
+        const user = await db.user.create({
+            data: {
+                email: input.email,
+                passswordHash: passwordHash,
+                name: input.name,
+            }
+        });
+
+        const accessToken = createAccessToken({ id: user.id, email: user.email });
+        const refreshToken = createRefreshToken({ id: user.id, email: user.email });
+
+        return {
+            accessToken,
+            refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+            },
+        };
+    }),
 });
