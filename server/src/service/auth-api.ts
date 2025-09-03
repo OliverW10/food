@@ -35,8 +35,12 @@ export const authApi = router({
     refresh: publicProcedure
         .input(z.object({ refreshToken: z.string() }))
         .mutation(async ({ input }) => {
-            const payload = verifyRefreshToken(input.refreshToken) as any;
-            const user = await db.user.findUnique({ where: { id: payload.sub } });
+            const payload = verifyRefreshToken(input.refreshToken);
+            const userId = Number(payload.sub);
+            if (isNaN(userId)) {
+                throw new Error('Invalid user id in token');
+            }
+            const user = await db.user.findUnique({ where: { id: userId } });
             if (!user) {
                 throw new Error('User not found');
             }

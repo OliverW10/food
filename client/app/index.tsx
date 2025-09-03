@@ -30,29 +30,3 @@ export default function Index() {
 
   return null;
 }
-// function RootNavigator() {
-//   const { session, isLoading } = useSession();
-
-//   if (isLoading) {
-//     return null;
-//   }
-
-//   return (
-//     <stack.Navigator>
-//       {session ? (
-//         <>
-//           <stack.Screen name="Home" component={HomeScreen} />
-//         </>
-//         ) : (
-//           <stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }}/>
-//         )}
-//     </stack.Navigator>
-//   )
-// }
-
-// export default function App() {
-//   return (
-//     <SessionProvider>
-//       <Slot />
-//     </SessionProvider>);
-// }
