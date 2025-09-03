@@ -1,44 +1,53 @@
-import trpc from "@/services/trpc";
-import { router } from "expo-router";
-import { Button, FlatList, Image, Pressable, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import { ProfileHeader } from "../components/profile/profile-header";
+import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
+import { ProfileTopBar } from "../components/profile/profile-top-bar";
+import { fetchMyFeed } from "../lib/api";
+import type { FeedResponse } from "../lib/types";
 
 export default function ProfilePage() {
-  const { data, isLoading } = trpc.profile.get.useQuery();
+  const [feed, setFeed] = useState<FeedResponse | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (isLoading) return <Text>Loading...</Text>;
-  if (!data) return <Text>No user</Text>;
+  useEffect(() => {
+    fetchMyFeed().then((res) => {
+      setFeed(res);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color="#fff" />
+        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading profile…</Text>
+      </View>
+    );
+  }
+
+  if (!feed) return null;
+
+  const name = feed.user?.name;
+  const email = (feed.user as any)?.email ?? "";
+  const followers = (feed.user as any)?.followers ?? 0;
+  const following = (feed.user as any)?.following ?? 0;
+  const postsCount = feed.reviews?.length ?? 0;
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={data.posts}
-        keyExtractor={(p) => String(p.id)}
-        numColumns={3}
-        ListHeaderComponent={
-          <View>
-            <Text>Profile</Text>
-            <Text>Id: {data.id}</Text>
-            <Text>Name: {data.name}</Text>
-            <Text>Email: {data.email}</Text>
-            <Button title={`Followers: ${data.followers}`} onPress={() => router.push("/follows")} />
-            <Button title={`Following: ${data.following}`} onPress={() => router.push("/follows")} />
-            <Button title="Add friend" onPress={() => router.push("/search")} />
-            <Button title="Settings" onPress={() => router.push("/settings")} />
-          </View>
+    <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
+      <ProfileTopBar username={name} />
+      <ProfilePostsGrid
+        reviews={feed.reviews}
+        header={
+          <ProfileHeader
+            name={name}
+            email={email}
+            followers={followers}
+            following={following}
+            postsCount={postsCount}
+          />
         }
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => router.push({ pathname: "/post", params: { id: String(item.id) } })}
-            style={{ width: "33.33%", padding: 4 }}
-          >
-            <View style={{ width: "100%", aspectRatio: 1, backgroundColor: "#eee", overflow: "hidden" }}>
-              <Image source={require("../assets/images/pasta.png")} style={{ width: "100%", height: "100%" }} />
-            </View>
-            <Text numberOfLines={1}>{item.title}</Text>
-          </Pressable>
-        )}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        showsVerticalScrollIndicator
       />
     </View>
   );
