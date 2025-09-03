@@ -31,3 +31,11 @@ Run the android emulator. It appears that it does not work while connected to th
 It looks like its possible to setup a github action to create an ios build (`xcodebuild` on gh macos runner) and then run it with testflight. Will need to work out having multiple deployed versions, will probably get k8's running on my vps
 
 <https://docs.expo.dev/guides/local-app-development/#local-app-compilation>
+
+# TODOS:
+- auto refresh access token when api call fails with 401
+- decode and store user info from jwt in fe so i can access user id and email without extra api calls
+- mfa setup
+- store jwt in db, and revoke on logout
+- email verification after signup
+- logout of all devices slay
