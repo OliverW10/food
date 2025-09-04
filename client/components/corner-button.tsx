@@ -4,10 +4,10 @@ import { Pressable, StyleSheet } from "react-native";
 export default function CornerButton({ children, onPress, isTop }: {children: React.ReactNode, onPress: () => void, isTop: boolean}
 ) {
     return (
-    <Pressable className={`absolute right-4 ${isTop ? "top-4" : "bottom-4"} p-2 bg-primary-500 text-white rounded-full shadow-md`}
-        style={({pressed}) => [
+    <Pressable className={`absolute right-4 ${isTop ? "top-4" : "bottom-4"} p-2 bg-red text-white rounded-full shadow-md`}
+        style={({pressed, hovered}) => [
             {
-              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
+              backgroundColor: hovered ? 'rgb(210, 230, 255)' : 'white',
             },
           ]}
         onPress={onPress}
