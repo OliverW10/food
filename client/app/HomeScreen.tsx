@@ -1,22 +1,13 @@
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
-import React, { useEffect, useState } from "react";
+import trpc from "@/services/trpc";
+import React from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import { fetchMyFeed } from "../lib/api";
-import type { FeedResponse } from "../lib/types";
 
 export default function Home() {
-  const [feed, setFeed] = useState<FeedResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchMyFeed().then((res) => {
-      setFeed(res);
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
+  const { data: posts, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
+  const { data: profile, isLoading: isProfileLoading } = trpc.profile.get.useQuery();
+  if (isPostsLoading || isProfileLoading || !posts || !profile) {
     return (
       <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
@@ -25,14 +16,12 @@ export default function Home() {
     );
   }
 
-  if (!feed) return null;
-
   return (
     <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <TopNav username={feed.user.name} />
+      <TopNav username={profile.email} />
       <FlatList
-        data={feed.reviews}
-        keyExtractor={(item) => item.id}
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <FoodPost review={item} />}
         contentContainerStyle={{ padding: 12 }}
       />
