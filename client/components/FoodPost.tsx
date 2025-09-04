@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { Post } from "../../server/src/generated/prisma";
+import type { Post } from "../../server/src/generated/prisma";
 
 const pastaImage = require("../assets/images/pasta.png");
 

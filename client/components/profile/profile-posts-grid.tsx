@@ -2,11 +2,11 @@
 import { router } from "expo-router";
 import React from "react";
 import { FlatList, View } from "react-native";
-import type { Review } from "../../lib/types";
+import type { Post } from "../../../server/src/generated/prisma";
 import { FoodPost } from "../FoodPost";
 
 type Props = {
-  reviews: Review[];
+  reviews: Post[];
   header?: React.ReactElement | null; // ← narrower than ReactNode
 };
 
@@ -14,7 +14,7 @@ export function ProfilePostsGrid({ reviews, header }: Props) {
   return (
     <FlatList
       data={reviews}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.id.toString()}
       numColumns={3}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 16 }}
