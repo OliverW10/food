@@ -9,7 +9,7 @@ type User = {
   email: string;
 }
 
-export const AuthContext = createContext<{
+const AuthContext = createContext<{
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   session?: string | null;

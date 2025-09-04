@@ -1,13 +1,13 @@
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
-import { AuthContext } from "@/hooks/user-context";
+import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import React, { useContext } from "react";
+import React from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 export default function Home() {
   const { data: posts, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
-  const { user } = useContext(AuthContext);
+  const { user } = useSession();
   if (isPostsLoading || !posts) {
     return (
       <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
