@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { db } from '../db';
+import { comparePassword, createAccessToken, createRefreshToken, hashPassword, verifyRefreshToken } from '../service/auth';
 import { publicProcedure, router } from '../trpc';
-import { comparePassword, createAccessToken, createRefreshToken, hashPassword, verifyRefreshToken } from './auth';
 
 export const authApi = router({
     login: publicProcedure
