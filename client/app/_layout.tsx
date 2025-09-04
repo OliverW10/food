@@ -6,7 +6,7 @@ import { httpBatchLink } from "@trpc/client";
 import { Slot } from "expo-router";
 import { createContext, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-
+import superjson from "superjson";
 
 export const UserContext = createContext(null);
 
@@ -36,6 +36,7 @@ export default function RootLayout() {
     trpc.createClient({
       links: [
         httpBatchLink({
+          transformer: superjson,
           url: serverUrl,
           // You can pass any HTTP headers you wish here
           async headers() {

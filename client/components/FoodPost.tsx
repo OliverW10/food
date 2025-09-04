@@ -1,10 +1,11 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import type { Review } from "../lib/types";
-import { Rating } from "./Rating";
+import { Post } from "../../server/src/generated/prisma";
+
+const pastaImage = require("../assets/images/pasta.png");
 
 type Props = {
-  review: Review;
+  review: Post;
   variant?: "card" | "tile";
   onPress?: () => void;
   showCaption?: boolean; 
@@ -26,20 +27,17 @@ export function FoodPost({ review, variant = "card", onPress, showCaption = fals
             backgroundColor: "#111827",
           }}
         >
-          {review.imageUrl ? (
-            <Image source={{ uri: review.imageUrl }} style={{ width: "100%", height: "100%" }} />
-          ) : (
+            <Image source={pastaImage} style={{ width: "100%", height: "100%" }} />
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
               <Text style={{ color: "#9ca3af", paddingHorizontal: 6 }} numberOfLines={2}>
-                {review.dish}
+                {review.title}
               </Text>
             </View>
-          )}
         </Pressable>
 
         {showCaption && (
           <Text style={{ color: "#9ca3af", marginTop: 6 }} numberOfLines={1}>
-            {review.dish} @ {review.restaurant}
+            {review.description}
           </Text>
         )}
       </View>
@@ -55,16 +53,14 @@ export function FoodPost({ review, variant = "card", onPress, showCaption = fals
         overflow: "hidden",
       }}
     >
-      {review.imageUrl && (
-        <Image source={{ uri: review.imageUrl }} style={{ width: "100%", height: 200 }} />
-      )}
+      <Image source={pastaImage} style={{ width: "100%", height: 200 }} />
       <View style={{ padding: 12 }}>
         <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-          {review.dish} @ {review.restaurant}
+          {review.title}
         </Text>
-        <Rating value={review.rating} />
-        {review.comment && (
-          <Text style={{ color: "#d1d5db", marginTop: 6 }}>{review.comment}</Text>
+        {/* <Rating value={review.} /> */}
+        {review.description && (
+          <Text style={{ color: "#d1d5db", marginTop: 6 }}>{review.description}</Text>
         )}
         <Text style={{ color: "#6b7280", fontSize: 12, marginTop: 4 }}>
           {new Date(review.createdAt).toLocaleString()}

@@ -1,4 +1,5 @@
-import TypeSelect, { SimplePreset } from '@/components/type-select';
+import { TopNav } from '@/components/TopNav';
+import { SimplePreset, TypeSelect } from '@/components/type-select';
 import { useSession } from '@/hooks/user-context';
 import trpc from '@/services/trpc';
 import { useRouter } from 'expo-router';
@@ -61,82 +62,85 @@ const presets: SimplePreset[] = [
 ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      <ScrollView contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
-        <Text style={{ fontSize: 24, fontWeight: '700', marginBottom: 20 }}>Create Post</Text>
+    <>
+      <TopNav  />
+      <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <ScrollView contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
+          <Text style={{ fontSize: 24, fontWeight: '700', marginBottom: 20 }}>Create Post</Text>
 
-        <View style={{ marginBottom: 18 }}>
-          <Text style={{ fontWeight: '600', marginBottom: 6 }}>Title</Text>
-          <TypeSelect
-            value={title}
-            onChange={setTitleAndPreset}
-            presets={presets}
-            placeholder="E.g. Homemade ramen"
-          />
-          {touched && title.trim().length === 0 && (
-            <Text style={{ color: '#dc2626', marginTop: 4 }}>Title is required.</Text>
-          )}
-        </View>
+          <View style={{ marginBottom: 18 }}>
+            <Text style={{ fontWeight: '600', marginBottom: 6 }}>Title</Text>
+            <TypeSelect
+              value={title}
+              onChange={setTitleAndPreset}
+              presets={presets}
+              placeholder="E.g. Homemade ramen"
+            />
+            {touched && title.trim().length === 0 && (
+              <Text style={{ color: '#dc2626', marginTop: 4 }}>Title is required.</Text>
+            )}
+          </View>
 
-        <View style={{ marginBottom: 18 }}>
-          <Text style={{ fontWeight: '600', marginBottom: 6 }}>Description (optional)</Text>
-          <TextInput
-            value={description}
-            onChangeText={setDescription}
-            placeholder=""
-            placeholderTextColor="#9ca3af"
-            multiline
-            numberOfLines={5}
-            style={{
-              borderWidth: 1,
-              borderColor: '#d1d5db',
-              padding: 10,
-              borderRadius: 8,
-              backgroundColor: '#f9fafb',
-              textAlignVertical: 'top',
-              minHeight: 120,
-            }}
-            onBlur={() => setTouched(true)}
-          />
-          {touched && description.trim().length === 0 && (
-            <Text style={{ color: '#dc2626', marginTop: 4 }}>Description is required.</Text>
-          )}
-        </View>
+          <View style={{ marginBottom: 18 }}>
+            <Text style={{ fontWeight: '600', marginBottom: 6 }}>Description (optional)</Text>
+            <TextInput
+              value={description}
+              onChangeText={setDescription}
+              placeholder=""
+              placeholderTextColor="#9ca3af"
+              multiline
+              numberOfLines={5}
+              style={{
+                borderWidth: 1,
+                borderColor: '#d1d5db',
+                padding: 10,
+                borderRadius: 8,
+                backgroundColor: '#f9fafb',
+                textAlignVertical: 'top',
+                minHeight: 120,
+              }}
+              onBlur={() => setTouched(true)}
+            />
+            {touched && description.trim().length === 0 && (
+              <Text style={{ color: '#dc2626', marginTop: 4 }}>Description is required.</Text>
+            )}
+          </View>
 
-        <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <View style={{ flex: 1, paddingRight: 12 }}>
-            <Text style={{ fontWeight: '600' }}>I {didCook ? 'cooked' : 'ate'} this</Text>
-            <Text style={{ color: '#6b7280', fontSize: 12, marginTop: 2 }}>
-              (Not yet saved – future schema field)
+          <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flex: 1, paddingRight: 12 }}>
+              <Text style={{ fontWeight: '600' }}>I {didCook ? 'cooked' : 'ate'} this</Text>
+              <Text style={{ color: '#6b7280', fontSize: 12, marginTop: 2 }}>
+                (Not yet saved – future schema field)
+              </Text>
+            </View>
+            <Switch value={didCook} onValueChange={setDidCook} />
+          </View>
+
+          {/* Placeholder for future image picker */}
+          <View style={{ marginBottom: 24, padding: 16, borderWidth: 1, borderColor: '#d1d5db', borderRadius: 10, backgroundColor: '#f3f4f6' }}>
+            <Text style={{ fontWeight: '600', marginBottom: 6 }}>Image (coming soon)</Text>
+            <Text style={{ color: '#6b7280', fontSize: 12 }}>
+              Add a photo of your dish or meal in a future update.
             </Text>
           </View>
-          <Switch value={didCook} onValueChange={setDidCook} />
-        </View>
 
-        {/* Placeholder for future image picker */}
-        <View style={{ marginBottom: 24, padding: 16, borderWidth: 1, borderColor: '#d1d5db', borderRadius: 10, backgroundColor: '#f3f4f6' }}>
-          <Text style={{ fontWeight: '600', marginBottom: 6 }}>Image (coming soon)</Text>
-          <Text style={{ color: '#6b7280', fontSize: 12 }}>
-            Add a photo of your dish or meal in a future update.
-          </Text>
-        </View>
-
-        <View style={{ marginBottom: 40 }}>
-          {createPostMutation.isPending ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <ActivityIndicator color="#111827" />
-              <Text style={{ marginLeft: 12 }}>Posting…</Text>
-            </View>
-          ) : (
-            <Button
-              title={isValid ? 'Post' : 'Fill required fields'}
-              onPress={handleSubmit}
-              disabled={!isValid}
-              color={isValid ? undefined : '#9ca3af'}
-            />
-          )}
-        </View>
-      </ScrollView>
-    </View>
+          <View style={{ marginBottom: 40 }}>
+            {createPostMutation.isPending ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator color="#111827" />
+                <Text style={{ marginLeft: 12 }}>Posting…</Text>
+              </View>
+            ) : (
+              <Button
+                title={isValid ? 'Post' : 'Fill required fields'}
+                onPress={handleSubmit}
+                disabled={!isValid}
+                color={isValid ? undefined : '#9ca3af'}
+              />
+            )}
+          </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }

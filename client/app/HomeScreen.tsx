@@ -1,7 +1,6 @@
 import CornerButton from "@/components/corner-button";
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
-import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -9,7 +8,6 @@ import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 export default function Home() {
   const { data: posts, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
-  const { user } = useSession();
 
   const router = useRouter();
   
@@ -24,7 +22,7 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
-      <TopNav username={user?.email.split("@")[0] ?? "Unknown"} />
+      <TopNav />
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}

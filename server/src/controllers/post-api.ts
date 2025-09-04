@@ -2,8 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { idInputSchema } from "../api-schema/app-schema";
 import {
   createPostInputSchema,
-  postOutputSchema,
-  postsOutputSchema,
 } from "../api-schema/post-schemas";
 import { db } from "../db";
 
@@ -12,7 +10,6 @@ import { publicProcedure, router } from "../trpc";
 export const postApi = router({
   create: publicProcedure
     .input(createPostInputSchema)
-    .output(postOutputSchema)
     .mutation(async ({ input }) => {
       const post = await db.post.create({
         data: {
@@ -26,20 +23,18 @@ export const postApi = router({
     }),
   getById: publicProcedure
     .input(idInputSchema)
-    .output(postOutputSchema.optional())
     .query(async ({ input }) => {
       const post = await db.post.findUnique({
         where: { id: input.id },
       });
       return post ?? undefined;
     }),
-  getAll: publicProcedure.output(postsOutputSchema).query(async () => {
+  getAll: publicProcedure.query(async () => {
     const posts = await db.post.findMany();
     return posts;
   }),
   delete: publicProcedure
     .input(idInputSchema)
-    .output(postOutputSchema)
     .mutation(async ({ input }) => {
       const existing = await db.post.findUnique({
         where: { id: input.id },
