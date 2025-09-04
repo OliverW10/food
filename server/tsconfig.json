@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "commonjs",
+    // Use ESNext module so Jest (with ts-jest useESM) and runtime can handle ESM imports from deps like superjson
+    "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
