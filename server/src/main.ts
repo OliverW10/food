@@ -1,11 +1,11 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { authApi } from "./controllers/auth-api";
+import { postApi } from './controllers/post-api';
+import { profileApi } from "./controllers/profile-api";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
-import { authApi } from "./service/auth-api";
-import { postApi } from './service/post-api';
-import { profileApi } from "./service/profile-api";
 import { createContext, publicProcedure, router } from "./trpc";
 
 dotenv.config({ path: '.env.development' });

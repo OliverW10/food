@@ -17,7 +17,7 @@ export function createContext(opts: CreateHTTPContextOptions) {
     return { req: opts.req, res: opts.res };
 }
 
-type Context = ReturnType<typeof createContext>;
+export type Context = ReturnType<typeof createContext>;
 const t = initTRPC.context<Context>().create();
 
 const isAuthed = t.middleware(({ ctx, next }) => {
@@ -34,6 +34,7 @@ const isAuthed = t.middleware(({ ctx, next }) => {
     }
 });
 
+export const createCallerFactory = t.createCallerFactory;
 export const router = t.router;
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);

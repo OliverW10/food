@@ -4,7 +4,6 @@ import { createContext, use, useEffect, useState, type PropsWithChildren } from 
 import trpc from '../services/trpc';
 import { useStorageState } from './use-storage-state';
 
-const router = useRouter();
 type User = {
   id: string;
   email: string;
@@ -38,6 +37,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
   const [_, setRefreshToken] = useStorageState('refreshToken');
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   const signInMutation = trpc.auth.login.useMutation();
 
@@ -79,7 +79,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <AuthContext.Provider
+    <AuthContext
       value={{
         signIn,
         signOut,
@@ -88,6 +88,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
         user,
       }}>
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   );
 }

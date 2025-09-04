@@ -1,46 +1,57 @@
 import { TRPCError } from "@trpc/server";
-import { idInputSchema } from "../schema/app-schema";
+import { idInputSchema } from "../api-schema/app-schema";
 import {
   createPostInputSchema,
   postOutputSchema,
   postsOutputSchema,
-} from "../schema/post-schemas";
+} from "../api-schema/post-schemas";
+import { db } from "../db";
+
 import { publicProcedure, router } from "../trpc";
-import {
-  createPost,
-  deletePost,
-  getAllPosts,
-  getPostById,
-} from "./post-service";
 
 export const postApi = router({
   create: publicProcedure
     .input(createPostInputSchema)
     .output(postOutputSchema)
     .mutation(async ({ input }) => {
-      const post = await createPost(input);
+      const post = await db.post.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          ...(input.foodId && { food: { connect: { id: input.foodId } } }),
+          author: { connect: { id: input.authorId } },
+        },
+      });
       return post;
     }),
   getById: publicProcedure
     .input(idInputSchema)
     .output(postOutputSchema.optional())
     .query(async ({ input }) => {
-      const post = await getPostById(input.id);
+      const post = await db.post.findUnique({
+        where: { id: input.id },
+      });
       return post ?? undefined;
     }),
   getAll: publicProcedure.output(postsOutputSchema).query(async () => {
-    const posts = await getAllPosts();
+    const posts = await db.post.findMany();
     return posts;
   }),
   delete: publicProcedure
     .input(idInputSchema)
     .output(postOutputSchema)
     .mutation(async ({ input }) => {
-      const existing = await getPostById(input.id);
+      const existing = await db.post.findUnique({
+        where: { id: input.id },
+      });
       if (!existing) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
       }
-      await deletePost(input.id);
+      await db.post.delete({
+        where: { id: input.id },
+      });
       return existing;
     }),
 });
+
+
