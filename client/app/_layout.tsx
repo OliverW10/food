@@ -10,6 +10,10 @@ import { ActivityIndicator, View } from "react-native";
 
 export const UserContext = createContext(null);
 
+function getAuthCookie() {
+  return "todo";
+}
+
 function AppLayout() {
   const { session, isLoading } = useSession();
   // const router = useRoute();
