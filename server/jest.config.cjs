@@ -1,6 +1,6 @@
 /** @type {import('jest').Config} */
 module.exports = {
-	preset: 'ts-jest',
+	preset: 'ts-jest/presets/default-esm',
 	testEnvironment: 'node',
 	roots: ['<rootDir>/src'],
 	testMatch: ['**/__tests__/**/*.test.ts?(x)'],
@@ -13,4 +13,17 @@ module.exports = {
 		'!src/**/index.ts',
 		'!src/**/generated/**',
 	],
+	transform: {
+		'^.+\\.[tj]sx?$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: '<rootDir>/tsconfig.json',
+				diagnostics: true,
+			},
+		],
+	},
+	extensionsToTreatAsEsm: ['.ts'],
+	// Transform ESM deps like superjson
+	transformIgnorePatterns: ['node_modules/(?!(superjson)/)'],
 };

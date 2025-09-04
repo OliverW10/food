@@ -1,5 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { CreateHTTPContextOptions } from '@trpc/server/dist/adapters/standalone.cjs';
+import superjson from 'superjson';
 import { verifyAccessToken } from './service/auth';
 
 /**
@@ -18,7 +19,9 @@ export function createContext(opts: CreateHTTPContextOptions) {
 }
 
 export type Context = ReturnType<typeof createContext>;
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+    transformer: superjson,
+});
 
 const isAuthed = t.middleware(({ ctx, next }) => {
     const token = ctx.req.headers.authorization?.split(' ')[1];

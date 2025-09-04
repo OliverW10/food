@@ -1,11 +1,14 @@
+import { useSession } from "@/hooks/user-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
-export function TopNav({ username }: { username: string }) {
+export function TopNav() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { user } = useSession();
+  const username = user?.email.split("@")[0] ?? "Unknown";
 
   return (
     <>
@@ -21,7 +24,7 @@ export function TopNav({ username }: { username: string }) {
       >
         <Pressable onPress={() => setOpen(true)}>
           <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-            {username}’s Feed ▼
+            {username}&apos;s ▼
           </Text>
         </Pressable>
 

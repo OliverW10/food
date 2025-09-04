@@ -16,7 +16,6 @@ const appRouter = router({
     return users;
   }),
   versions: publicProcedure.query(async () => {
-    console.log("Got versions request");
     const dbVersion = await checkMigrations();
     return {
       ...dbVersion,
