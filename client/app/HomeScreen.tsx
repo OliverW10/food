@@ -1,13 +1,14 @@
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
+import { AuthContext } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import React from "react";
+import React, { useContext } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 export default function Home() {
   const { data: posts, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
-  const { data: profile, isLoading: isProfileLoading } = trpc.profile.get.useQuery();
-  if (isPostsLoading || isProfileLoading || !posts || !profile) {
+  const { user } = useContext(AuthContext);
+  if (isPostsLoading || !posts) {
     return (
       <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
@@ -18,7 +19,7 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <TopNav username={profile.email} />
+      <TopNav username={user?.email.split("@")[0] ?? "Unknown"} />
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
