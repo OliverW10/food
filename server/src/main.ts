@@ -10,6 +10,7 @@ import { postApi } from './controllers/post-api';
 import { profileApi } from "./controllers/profile-api";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
+import { saveUploadedImage } from './service/upload-service';
 import { createContext, publicProcedure, router } from "./trpc";
 
 dotenv.config({ path: '.env.development' });
@@ -68,17 +69,18 @@ const upload = multer({
 app.get('/health', (_req: Request, res: Response) => res.json({ status: 'ok' }));
 
 // Image upload REST endpoint
-app.post('/api/upload', upload.single('image'), (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+app.post('/api/upload', upload.single('image'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const saved = await saveUploadedImage({ file: req.file });
+    res.status(201).json(saved);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Upload failed';
+    console.error('Upload error', err);
+    res.status(500).json({ error: message });
   }
-  const fileUrl = `/uploads/${req.file.filename}`;
-  res.status(201).json({
-    url: fileUrl,
-    originalName: req.file.originalname,
-    size: req.file.size,
-    mimeType: req.file.mimetype,
-  });
 });
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;

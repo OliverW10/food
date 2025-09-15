@@ -68,8 +68,7 @@ model Food {
 }
 
 model Image {
-  id     Int    @id @default(autoincrement())
-  url    String @db.Text
-  data   Bytes
-  Posts Post[]
+  id         Int    @id @default(autoincrement())
+  storageUrl String @db.Text
+  Posts      Post[]
 }
