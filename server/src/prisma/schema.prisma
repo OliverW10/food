@@ -39,6 +39,8 @@ model Post {
   authorId  Int
   food      Food?    @relation(fields: [foodId], references: [id])
   foodId    Int?
+  image     Image?   @relation(fields: [imageId], references: [id])
+  imageId   Int? @unique
 }
 
 model Follow {
@@ -63,4 +65,11 @@ model Food {
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
   Posts      Post[]
+}
+
+model Image {
+  id     Int    @id @default(autoincrement())
+  url    String @db.Text
+  data   Bytes
+  Posts Post[]
 }

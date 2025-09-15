@@ -17,11 +17,12 @@ export const postApi = router({
           description: input.description,
           ...(input.foodId && { food: { connect: { id: input.foodId } } }),
           author: { connect: { id: input.authorId } },
+          ...(input.imageId && { image: { connect: { id: input.imageId } } }),
         },
       });
       return post;
     }),
-  getById: publicProcedure
+  getById: publicProcedureW
     .input(idInputSchema)
     .query(async ({ input }) => {
       const post = await db.post.findUnique({

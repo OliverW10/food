@@ -1,6 +1,10 @@
-import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
+import express, { Request, Response } from 'express';
+import multer from 'multer';
+import path from 'path';
 import { authApi } from "./controllers/auth-api";
 import { postApi } from './controllers/post-api';
 import { profileApi } from "./controllers/profile-api";
@@ -29,12 +33,55 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const server = createHTTPServer({
-  middleware: cors(),
-  createContext,
-  router: appRouter
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(process.cwd(), 'src', '..', 'uploads')));
+
+// tRPC endpoint
+app.use('/trpc', trpcExpress.createExpressMiddleware({ router: appRouter, createContext }));
+
+// Multer storage config
+const uploadsDir = path.join(process.cwd(), 'server', 'uploads');
+const storage = multer.diskStorage({
+  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => cb(null, uploadsDir),
+  filename: (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+    const ext = path.extname(file.originalname);
+    const base = crypto.randomBytes(16).toString('hex');
+    cb(null, `${base}${ext}`);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'));
+    }
+    cb(null, true);
+  },
 });
 
-const port = 3000;
-console.log(`Started server on port ${port}!`);
-server.listen(port);
+// Health check
+app.get('/health', (_req: Request, res: Response) => res.json({ status: 'ok' }));
+
+// Image upload REST endpoint
+app.post('/api/upload', upload.single('image'), (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.status(201).json({
+    url: fileUrl,
+    originalName: req.file.originalname,
+    size: req.file.size,
+    mimeType: req.file.mimetype,
+  });
+});
+
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+app.listen(port, () => {
+  console.log(`Server (REST + tRPC) listening on port ${port}`);
+});
