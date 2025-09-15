@@ -22,7 +22,7 @@ export const postApi = router({
       });
       return post;
     }),
-  getById: publicProcedureW
+  getById: publicProcedure
     .input(idInputSchema)
     .query(async ({ input }) => {
       const post = await db.post.findUnique({
