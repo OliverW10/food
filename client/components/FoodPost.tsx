@@ -1,70 +1,73 @@
-import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import type { Post } from "../../server/src/generated/prisma";
+import trpc from '@/services/trpc';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-const pastaImage = require("../assets/images/pasta.png");
-
-type Props = {
-  review: Post;
-  variant?: "card" | "tile";
-  onPress?: () => void;
-  showCaption?: boolean; 
+export type PostUI = {
+  id: number;
+  title: string;
+  description: string;
+  author: { id: number; email: string };
+  likesCount: number;
+  likedByMe: boolean;
+  commentsCount: number;
 };
 
-export function FoodPost({ review, variant = "card", onPress, showCaption = false }: Props) {
-  if (variant === "tile") {
-    return (
-      <View>
-        <Pressable
-          onPress={onPress}
-          style={{
-            width: "100%",
-            aspectRatio: 1,
-            borderRadius: 10,
-            overflow: "hidden",
-            borderWidth: 1,
-            borderColor: "#1f2937",
-            backgroundColor: "#111827",
-          }}
-        >
-            <Image source={pastaImage} style={{ width: "100%", height: "100%" }} />
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ color: "#9ca3af", paddingHorizontal: 6 }} numberOfLines={2}>
-                {review.title}
-              </Text>
-            </View>
-        </Pressable>
+export function FoodPost({
+  review,
+  onOpenComments,
+}: {
+  review: PostUI;
+  onOpenComments?: () => void;
+}) {
+  const utils = (trpc as any).useUtils?.() ?? {
+    post: { getFeed: { cancel: () => {}, getInfiniteData: () => undefined, setInfiniteData: () => {}, invalidate: () => {} } }
+  };
 
-        {showCaption && (
-          <Text style={{ color: "#9ca3af", marginTop: 6 }} numberOfLines={1}>
-            {review.description}
-          </Text>
-        )}
-      </View>
-    );
-  }
-  
+  const likeMutation = (trpc as any).post?.likeToggle?.useMutation?.({
+    onMutate: async ({ postId, like }: { postId: number; like: boolean }) => {
+      await utils.post.getFeed.cancel();
+      const previous = utils.post.getFeed.getInfiniteData();
+      utils.post.getFeed.setInfiniteData(undefined, (data: any) => {
+        if (!data) return data;
+        return {
+          ...data,
+          pages: data.pages.map((pg: any) => ({
+            ...pg,
+            items: pg.items.map((p: any) =>
+              p.id === postId
+                ? { ...p, likedByMe: like, likesCount: p.likesCount + (like ? 1 : -1) }
+                : p
+            ),
+          })),
+        };
+      });
+      return { previous };
+    },
+    onError: (_e: any, _v: any, ctx: any) => {
+      if (ctx?.previous) utils.post.getFeed.setInfiniteData(undefined, ctx.previous);
+    },
+    onSettled: () => {
+      utils.post.getFeed.invalidate();
+    },
+  }) ?? { mutate: () => {} };
+
+  const toggleLike = () => {
+    likeMutation.mutate({ postId: review.id, like: !review.likedByMe });
+  };
+
   return (
-    <View
-      style={{
-        marginBottom: 20,
-        backgroundColor: "#111827",
-        borderRadius: 12,
-        overflow: "hidden",
-      }}
-    >
-      <Image source={pastaImage} style={{ width: "100%", height: 200 }} />
-      <View style={{ padding: 12 }}>
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-          {review.title}
-        </Text>
-        {/* <Rating value={review.} /> */}
-        {review.description && (
-          <Text style={{ color: "#d1d5db", marginTop: 6 }}>{review.description}</Text>
-        )}
-        <Text style={{ color: "#6b7280", fontSize: 12, marginTop: 4 }}>
-          {new Date(review.createdAt).toLocaleString()}
-        </Text>
+    <View style={{ padding:12, borderBottomWidth:1, borderColor:'#eee' }}>
+      <Text style={{ fontWeight:'700' }}>{review.title}</Text>
+      <Text style={{ color:'#6b7280', marginTop:4 }}>{review.description}</Text>
+
+      <View style={{ flexDirection:'row', gap:16, marginTop:10 }}>
+        <TouchableOpacity accessibilityLabel="Like post" onPress={toggleLike}>
+          <Text>{review.likedByMe ? '♥' : '♡'} {review.likesCount}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity accessibilityLabel="Open comments" onPress={onOpenComments}>
+          <Text>💬 {review.commentsCount}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
