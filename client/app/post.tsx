@@ -1,10 +1,11 @@
+import PostImagePicker from '@/components/PostImagePicker';
 import { TopNav } from '@/components/TopNav';
 import { SimplePreset, TypeSelect } from '@/components/type-select';
 import { useSession } from '@/hooks/user-context';
 import trpc from '@/services/trpc';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Button, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, Image, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 
 export default function PostPage() {
   const { user, session } = useSession();
@@ -14,6 +15,9 @@ export default function PostPage() {
   const [description, setDescription] = useState('');
   const [didCook, setDidCook] = useState(true); // Not persisted yet – placeholder for future schema
   const [touched, setTouched] = useState(false);
+  const [imageUri, setImageUri] = useState<string | null>(null); // local selected (pre-upload)
+  const [remoteImageUri, setRemoteImageUri] = useState<string | null>(null); // from API after save or existing post
+  const [loadingRemote, setLoadingRemote] = useState(false);
 
   const createPostMutation = trpc.post.create.useMutation();
 
@@ -32,11 +36,26 @@ export default function PostPage() {
     if (!isValid) return;
 
     try {
-      await createPostMutation.mutateAsync({
+      //uploadImage
+      const imageId = await uploadImage();
+      if (!imageId) {
+        Alert.alert('Error', 'Failed to upload image');
+        return;
+      }
+
+      // create Post
+      const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
+        imageId,
         authorId: parseInt(user.id, 10),
       });
+      if (created?.image?.storageUrl) {
+        setLoadingRemote(true);
+        // Simulate async fetch/validation step (could add HEAD request etc.)
+        setRemoteImageUri(created.image.storageUrl);
+        setLoadingRemote(false);
+      }
       setTitle('');
       setDescription('');
       Alert.alert('Posted!', 'Your post was created.', [
@@ -47,6 +66,31 @@ export default function PostPage() {
       Alert.alert('Error', err?.message || 'Failed to create post');
     }
   };
+
+  const uploadImage = async () : Promise<number | null> => {
+    if (!imageUri) return null;
+
+    try {
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append('image', blob, 'image.jpg');
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) throw new Error('Failed to upload image');
+
+      const { id } = await uploadResponse.json();
+      return id;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  }
 
 const presets: SimplePreset[] = [
     { label: "Homemade ramen", value: "Homemade ramen" },
@@ -106,6 +150,13 @@ const presets: SimplePreset[] = [
             )}
           </View>
 
+          <View style={{ height: 1, backgroundColor: '#e5e7eb', marginVertical: 20 }} />
+
+          <PostImagePicker
+            value={imageUri}
+            onChange={(uri) => setImageUri(uri)}
+            label="Image (optional)"
+          />
           <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flex: 1, paddingRight: 12 }}>
               <Text style={{ fontWeight: '600' }}>I {didCook ? 'cooked' : 'ate'} this</Text>
@@ -116,13 +167,25 @@ const presets: SimplePreset[] = [
             <Switch value={didCook} onValueChange={setDidCook} />
           </View>
 
-          {/* Placeholder for future image picker */}
-          <View style={{ marginBottom: 24, padding: 16, borderWidth: 1, borderColor: '#d1d5db', borderRadius: 10, backgroundColor: '#f3f4f6' }}>
-            <Text style={{ fontWeight: '600', marginBottom: 6 }}>Image (coming soon)</Text>
-            <Text style={{ color: '#6b7280', fontSize: 12 }}>
-              Add a photo of your dish or meal in a future update.
-            </Text>
-          </View>
+          {imageUri && !remoteImageUri && (
+            <Text style={{ marginBottom: 16, fontSize: 12, color: '#6b7280' }}>Image selected and ready to upload.</Text>
+          )}
+          {loadingRemote && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+              <ActivityIndicator size="small" />
+              <Text style={{ marginLeft: 8, fontSize: 12 }}>Loading uploaded image…</Text>
+            </View>
+          )}
+          {remoteImageUri && (
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{ fontWeight: '600', marginBottom: 8 }}>Uploaded Image</Text>
+              <Image
+                source={{ uri: remoteImageUri }}
+                style={{ width: '100%', height: 220, borderRadius: 12, backgroundColor: '#f3f4f6' }}
+                resizeMode="cover"
+              />
+            </View>
+          )}
 
           <View style={{ marginBottom: 40 }}>
             {createPostMutation.isPending ? (

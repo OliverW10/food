@@ -18,7 +18,7 @@ import { Context, createCallerFactory } from '../trpc';
 const createCaller = createCallerFactory(postApi);
 const caller = createCaller({} as Context);
 
-describe('post-service', () => {
+describe('post-api', () => {
   const basePost = {
     id: 1,
     createdAt: new Date('2025-08-29T00:00:00Z'),
@@ -26,6 +26,10 @@ describe('post-service', () => {
     published: false,
     authorId: 10,
     foodId: 5,
+    image: {
+      id: 2,
+      storageUrl: '/uploads/some-file.png',
+    }
   };
 
   beforeEach(() => {
@@ -38,6 +42,7 @@ describe('post-service', () => {
       const result = await caller.create({ title: 'Hello', authorId: 10, foodId: 5, description: 'A delicious meal' });
       expect(db.post.create).toHaveBeenCalledWith({
         data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } }, food: { connect: { id: 5 } }, description: 'A delicious meal' }),
+        include: { image: true }
       });
       expect(result).toEqual(basePost);
     });
@@ -47,6 +52,7 @@ describe('post-service', () => {
       const result = await caller.create({ title: 'Hello', authorId: 10, description: 'A delicious meal' });
       expect(db.post.create).toHaveBeenCalledWith({
         data: expect.objectContaining({ title: 'Hello', author: { connect: { id: 10 } }, description: 'A delicious meal' }),
+        include: { image: true }
       });
       expect(result.foodId).toBeNull();
     });
@@ -56,7 +62,7 @@ describe('post-service', () => {
     it('returns a post when found', async () => {
       (db.post.findUnique as jest.Mock).mockResolvedValue(basePost);
       const result = await caller.getById({ id: 1 });
-      expect(db.post.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+  expect(db.post.findUnique).toHaveBeenCalledWith({ where: { id: 1 }, include: { image: true } });
       expect(result).toEqual(basePost);
     });
 
@@ -71,7 +77,7 @@ describe('post-service', () => {
     it('returns all posts', async () => {
       (db.post.findMany as jest.Mock).mockResolvedValue([basePost]);
       const result = await caller.getAll();
-      expect(db.post.findMany).toHaveBeenCalledWith();
+  expect(db.post.findMany).toHaveBeenCalledWith({ include: { image: true } });
       expect(result).toHaveLength(1);
     });
   });
