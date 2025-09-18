@@ -75,7 +75,7 @@ export default function PostPage() {
       const blob = await response.blob();
 
       const formData = new FormData();
-      formData.append('file', blob, 'image.jpg');
+      formData.append('image', blob, 'image.jpg');
 
       const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
