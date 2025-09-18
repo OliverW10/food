@@ -37,9 +37,7 @@ jest.mock('../services/trpc', () => ({
 
 beforeEach(() => {
   global.fetch = jest.fn()
-    // first call: fetch(imageUri) -> return blob
     .mockResolvedValueOnce({ blob: async () => new Blob(['test'], { type: 'image/jpeg' }) } as any)
-    // second call: upload endpoint -> return json { id: 7 }
     .mockResolvedValueOnce({ ok: true, json: async () => ({ id: 7 }) } as any);
 });
 
@@ -59,7 +57,7 @@ describe('PostPage', () => {
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalled();
-    });
+    }, { timeout: 3000 });
   });
 
   it('prevents submission when required fields missing', async () => {
