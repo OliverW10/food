@@ -19,6 +19,7 @@ export const postApi = router({
           author: { connect: { id: input.authorId } },
           ...(input.imageId && { image: { connect: { id: input.imageId } } }),
         },
+        include: { image: true },
       });
       return post;
     }),
@@ -27,11 +28,12 @@ export const postApi = router({
     .query(async ({ input }) => {
       const post = await db.post.findUnique({
         where: { id: input.id },
+        include: { image: true },
       });
       return post ?? undefined;
     }),
   getAll: publicProcedure.query(async () => {
-    const posts = await db.post.findMany();
+    const posts = await db.post.findMany({ include: { image: true } });
     return posts;
   }),
   delete: publicProcedure

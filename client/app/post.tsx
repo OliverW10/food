@@ -5,7 +5,7 @@ import { useSession } from '@/hooks/user-context';
 import trpc from '@/services/trpc';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Button, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, Image, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 
 export default function PostPage() {
   const { user, session } = useSession();
@@ -15,7 +15,9 @@ export default function PostPage() {
   const [description, setDescription] = useState('');
   const [didCook, setDidCook] = useState(true); // Not persisted yet – placeholder for future schema
   const [touched, setTouched] = useState(false);
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null); // local selected (pre-upload)
+  const [remoteImageUri, setRemoteImageUri] = useState<string | null>(null); // from API after save or existing post
+  const [loadingRemote, setLoadingRemote] = useState(false);
 
   const createPostMutation = trpc.post.create.useMutation();
 
@@ -23,7 +25,7 @@ export default function PostPage() {
     setTitle(val);
   }
 
-  const isValid = title.trim().length > 0 && description.trim().length > 0 && imageUri !== null;
+  const isValid = title.trim().length > 0 && description.trim().length > 0;
 
   const handleSubmit = async () => {
     setTouched(true);
@@ -42,12 +44,18 @@ export default function PostPage() {
       }
 
       // create Post
-      await createPostMutation.mutateAsync({
+      const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
         imageId,
         authorId: parseInt(user.id, 10),
       });
+      if (created?.image?.storageUrl) {
+        setLoadingRemote(true);
+        // Simulate async fetch/validation step (could add HEAD request etc.)
+        setRemoteImageUri(created.image.storageUrl);
+        setLoadingRemote(false);
+      }
       setTitle('');
       setDescription('');
       Alert.alert('Posted!', 'Your post was created.', [
@@ -159,8 +167,24 @@ const presets: SimplePreset[] = [
             <Switch value={didCook} onValueChange={setDidCook} />
           </View>
 
-          {imageUri && (
+          {imageUri && !remoteImageUri && (
             <Text style={{ marginBottom: 16, fontSize: 12, color: '#6b7280' }}>Image selected and ready to upload.</Text>
+          )}
+          {loadingRemote && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+              <ActivityIndicator size="small" />
+              <Text style={{ marginLeft: 8, fontSize: 12 }}>Loading uploaded image…</Text>
+            </View>
+          )}
+          {remoteImageUri && (
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{ fontWeight: '600', marginBottom: 8 }}>Uploaded Image</Text>
+              <Image
+                source={{ uri: remoteImageUri }}
+                style={{ width: '100%', height: 220, borderRadius: 12, backgroundColor: '#f3f4f6' }}
+                resizeMode="cover"
+              />
+            </View>
           )}
 
           <View style={{ marginBottom: 40 }}>
