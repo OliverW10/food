@@ -28,20 +28,6 @@ model User {
   Following Follow[] @relation("Following")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String   @db.VarChar(255)
-  description      String   @db.Text
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  food      Food?    @relation(fields: [foodId], references: [id])
-  foodId    Int?
-  image     Image?   @relation(fields: [imageId], references: [id])
-  imageId   Int? @unique
-}
-
 model Follow {
   id          Int  @id @default(autoincrement())
   follower    User @relation("Follower", fields: [followerId], references: [id])
@@ -50,7 +36,27 @@ model Follow {
   followingId Int
 
   @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  published   Boolean  @default(false)
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+  food        Food?    @relation(fields: [foodId], references: [id])
+  foodId      Int?
+  image       Image?   @relation(fields: [imageId], references: [id])
+  imageId     Int?     @unique
+
+  @@index([authorId])
+  @@index([authorId, createdAt])
+}
+
 
 model Category {
   id    Int    @id @default(autoincrement())
