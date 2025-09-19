@@ -65,11 +65,27 @@ export function TopNav() {
             </Pressable>
             <Pressable
               onPress={() => {
+                router.push("/HomeScreen");
+                setOpen(false);
+              }}
+            >
+              <Text style={{ color: "#fff", padding: 8 }}>Home</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
                 router.push("/settings");
                 setOpen(false);
               }}
             >
               <Text style={{ color: "#fff", padding: 8 }}>Settings</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                router.push("/post");
+                setOpen(false);
+              }}
+            >
+              <Text style={{ color: "#fff", padding: 8 }}>Post</Text>
             </Pressable>
             <Pressable onPress={() => setOpen(false)}>
               <Text style={{ color: "#ef4444", padding: 8 }}>Close</Text>

@@ -1,6 +1,8 @@
+import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
+import { useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { ProfileHeader } from "../components/profile/profile-header";
 import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
 import { ProfileTopBar } from "../components/profile/profile-top-bar";
@@ -8,6 +10,13 @@ import { ProfileTopBar } from "../components/profile/profile-top-bar";
 export default function ProfilePage() {
   const { data: feed, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
   const { data: profile, isLoading: isProfileLoading } = trpc.profile.get.useQuery();
+  const { signOut } = useSession();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut();  
+    router.replace("/AuthScreen"); 
+  };
 
   if (isPostsLoading || isProfileLoading || !feed || !profile) {
     return (
@@ -33,6 +42,12 @@ export default function ProfilePage() {
           />
         }
       />
+      <TouchableOpacity 
+              onPress={handleLogout}
+              style={{ marginTop:14, padding:10, backgroundColor:'#371f1fff', borderRadius:8 }}
+            >
+              <Text style={{ color:'#fff' }}>Logout</Text>
+     </TouchableOpacity>
     </View>
   );
 }
