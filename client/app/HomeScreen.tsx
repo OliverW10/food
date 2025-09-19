@@ -12,11 +12,23 @@ import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, Vi
 const Toggle = ({ mode, setMode }:{ mode:'following'|'explore'; setMode:(m:any)=>void }) => (
   <View style={{ flexDirection:'row', gap:8, padding:12 }}>
     {(['following','explore'] as const).map(m => (
-      <TouchableOpacity key={m} onPress={()=>setMode(m)} style={{
-        paddingVertical:8, paddingHorizontal:14, borderRadius:999,
-        backgroundColor: mode===m ? '#111827' : '#e5e7eb'
-      }}>
-        <Text style={{ color: mode===m ? '#fff' : '#111827', fontWeight:'600', textTransform:'capitalize' }}>{m}</Text>
+      <TouchableOpacity 
+        key={m} 
+        onPress={()=>setMode(m)} 
+        style={{
+          paddingVertical:8, 
+          paddingHorizontal:14, 
+          borderRadius:999,
+          backgroundColor: mode===m ? '#1f2937' : '#374151'
+        }}
+      >
+        <Text style={{ 
+          color: mode===m ? '#fff' : '#9ca3af', 
+          fontWeight:'600', 
+          textTransform:'capitalize' 
+        }}>
+          {m}
+        </Text>
       </TouchableOpacity>
     ))}
   </View>
@@ -46,31 +58,34 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#ffffff", justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-        <Text style={{ color: "#6b7280", marginTop: 8 }}>Loading feed…</Text>
+      <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color="#fff" />
+        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading feed…</Text>
       </View>
     );
   }
 
   const EmptyState = () => (
     <View style={{ padding: 24, alignItems:'center' }}>
-      <Text style={{ fontSize:18, fontWeight:'700', marginBottom:6 }}>
+      <Text style={{ fontSize:18, fontWeight:'700', marginBottom:6, color:'#fff' }}>
         {mode === 'following' ? "You’re not following anyone yet" : "No posts yet"}
       </Text>
-      <Text style={{ color:'#6b7280', textAlign:'center' }}>
+      <Text style={{ color:'#9ca3af', textAlign:'center' }}>
         {mode === 'following'
           ? "Explore trending posts to find people to follow."
           : "Be the first to share something tasty!"}
       </Text>
-      <TouchableOpacity onPress={()=>setMode('explore')} style={{ marginTop:14, padding:10, backgroundColor:'#111827', borderRadius:8 }}>
+      <TouchableOpacity 
+        onPress={()=>setMode('explore')} 
+        style={{ marginTop:14, padding:10, backgroundColor:'#1f2937', borderRadius:8 }}
+      >
         <Text style={{ color:'#fff' }}>Explore</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
       <TopNav />
       <Toggle mode={mode} setMode={setMode} />
 
@@ -92,7 +107,7 @@ export default function Home() {
       />
 
       <CornerButton isTop={false} onPress={() => session ? router.push("/post") : router.push("/AuthScreen")}>
-        <Text style={{ color: "#999", fontSize: 24, lineHeight: 24 }}>+</Text>
+        <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>+</Text>
       </CornerButton>
 
       <CommentsSheet

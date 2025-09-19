@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -24,7 +23,7 @@ model User {
   email     String   @unique
   name      String?
   posts     Post[]
-  passswordHash String
+  passwordHash String
   Followers Follow[] @relation("Follower")
   Following Follow[] @relation("Following")
 }
@@ -55,13 +54,13 @@ model Follow {
 
 model Category {
   id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(100)
+  name  String @db.VarChar(100) @unique
   foods Food[]
 }
 
 model Food {
   id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(255)
+  name       String   @db.VarChar(255) @unique
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
   Posts      Post[]
