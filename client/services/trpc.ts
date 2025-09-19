@@ -6,7 +6,7 @@ const configuredServerUrl = Constants.expoConfig?.extra!.apiUrl;
 const expoServerIp = Constants.expoConfig?.hostUri?.split(":")[0]
 const expoServerUrl = expoServerIp !== undefined ? `http://${expoServerIp}:3000` : undefined;
 const localhostServerUrl = `http://localhost:3000`;
-const serverUrl = configuredServerUrl ?? expoServerUrl ?? localhostServerUrl;
+const serverUrl = (configuredServerUrl ?? expoServerUrl ?? localhostServerUrl) + '/trpc';
 
 console.log(serverUrl);
 const trpc = createTRPCReact<AppRouter>({
@@ -14,3 +14,4 @@ const trpc = createTRPCReact<AppRouter>({
 
 export default trpc;
 export { serverUrl };
+
