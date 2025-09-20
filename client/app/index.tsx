@@ -1,10 +1,9 @@
 import { useSession } from "@/hooks/user-context";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const stack = createNativeStackNavigator();
 
 export default function Index() {
   const { session, isLoading } = useSession();
@@ -18,13 +17,13 @@ export default function Index() {
         router.replace("/AuthScreen");
       }
     }
-  }, [session, isLoading]);
+  }, [session, isLoading, router]);
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator />
-      </View>
+      </SafeAreaView>
     )
   }
 
