@@ -1,4 +1,5 @@
 import "@/global.css";
+import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { SessionProvider, useSession } from "@/hooks/user-context";
 import trpc, { serverUrl, trpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -41,7 +42,7 @@ export default function RootLayout() {
           // You can pass any HTTP headers you wish here
           async headers() {
             return {
-              authorization: getAuthCookie(),
+              Authorization: "Bearer: " + ((await getStorageStateAsync("session")) ?? ""),
             };
           },
         }),

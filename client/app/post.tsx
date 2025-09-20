@@ -3,7 +3,7 @@ import { TopNav } from '@/components/TopNav';
 import { SimplePreset, TypeSelect } from '@/components/type-select';
 import { useSession } from '@/hooks/user-context';
 import { fetchWithAuth } from '@/services/fetch-with-auth';
-import trpc from '@/services/trpc';
+import trpc, { serverUrl } from '@/services/trpc';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Button, Image, ScrollView, Switch, Text, TextInput, View } from 'react-native';
@@ -55,7 +55,7 @@ export default function PostPage() {
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
         // Simulate async fetch/validation step (could add HEAD request etc.)
-        setRemoteImageUri(created.image.storageUrl);
+        setRemoteImageUri(serverUrl + created.image.storageUrl);
         setLoadingRemote(false);
       }
       setTitle('');
