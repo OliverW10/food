@@ -11,12 +11,16 @@ jest.mock('../db', () => {
   return { db: m };
 });
 
+import { IncomingHttpHeaders } from 'http';
 import { postApi } from '../controllers/post-api';
 import { db } from '../db';
+import { User } from '../generated/prisma';
+import { createAccessToken } from '../service/auth';
 import { Context, createCallerFactory } from '../trpc';
 
 const createCaller = createCallerFactory(postApi);
-const caller = createCaller({} as Context);
+const headers: IncomingHttpHeaders = { authorization: `Bearer: ${createAccessToken({} as User)}` }
+const caller = createCaller({ req: { headers }} as Context);
 
 describe('post-api', () => {
   const basePost = {

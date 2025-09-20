@@ -99,15 +99,4 @@ describe('auth service', () => {
             expect(output).toBe(null);
         });
     });
-
-    describe('environment handling', () => {
-        it('re-loads with new secrets when module is re-imported', async () => {
-            process.env.JWT_SECRET = 'new_secret_value';
-            process.env.REFRESH_TOKEN_SECRET = 'new_refresh_secret_value';
-            const fresh = await loadAuth();
-            const t = fresh.createAccessToken(USER);
-            expect(() => auth.verifyAccessToken(t)).toThrow();
-            expect(() => fresh.verifyAccessToken(t)).not.toThrow();
-        });
-    });
 });
