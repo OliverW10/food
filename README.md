@@ -32,6 +32,7 @@ It looks like its possible to setup a github action to create an ios build (`xco
 
 <https://docs.expo.dev/guides/local-app-development/#local-app-compilation>
 
+To seed DB if needed - cd to server and run: npm run prisma:seed
 # TODOS:
 - auto refresh access token when api call fails with 401
 - decode and store user info from jwt in fe so i can access user id and email without extra api calls
