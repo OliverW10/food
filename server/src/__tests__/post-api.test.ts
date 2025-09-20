@@ -14,7 +14,7 @@ jest.mock('../db', () => {
 import { IncomingHttpHeaders } from 'http';
 import { postApi } from '../controllers/post-api';
 import { db } from '../db';
-import { User } from '../generated/prisma';
+import type { User } from '../generated/prisma';
 import { createAccessToken } from '../service/auth';
 import { Context, createCallerFactory } from '../trpc';
 
