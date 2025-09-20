@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from "react";
 import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSession } from '../hooks/user-context';
 import trpc from "../services/trpc";
 
@@ -8,7 +9,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
     const { signIn } = useSession();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // TODO: could show loading indicator
     const router = useRouter();
 
     const handleLogin = async () => {
@@ -43,7 +44,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
 function SignupForm({ onSwitch }: { onSwitch: () => void }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // TODO: could show loading indicator
 
     const registerMutation = trpc.auth.register.useMutation();
 
@@ -91,12 +92,12 @@ export default function AuthScreen() {
     }, [session, router]);
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
             {isLogin ? (
                 <LoginForm onSwitch={() => setIsLogin(false)} />
             ) : (
                 <SignupForm onSwitch={() => setIsLogin(true)} />
             )}
-        </View>
+        </SafeAreaView>
     )
 }

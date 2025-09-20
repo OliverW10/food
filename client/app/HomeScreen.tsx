@@ -4,7 +4,8 @@ import { TopNav } from "@/components/TopNav";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const { data: posts, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
@@ -13,15 +14,15 @@ export default function Home() {
   
   if (isPostsLoading || !posts) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading feed…</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <TopNav />
       <FlatList
         data={posts}
@@ -32,6 +33,6 @@ export default function Home() {
       <CornerButton isTop={false} onPress={() => router.push("/post")} >
         <Text style={{ color: "#999", fontSize: 24, lineHeight: 24 }}>+</Text>
       </CornerButton>
-    </View>
+    </SafeAreaView>
   );
 }

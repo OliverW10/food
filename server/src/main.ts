@@ -3,6 +3,7 @@ import cors from 'cors';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
+import { mkdirSync } from 'fs';
 import multer from 'multer';
 import path from 'path';
 import { authApi } from "./controllers/auth-api";
@@ -39,13 +40,15 @@ app.use(cors());
 app.use(express.json());
 
 // Serve uploaded files statically
-app.use('/uploads', express.static(path.join(process.cwd(), 'src', '..', 'uploads')));
+const uploadsDir = process.env.UPLOADS_PATH ?? path.join(process.cwd(), 'uploads');
+mkdirSync(uploadsDir, { recursive: true });
+app.use('/uploads', express.static(uploadsDir));
 
 // tRPC endpoint
 app.use('/trpc', trpcExpress.createExpressMiddleware({ router: appRouter, createContext }));
 
 // Multer storage config
-const uploadsDir = path.join(process.cwd(), 'server', 'uploads');
+
 const storage = multer.diskStorage({
   destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => cb(null, uploadsDir),
   filename: (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
@@ -56,7 +59,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 5MB
   fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     if (!file.mimetype.startsWith('image/')) {
       return cb(new Error('Only image uploads are allowed'));
@@ -64,6 +67,9 @@ const upload = multer({
     cb(null, true);
   },
 });
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Health check
 app.get('/health', (_req: Request, res: Response) => res.json({ status: 'ok' }));

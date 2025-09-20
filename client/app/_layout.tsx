@@ -1,8 +1,9 @@
 import "@/global.css";
+import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { SessionProvider, useSession } from "@/hooks/user-context";
-import trpc, { serverUrl } from "@/services/trpc";
+import trpc, { serverUrl, trpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink } from "@trpc/client";
+import { httpBatchLink, retryLink } from "@trpc/client";
 import { Slot } from "expo-router";
 import { createContext, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
@@ -37,14 +38,20 @@ export default function RootLayout() {
       links: [
         httpBatchLink({
           transformer: superjson,
-          url: serverUrl,
+          url: trpcServerUrl,
           // You can pass any HTTP headers you wish here
           async headers() {
             return {
-              authorization: getAuthCookie(),
+              Authorization: "Bearer: " + ((await getStorageStateAsync("session")) ?? ""),
             };
           },
         }),
+        retryLink({
+          retry: (opts) => {
+            console.log("retry");
+            return true;
+          },
+        })
       ],
     }),
   );

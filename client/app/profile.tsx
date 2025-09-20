@@ -1,6 +1,7 @@
 import trpc from "@/services/trpc";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileHeader } from "../components/profile/profile-header";
 import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
 import { ProfileTopBar } from "../components/profile/profile-top-bar";
@@ -11,15 +12,15 @@ export default function ProfilePage() {
 
   if (isPostsLoading || isProfileLoading || !feed || !profile) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading profile…</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
       <ProfileTopBar username={profile.email} />
       <ProfilePostsGrid
         reviews={feed}
@@ -33,6 +34,6 @@ export default function ProfilePage() {
           />
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
