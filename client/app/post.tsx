@@ -79,7 +79,7 @@ export default function PostPage() {
       const formData = new FormData();
       formData.append('image', blob, 'image.jpg');
 
-      const uploadResponse = await fetchWithAuth('/api/upload', {
+      const uploadResponse = await fetchWithAuth('api/upload', {
         method: 'POST',
         body: formData,
       });
