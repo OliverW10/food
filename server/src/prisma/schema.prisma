@@ -25,6 +25,7 @@ model User {
   name      String?
   posts     Post[]
   passswordHash String
+  pushToken String?
   Followers Follow[] @relation("Follower")
   Following Follow[] @relation("Following")
 }

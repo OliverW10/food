@@ -56,7 +56,8 @@ export const authApi = router({
         .input(z.object({
             email: z.email(),
             password: z.string().min(6),
-            name: z.string().optional()
+            name: z.string().optional(),
+            token: z.string().optional(),
         }))
         .mutation(async ({ input }) => {
             console.log("Attempt to register user:", input.email);

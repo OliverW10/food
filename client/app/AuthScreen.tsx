@@ -1,3 +1,4 @@
+import { registerForPushNotificationsAsync } from '@/services/notifications';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from "react";
 import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -54,8 +55,9 @@ function SignupForm({ onSwitch }: { onSwitch: () => void }) {
             return;
         }
         setLoading(true);
+        const expoPushToken = await registerForPushNotificationsAsync(); // applicationId?
         try {
-            await registerMutation.mutateAsync({ email, password });
+            await registerMutation.mutateAsync({ email, password, token: expoPushToken });
             alert("Account created!");
             onSwitch();
         } catch (err: any) {

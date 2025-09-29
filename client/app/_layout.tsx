@@ -1,12 +1,12 @@
 import "@/global.css";
 import { getStorageStateAsync } from "@/hooks/use-storage-state";
-import { SessionProvider, useSession } from "@/hooks/user-context";
+import { SessionProvider } from "@/hooks/user-context";
 import trpc, { serverUrl, trpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, retryLink } from "@trpc/client";
-import { Slot } from "expo-router";
-import { createContext, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import * as Notifications from 'expo-notifications';
+import { router, Slot } from "expo-router";
+import { createContext, useEffect, useState } from "react";
 import superjson from "superjson";
 
 export const UserContext = createContext(null);
@@ -15,19 +15,28 @@ function getAuthCookie() {
   return "todo";
 }
 
-function AppLayout() {
-  const { session, isLoading } = useSession();
-  // const router = useRoute();
+function useNotificationObserver() {
+  useEffect(() => {
+    function redirect(notification: Notifications.Notification) {
+      const url = notification.request.content.data?.url;
+      if (typeof url === 'string') {
+        router.push(url as any);
+      }
+    }
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
+    const response = Notifications.getLastNotificationResponse();
+    if (response?.notification) {
+      redirect(response.notification);
+    }
 
-    return <Slot />;
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      redirect(response.notification);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 }
   
 export default function RootLayout() {
