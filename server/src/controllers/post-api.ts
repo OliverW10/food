@@ -5,6 +5,7 @@ import {
 } from "../api-schema/post-schemas";
 import { db } from "../db";
 
+import { sendPostNotification } from "../service/notification-service";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const postApi = router({
@@ -21,6 +22,7 @@ export const postApi = router({
         },
         include: { image: true },
       });
+      sendPostNotification(post.id);
       return post;
     }),
   getById: publicProcedure
