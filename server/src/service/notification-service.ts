@@ -1,6 +1,5 @@
-import Expo, { ExpoPushMessage } from "expo-server-sdk";
+import { Expo, ExpoPushMessage } from "expo-server-sdk";
 import { db } from "../db";
-
 let expo = new Expo({
   accessToken: process.env.EXPO_ACCESS_TOKEN,
 });
