@@ -57,6 +57,15 @@ export function TopNav() {
           >
             <Pressable
               onPress={() => {
+                router.push("/saved");
+                setOpen(false);
+              }}
+            >
+              <Text style={{ color: "#fff", padding: 8 }}>Saved</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
                 router.push("/profile");
                 setOpen(false);
               }}

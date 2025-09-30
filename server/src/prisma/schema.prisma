@@ -25,6 +25,7 @@ model User {
   name      String?
   posts     Post[]
   passswordHash String
+  savedPosts UserSavedPost[]
   Followers Follow[] @relation("Follower")
   Following Follow[] @relation("Following")
 }
@@ -41,6 +42,17 @@ model Post {
   foodId    Int?
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int? @unique
+  savedBy   UserSavedPost[]
+}
+
+model UserSavedPost {
+  userId Int
+  postId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
 }
 
 model Follow {
