@@ -5,10 +5,10 @@ import {
 } from "../api-schema/post-schemas";
 import { db } from "../db";
 
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const postApi = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(createPostInputSchema)
     .mutation(async ({ input }) => {
       const post = await db.post.create({
@@ -36,7 +36,7 @@ export const postApi = router({
     const posts = await db.post.findMany({ include: { image: true } });
     return posts;
   }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(idInputSchema)
     .mutation(async ({ input }) => {
       const existing = await db.post.findUnique({

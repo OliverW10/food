@@ -2,13 +2,15 @@ import PostImagePicker from '@/components/PostImagePicker';
 import { TopNav } from '@/components/TopNav';
 import { SimplePreset, TypeSelect } from '@/components/type-select';
 import { useSession } from '@/hooks/user-context';
-import trpc from '@/services/trpc';
+import { fetchWithAuth } from '@/services/fetch-with-auth';
+import trpc, { serverUrl } from '@/services/trpc';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Button, Image, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PostPage() {
-  const { user, session } = useSession();
+  const { user } = useSession();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -53,7 +55,7 @@ export default function PostPage() {
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
         // Simulate async fetch/validation step (could add HEAD request etc.)
-        setRemoteImageUri(created.image.storageUrl);
+        setRemoteImageUri(serverUrl + created.image.storageUrl);
         setLoadingRemote(false);
       }
       setTitle('');
@@ -77,7 +79,7 @@ export default function PostPage() {
       const formData = new FormData();
       formData.append('image', blob, 'image.jpg');
 
-      const uploadResponse = await fetch('/api/upload', {
+      const uploadResponse = await fetchWithAuth('api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -106,9 +108,9 @@ const presets: SimplePreset[] = [
 ];
 
   return (
-    <>
-      <TopNav  />
-      <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+    <SafeAreaView style={{ flex:1, backgroundColor:'#ffffff' }}>
+      <TopNav />
+      <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
           <Text style={{ fontSize: 24, fontWeight: '700', marginBottom: 20 }}>Create Post</Text>
 
@@ -204,6 +206,6 @@ const presets: SimplePreset[] = [
           </View>
         </ScrollView>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
