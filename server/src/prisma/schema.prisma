@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -24,7 +23,7 @@ model User {
   email     String   @unique
   name      String?
   posts     Post[]
-  passswordHash String
+  passwordHash String
   savedPosts UserSavedPost[]
   Followers Follow[] @relation("Follower")
   Following Follow[] @relation("Following")
@@ -42,17 +41,6 @@ model Post {
   foodId    Int?
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int? @unique
-  savedBy   UserSavedPost[]
-}
-
-model UserSavedPost {
-  userId Int
-  postId Int
-
-  user   User @relation(fields: [userId], references: [id])
-  post   Post @relation(fields: [postId], references: [id])
-
-  @@id([userId, postId])
 }
 
 model Follow {
@@ -63,17 +51,37 @@ model Follow {
   followingId Int
 
   @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  published   Boolean  @default(false)
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+  food        Food?    @relation(fields: [foodId], references: [id])
+  foodId      Int?
+  image       Image?   @relation(fields: [imageId], references: [id])
+  imageId     Int?     @unique
+
+  @@index([authorId])
+  @@index([authorId, createdAt])
+}
+
 
 model Category {
   id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(100)
+  name  String @db.VarChar(100) @unique
   foods Food[]
 }
 
 model Food {
   id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(255)
+  name       String   @db.VarChar(255) @unique
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
   Posts      Post[]
