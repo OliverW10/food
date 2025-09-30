@@ -42,6 +42,9 @@ model Post {
   image     Image?   @relation(fields: [imageId], references: [id])
   imageId   Int? @unique
   savedBy   UserSavedPost[]
+
+  @@index([authorId])
+  @@index([authorId, createdAt])
 }
 
 model UserSavedPost {
@@ -64,23 +67,6 @@ model Follow {
   @@unique([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
-}
-
-model Post {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  title       String   @db.VarChar(255)
-  description String   @db.Text
-  published   Boolean  @default(false)
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    Int
-  food        Food?    @relation(fields: [foodId], references: [id])
-  foodId      Int?
-  image       Image?   @relation(fields: [imageId], references: [id])
-  imageId     Int?     @unique
-
-  @@index([authorId])
-  @@index([authorId, createdAt])
 }
 
 
