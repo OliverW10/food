@@ -70,7 +70,7 @@ export const authApi = router({
             const user = await db.user.create({
                 data: {
                     email: input.email,
-                    passwordHash: passwordHash,
+                    passswordHash: passwordHash,
                     name: input.name,
                 }
             });
