@@ -31,25 +31,26 @@ export default function ProfilePage() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
       <ProfileTopBar username={profile.email} />
-      <ProfilePostsGrid
-        reviews={feed}
-        header={
-          <ProfileHeader
-            name={profile.email.split("@")[0]}
-            email={profile.email}
-            followers={profile.followers}
-            following={profile.following}
-            postsCount={feed.length}
-          />
-        }
-      />
-      <TouchableOpacity 
-              onPress={handleLogout}
-              style={{ marginTop:14, padding:10, backgroundColor:'#371f1fFF', borderRadius:8 }}
-            >
-              <Text style={{ color:'#fff' }}>Logout</Text>
-     </TouchableOpacity>
-    </View>
+            <View style={{ flex: 1 }}>
+        <ProfilePostsGrid
+          reviews={feed}
+          header={
+            <ProfileHeader
+              name={profile.email.split("@")[0]}
+              email={profile.email}
+              followers={profile.followers}
+              following={profile.following}
+              postsCount={feed.length}
+            />
+          }
+        />
+        <TouchableOpacity 
+          onPress={handleLogout}
+          style={{ marginTop:14, padding:10, backgroundColor:'#371f1fFF', borderRadius:8 }}
+        >
+          <Text style={{ color:'#fff' }}>Logout</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

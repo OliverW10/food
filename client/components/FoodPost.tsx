@@ -1,6 +1,6 @@
 import trpc from '@/services/trpc';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, ViewProps } from 'react-native';
 
 export type PostUI = {
   id: number;
@@ -11,6 +11,11 @@ export type PostUI = {
   likedByMe: boolean;
   commentsCount: number;
 };
+
+type FoodPostProps = {
+  review: PostUI;
+  onOpenComments?: () => void;
+} & ViewProps;
 
 export function FoodPost({
   review,

@@ -116,6 +116,5 @@ export default function Home() {
         onClose={() => setActivePostId(null)}
       />
     </View>
-    </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 // server/src/prisma/seed.ts
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import * as crypto from 'node:crypto';
 
 const prisma = new PrismaClient();
@@ -109,7 +109,7 @@ async function main() {
         published: true,
         foodId: foodRamen.id,
         imageId: imgRamen.id,
-      } as any,
+      },
       {
         authorId: charlie.id,
         title: 'Margherita Pizza',
@@ -117,7 +117,7 @@ async function main() {
         published: true,
         foodId: foodPizza.id,
         imageId: imgPizza.id,
-      } as any,
+      },
       {
         authorId: bob.id,
         title: 'Beef Tacos',
@@ -125,7 +125,7 @@ async function main() {
         published: true,
         foodId: foodTacos.id,
         imageId: imgTacos.id,
-      } as any,
+      },
       {
         authorId: charlie.id,
         title: 'Sushi Platter',
@@ -133,7 +133,7 @@ async function main() {
         published: true,
         foodId: foodSushi.id,
         imageId: imgSushi.id,
-      } as any,
+      },
       {
         authorId: bob.id,
         title: 'Avocado Toast',
@@ -141,9 +141,8 @@ async function main() {
         published: true,
         foodId: foodAvoToast.id,
         imageId: imgAvoToast.id,
-      } as any,
-    ],
-    // prisma.createMany ignores unique violations; if you re-run seed, consider deleteMany first
+      },
+    ]as Prisma.PostCreateManyInput[],
     skipDuplicates: true,
   });
 
