@@ -44,7 +44,7 @@ export default function ProfilePage() {
       />
       <TouchableOpacity 
               onPress={handleLogout}
-              style={{ marginTop:14, padding:10, backgroundColor:'#371f1fff', borderRadius:8 }}
+              style={{ marginTop:14, padding:10, backgroundColor:'#371f1fFF', borderRadius:8 }}
             >
               <Text style={{ color:'#fff' }}>Logout</Text>
      </TouchableOpacity>
