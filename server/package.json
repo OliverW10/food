@@ -12,10 +12,11 @@
   "scripts": {
     "dev": "concurrently \"nodemon --watch src --exec tsx watch src/main.ts\" \"cpx ../client/version.ts version.ts\"",
     "test": "jest",
-    "lint": "eslint --ignore-pattern \"src/generated/**\"",
-    "db-dev": "prisma migrate dev --schema=src/prisma/schema.prisma",
-    "generate": "prisma generate --schema=src/prisma/schema.prisma",
-    "prisma:seed": "tsx src/prisma/seed.ts"
+    "check-types": "tsc --noemit",
+    "eslint": "eslint --ignore-pattern \"src/generated/**\"",
+    "lint": "npm run eslint && npm run check-types",
+    "prisma:seed": "tsx src/prisma/seed.ts",
+    "generate": "prisma generate --schema=src/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",

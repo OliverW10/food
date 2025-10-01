@@ -9,11 +9,11 @@ export const authApi = router({
     .mutation(async ({ input }) => {
         console.log("Attempt to login user:", input.email);
         const user = await db.user.findUnique({ where: { email: input.email } });
-    if (!user || !user.passwordHash) {
+        if (!user || !user.passwordHash) {
             throw new Error('Invalid email or password');
         }
 
-    const valid = await comparePassword(input.password, user.passwordHash);
+        const valid = await comparePassword(input.password, user.passwordHash);
         if (!valid) {
             throw new Error('Invalid email or password');
         }
