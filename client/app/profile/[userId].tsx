@@ -1,78 +1,45 @@
+// app/profile/ProfileView.tsx
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
+import { ProfileTopBar } from "@/components/profile/profile-top-bar";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Post } from "../../../server/src/generated/prisma";
-import { ProfileHeader } from "../../components/profile/profile-header";
-import { ProfilePostsGrid } from "../../components/profile/profile-posts-grid";
-import { ProfileTopBar } from "../../components/profile/profile-top-bar";
 
-export default function ProfilePage() {
-  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
-  if (targetUserId === -1){
-    throw new Error("Invalid id")
-  }
-  const router = useRouter();
-  const { user, session, signOut } = useSession();
+export default function ProfileView({ userId }: { userId?: number }) {
+  const { user, session } = useSession();
 
-  // Redirect if not authed
+  const input = useMemo(() => {
+    if (userId != null) return { id: userId };
+    const raw = user?.id;
+    const authedId = typeof raw === "string" ? Number(raw) : raw;
+    if (authedId != null) return { id: authedId };
+    if (user?.email) return { email: user.email };
+    return undefined;
+  }, [userId, user?.id, user?.email]);
+
+  const { data: profile, isLoading, isFetching, isError, error } =
+    trpc.profile.get.useQuery((input ?? { id: -1 }) as any, {
+      enabled: !!session && !!input && (input as any).id !== -1,
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+    });
+
   if (!session) {
-    // router.replace("/auth");
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
-        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Redirecting…</Text>
+        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Please sign in…</Text>
       </SafeAreaView>
     );
   }
-
-  const userId = useMemo(() => {
-    const raw = user?.id as number | string | undefined;
-    if (typeof raw === "number") return raw;
-    if (typeof raw === "string") {
-      const n = Number(raw);
-      return Number.isFinite(n) ? n : undefined;
-    }
-    return undefined;
-  }, [user?.id]);
-
- const input =
-  userId != null
-    ? { id: userId }
-    : user?.email
-    ? { email: user.email }
-    : undefined;
-
-const { data: profile, isLoading, isFetching } =
-  trpc.profile.get.useQuery(input!, {
-    enabled: !!session && !!input,
-    staleTime: 60_000,
-  });
-
-
-  const displayName = profile?.name ?? "User";
-  const displayEmail = profile?.email ?? user?.email ?? "";
-  const followers = profile?.followers ?? 0;
-  const following = profile?.following ?? 0;
-  const userPosts: Post[] = (profile?.posts ?? []).map((post: any) => ({
-    id: post.id,
-    title: post.title,
-    description: post.description ?? "",
-    authorId: post.authorId ?? 0,
-    foodId: post.foodId ?? null,
-    imageId: post.imageId ?? null,
-    createdAt: post.createdAt ? new Date(post.createdAt) : new Date(),
-    published: post.published ?? false,
-  }));
-  const postsCount = userPosts.length;
-
-  const handleLogout = async () => {
-    await signOut();  
-    router.replace("/auth"); 
-  };
-
+  if (!input) {
+    return <Text style={{ color: "#fff" }}>No profile to load.</Text>;
+  }
   if (isLoading || isFetching) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
@@ -81,38 +48,30 @@ const { data: profile, isLoading, isFetching } =
       </SafeAreaView>
     );
   }
+  if (isError) {
+    return <Text style={{ color: "#fff" }}>{error instanceof Error ? error.message : "Error"}</Text>;
+  }
 
+  const posts = (profile?.posts ?? []).map(p => ({
+    ...p,
+    createdAt: new Date(p.createdAt),
+  }));
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <ProfileTopBar username={displayEmail} />
-
+      <ProfileTopBar username={profile?.email ?? user?.email ?? ""} />
       <View style={{ flex: 1 }}>
         <ProfilePostsGrid
-          reviews={userPosts}
+          reviews={posts}
           header={
             <ProfileHeader
-              name={displayName}
-              email={displayEmail}
-              followers={followers}
-              following={following}
-              postsCount={postsCount}
+              name={profile?.name ?? "User"}
+              email={profile?.email ?? ""}
+              followers={profile?.followers ?? 0}
+              following={profile?.following ?? 0}
+              postsCount={posts.length}
             />
           }
         />
-
-        <TouchableOpacity
-          onPress={handleLogout}
-          style={{
-            marginTop: 14,
-            marginHorizontal: 12,
-            padding: 12,
-            backgroundColor: "#1f2937",
-            borderRadius: 10,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>Logout</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
