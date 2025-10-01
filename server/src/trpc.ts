@@ -1,7 +1,8 @@
 import { initTRPC } from '@trpc/server';
 import { CreateHTTPContextOptions } from '@trpc/server/dist/adapters/standalone.cjs';
+import { IncomingMessage, ServerResponse } from 'http';
 import superjson from 'superjson';
-import { verifyAccessToken } from './service/auth';
+import { UserClaims, verifyAccessToken } from './service/auth';
 
 /**
  * Initialization of tRPC backend
@@ -14,16 +15,22 @@ import { verifyAccessToken } from './service/auth';
  * that can be used throughout the router
  */
 
+export interface Context {
+    req: IncomingMessage;
+    res: ServerResponse<IncomingMessage>;
+}
+
+export type AuthedContext = Context & { user: UserClaims }
+
 export function createContext(opts: CreateHTTPContextOptions) {
     return { req: opts.req, res: opts.res };
 }
 
-export type Context = ReturnType<typeof createContext>;
 const t = initTRPC.context<Context>().create({
     transformer: superjson,
 });
 
-const isAuthed = t.middleware(({ ctx, next }) => {
+const isAuthed = t.middleware<AuthedContext>(({ ctx, next }) => {
     const token = ctx.req.headers.authorization?.split(' ')[1];
     if (!token) {
         throw new Error('Unauthorized');
@@ -31,6 +38,9 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 
     try {
         const decoded = verifyAccessToken(token);
+        if (typeof decoded === 'string') {
+            throw new Error('Invalid token');
+        }
         return next({ ctx: { ...ctx, user: decoded } });
     } catch {
         throw new Error('Invlaid token');

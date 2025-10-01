@@ -50,7 +50,7 @@ export default function Home() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = (trpc as any).post.getFeed.useInfiniteQuery(
+  } = trpc.post.getFeed.useInfiniteQuery(
     input,
     { getNextPageParam: (last: any) => last?.nextCursor ?? null, refetchOnWindowFocus: false }
   );
