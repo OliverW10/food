@@ -26,18 +26,13 @@ export default function ProfilePage() {
     );
   }
 
-  const userId = user?.id as number | string | undefined;
+  const userId = user?.id;
+  if (userId === undefined) {
+    throw new Error("Not logged in TODO: redirect")
+  }
 
-  const { data: byUserPages, isLoading: isUserPostsLoading } =
-    (trpc as any).post.getByUserId?.useInfiniteQuery
-      ? (trpc as any).post.getByUserId.useInfiniteQuery(
-          { userId, limit: 24, cursor: null },
-          { getNextPageParam: (last: any) => last?.nextCursor ?? null }
-        )
-      : { data: null, isLoading: false };
-
-  const userPosts = byUserPages?.pages?.flatMap((p: any) => p.items) ?? [];
-
+  const { data: userPostsData, isLoading: isUserPostsLoading } = trpc.post.forUser.useQuery({ id: Number.parseInt(userId) });
+  const userPosts = userPostsData ?? [];
   const isLoading = isUserPostsLoading;
 
   const displayEmail = user?.email ?? "";
