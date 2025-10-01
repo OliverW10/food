@@ -1,6 +1,6 @@
 import "@/global.css";
 import { SessionProvider } from "@/hooks/user-context";
-import { fetchWithAuth } from "@/services/fetch-with-auth";
+import { fetchWithAuthRaw } from "@/services/fetch-with-auth";
 import trpc, { trpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
@@ -19,7 +19,7 @@ export default function RootLayout() {
           transformer: superjson,
           url: trpcServerUrl,
           async fetch(url, options) {
-            let result = await fetchWithAuth(url, options);
+            let result = await fetchWithAuthRaw(url, options);
             return result;
           }
         }),

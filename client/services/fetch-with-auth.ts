@@ -2,7 +2,7 @@ import { getStorageStateAsync, setStorageItemAsync } from "@/hooks/use-storage-s
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { AppRouter } from "../../server/src/main";
-import { trpcServerUrl } from "./trpc";
+import { serverUrl, trpcServerUrl } from "./trpc";
 
 let authTrpc = createTRPCClient<AppRouter>({
     links: [
@@ -13,7 +13,11 @@ let authTrpc = createTRPCClient<AppRouter>({
     ]
 });
 
-export async function fetchWithAuth(url: URL | RequestInfo, options: RequestInit = {}) {
+export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
+    return fetchWithAuthRaw(`${serverUrl}/${endpoint}`, options)
+}
+
+export async function fetchWithAuthRaw(url: URL | RequestInfo, options: RequestInit = {}) {
     const token = await getStorageStateAsync('session');
     const refreshToken = await getStorageStateAsync('refreshToken');
 
