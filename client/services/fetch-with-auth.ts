@@ -1,5 +1,6 @@
 import { getStorageStateAsync, setStorageItemAsync } from "@/hooks/use-storage-state";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import superjson from "superjson";
 import { AppRouter } from "../../server/src/main";
 import { serverUrl, trpcServerUrl } from "./trpc";
 
@@ -7,6 +8,7 @@ let authTrpc = createTRPCClient<AppRouter>({
     links: [
         httpBatchLink({
           url: trpcServerUrl,
+          transformer: superjson,
         }),
     ]
 });
