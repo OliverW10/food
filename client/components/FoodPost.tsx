@@ -20,10 +20,7 @@ type FoodPostProps = {
 export function FoodPost({
   review,
   onOpenComments,
-}: {
-  review: PostUI;
-  onOpenComments?: () => void;
-}) {
+}: FoodPostProps ) {
   const utils = (trpc as any).useUtils?.() ?? {
     post: { getFeed: { cancel: () => {}, getInfiniteData: () => undefined, setInfiniteData: () => {}, invalidate: () => {} } }
   };
@@ -62,7 +59,7 @@ export function FoodPost({
 
   return (
     <View style={{ padding:12, borderBottomWidth:1, borderColor:'#eee' }}>
-      <Text style={{ fontWeight:'700' }}>{review.title}</Text>
+      <Text style={{ fontWeight:'700', color: 'white' }}>{review.title}</Text>
       <Text style={{ color:'#6b7280', marginTop:4 }}>{review.description}</Text>
 
       <View style={{ flexDirection:'row', gap:16, marginTop:10 }}>

@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import PostPage from '../app/post';
+import PostPage from '../app/create-post';
 
 jest.mock('../hooks/user-context', () => ({
   useSession: () => ({ user: { id: '42', email: 'tester@example.com' }, session: { token: 'abc' } }),

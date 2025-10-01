@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import Home from '../app/HomeScreen';
+import Home from '../app/home';
 
 jest.mock('../hooks/user-context', () => ({
   useSession: () => ({ user: { id: '42', email: 'tester@example.com' }, session: { token: 'abc' } }),

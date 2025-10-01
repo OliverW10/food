@@ -50,7 +50,7 @@ export default function Home() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = (trpc as any).post.getFeed.useInfiniteQuery(
+  } = trpc.post.getFeed.useInfiniteQuery(
     input,
     { getNextPageParam: (last: any) => last?.nextCursor ?? null, refetchOnWindowFocus: false }
   );
@@ -107,7 +107,7 @@ export default function Home() {
         onEndReached={() => { if (hasNextPage) fetchNextPage(); }}
       />
 
-      <CornerButton isTop={false} onPress={() => session ? router.push("/post") : router.push("/AuthScreen")}>
+      <CornerButton isTop={false} onPress={() => session ? router.push("/create-post") : router.push("/auth")}>
         <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>+</Text>
       </CornerButton>
       <CommentsSheet

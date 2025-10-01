@@ -1,21 +1,25 @@
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Post } from "../../server/src/generated/prisma";
-import { ProfileHeader } from "../components/profile/profile-header";
-import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
-import { ProfileTopBar } from "../components/profile/profile-top-bar";
+import { Post } from "../../../server/src/generated/prisma";
+import { ProfileHeader } from "../../components/profile/profile-header";
+import { ProfilePostsGrid } from "../../components/profile/profile-posts-grid";
+import { ProfileTopBar } from "../../components/profile/profile-top-bar";
 
 export default function ProfilePage() {
+  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
+  if (targetUserId === -1){
+    throw new Error("Invalid id")
+  }
   const router = useRouter();
-  const { user, session } = useSession();
+  const { user, session, signOut } = useSession();
 
   // Redirect if not authed
   if (!session) {
-    router.replace("/AuthScreen");
+    // router.replace("/auth");
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
@@ -65,7 +69,8 @@ const { data: profile, isLoading, isFetching } =
   const postsCount = userPosts.length;
 
   const handleLogout = async () => {
-    router.replace("/AuthScreen");
+    await signOut();  
+    router.replace("/auth"); 
   };
 
   if (isLoading || isFetching) {

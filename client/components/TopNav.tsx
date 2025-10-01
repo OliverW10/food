@@ -8,6 +8,11 @@ export function TopNav() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { user } = useSession();
+  if (user === undefined || user === null) {
+    console.log("no user on profile")
+    router.navigate("/auth")
+    return <></>
+  }
   const username = user?.email.split("@")[0] ?? "Unknown";
 
   return (
@@ -32,7 +37,10 @@ export function TopNav() {
           <Pressable onPress={() => router.push("/search")}>
             <Ionicons name="search" size={20} color="#fff" />
           </Pressable>
-          <Pressable onPress={() => router.push("/profile")}>
+          <Pressable onPress={() =>{
+            console.log(`Navigating to profile ${user.id}`)
+            router.push(`/profile/${user.id}`)
+          }}>
             <Ionicons name="person-circle-outline" size={22} color="#fff" />
           </Pressable>
         </View>
@@ -57,7 +65,7 @@ export function TopNav() {
           >
             <Pressable
               onPress={() => {
-                router.push("/profile");
+                router.push(`/profile/${user.id}`);
                 setOpen(false);
               }}
             >
@@ -65,7 +73,7 @@ export function TopNav() {
             </Pressable>
             <Pressable
               onPress={() => {
-                router.push("/HomeScreen");
+                router.push("/home");
                 setOpen(false);
               }}
             >
@@ -78,14 +86,6 @@ export function TopNav() {
               }}
             >
               <Text style={{ color: "#fff", padding: 8 }}>Settings</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                router.push("/post");
-                setOpen(false);
-              }}
-            >
-              <Text style={{ color: "#fff", padding: 8 }}>Post</Text>
             </Pressable>
             <Pressable onPress={() => setOpen(false)}>
               <Text style={{ color: "#ef4444", padding: 8 }}>Close</Text>

@@ -1,37 +1,16 @@
 import "@/global.css";
-import { getStorageStateAsync } from "@/hooks/use-storage-state";
-import { SessionProvider, useSession } from "@/hooks/user-context";
-import trpc, { serverUrl, trpcServerUrl } from "@/services/trpc";
+import { SessionProvider } from "@/hooks/user-context";
+import { fetchWithAuthRaw } from "@/services/fetch-with-auth";
+import trpc, { trpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink, retryLink } from "@trpc/client";
-import { Slot } from "expo-router";
+import { httpBatchLink } from "@trpc/client";
+import { Stack } from "expo-router";
 import { createContext, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
 import superjson from "superjson";
 
 export const UserContext = createContext(null);
 
-function getAuthCookie() {
-  return "todo";
-}
-
-function AppLayout() {
-  const { session, isLoading } = useSession();
-  // const router = useRoute();
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-    return <Slot />;
-}
-  
 export default function RootLayout() {
-  console.log("Sever URL:", serverUrl);
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -39,28 +18,20 @@ export default function RootLayout() {
         httpBatchLink({
           transformer: superjson,
           url: trpcServerUrl,
-          // You can pass any HTTP headers you wish here
-          async headers() {
-            return {
-              Authorization: "Bearer: " + ((await getStorageStateAsync("session")) ?? ""),
-            };
-          },
+          async fetch(url, options) {
+            let result = await fetchWithAuthRaw(url, options);
+            return result;
+          }
         }),
-        retryLink({
-          retry: (opts) => {
-            console.log("retry");
-            return true;
-          },
-        })
       ],
     }),
   );
-  
+  // TODO: use "protected routes" https://docs.expo.dev/router/basics/common-navigation-patterns/#authenticated-users-only-protected-routes
   return <>
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <Slot />
+          <Stack />
         </SessionProvider>
       </QueryClientProvider>
     </trpc.Provider>
