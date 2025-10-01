@@ -17,7 +17,6 @@ export type PostUI = {
   likesCount: number;
   likedByMe: boolean;
   commentsCount: number;
-  imageUrl: string;
 };
 
 type FoodPostProps = {
@@ -96,7 +95,7 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
       >
         <Image
           source={{ uri: review.imageUrl }}
-          style={{ width: "100%", height: "70%", resizeMode: "cover" }}
+          style={{ width: "100%", height: "80%", resizeMode: "cover" }}
         />
         <View style={{ padding: 8, flex: 1, justifyContent: "space-between" }}>
           <Text

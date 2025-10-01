@@ -59,7 +59,7 @@ export default function Home() {
   const [activePostId, setActivePostId] = useState<number | null>(null);
 
   const input = useMemo(
-    () => ({ mode, limit: 10, cursor: null as number | null }),
+    () => ({ mode, limit: 6, cursor: null as number | null }),
     [mode]
   );
 
