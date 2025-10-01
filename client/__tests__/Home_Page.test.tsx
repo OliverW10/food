@@ -1,18 +1,21 @@
-import { fireEvent, render, waitFor } from '@testing-library/react-native';
-import React from 'react';
-import Home from '../app/home';
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import React from "react";
+import Home from "../app/home";
 
-jest.mock('../hooks/user-context', () => ({
-  useSession: () => ({ user: { id: '42', email: 'tester@example.com' }, session: { token: 'abc' } }),
+jest.mock("../hooks/user-context", () => ({
+  useSession: () => ({
+    user: { id: "42", email: "tester@example.com" },
+    session: { token: "abc" },
+  }),
 }));
 
-jest.mock('expo-router', () => ({
+jest.mock("expo-router", () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
 }));
 
 const mockLikeMutate = jest.fn();
 
-jest.mock('../services/trpc', () => ({
+jest.mock("../services/trpc", () => ({
   __esModule: true,
   default: {
     post: {
@@ -24,12 +27,12 @@ jest.mock('../services/trpc', () => ({
                 items: [
                   {
                     id: 1,
-                    title: 'Ramen',
-                    description: 'Yum',
+                    title: "Ramen",
+                    description: "Yum",
                     likedByMe: false,
                     likesCount: 0,
                     commentsCount: 2,
-                    author: { id: 5, email: 'alice@example.com' },
+                    author: { id: 5, email: "alice@example.com" },
                   },
                 ],
               },
@@ -53,7 +56,11 @@ jest.mock('../services/trpc', () => ({
             pages: [
               {
                 items: [
-                  { id: 10, text: 'nice!', author: { id: 6, email: 'bob@example.com' } },
+                  {
+                    id: 10,
+                    text: "nice!",
+                    author: { id: 6, email: "bob@example.com" },
+                  },
                 ],
               },
             ],
@@ -78,32 +85,33 @@ jest.mock('../services/trpc', () => ({
   },
 }));
 
-
-describe('Home features', () => {
-  it('renders following feed', async () => {
+describe("Home features", () => {
+  it("renders following feed", async () => {
     const { getByText } = render(<Home />);
-    await waitFor(() => expect(getByText('Ramen')).toBeTruthy());
+    await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
   });
 
-  it('optimistic like toggles UI', async () => {
+  it("optimistic like toggles UI", async () => {
     const { getByLabelText, getByText } = render(<Home />);
-    await waitFor(() => expect(getByText('Ramen')).toBeTruthy());
-    const likeBtn = getByLabelText('Like post');
+    await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
+    const likeBtn = getByLabelText("Like post");
     fireEvent.press(likeBtn);
     expect(mockLikeMutate).toHaveBeenCalled();
   });
 
-  it('opens comments sheet', async () => {
+  it("opens comments sheet", async () => {
     const { getByLabelText, getByText } = render(<Home />);
-    await waitFor(() => expect(getByText('Ramen')).toBeTruthy());
-    const commentsBtn = getByLabelText('Open comments');
+    await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
+    const commentsBtn = getByLabelText("Open comments");
     fireEvent.press(commentsBtn);
-    await waitFor(() => expect(getByText(/Comments/i)).toBeTruthy(), { timeout: 3000 });
-    await waitFor(() => expect(getByText('nice!')).toBeTruthy());
+    await waitFor(() => expect(getByText(/Comments/i)).toBeTruthy(), {
+      timeout: 3000,
+    });
+    await waitFor(() => expect(getByText("nice!")).toBeTruthy());
   });
 
-  it('shows FAB', async () => {
+  it("shows FAB", async () => {
     const { getByText } = render(<Home />);
-    await waitFor(() => expect(getByText('+')).toBeTruthy());
+    await waitFor(() => expect(getByText("+")).toBeTruthy());
   });
 });
