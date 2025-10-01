@@ -1,7 +1,7 @@
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProfileHeader } from "../components/profile/profile-header";
@@ -37,10 +37,7 @@ export default function ProfilePage() {
   const isLoading = isUserPostsLoading;
 
   const displayEmail = user?.email ?? "";
-  const displayName = useMemo(
-    () => user?.id || displayEmail.split("@")[0] || "You",
-    [user?.id, displayEmail]
-  );
+  const displayName = "dn";
 
   const followers = 0;
   const following = 0;

@@ -2,14 +2,8 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import "dotenv/config"; // load .env for DATABASE_URL
-import * as crypto from 'node:crypto';
 
 const prisma = new PrismaClient();
-
-// simple SHA256 only for demo — replace with bcrypt/argon2 in production
-function hash(pw: string) {
-  return crypto.createHash('sha256').update(pw).digest('hex');
-}
 
 async function upsertCategory(name: string) {
   return prisma.category.upsert({
