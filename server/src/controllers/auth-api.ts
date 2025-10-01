@@ -9,11 +9,11 @@ export const authApi = router({
     .mutation(async ({ input }) => {
         console.log("Attempt to login user:", input.email);
         const user = await db.user.findUnique({ where: { email: input.email } });
-        if (!user || !user.passswordHash) {
+    if (!user || !user.passwordHash) {
             throw new Error('Invalid email or password');
         }
 
-        const valid = await comparePassword(input.password, user.passswordHash);
+    const valid = await comparePassword(input.password, user.passwordHash);
         if (!valid) {
             throw new Error('Invalid email or password');
         }
@@ -70,7 +70,7 @@ export const authApi = router({
             const user = await db.user.create({
                 data: {
                     email: input.email,
-                    passswordHash: passwordHash,
+                    passwordHash: passwordHash,
                     name: input.name,
                 }
             });

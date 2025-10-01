@@ -19,8 +19,7 @@ export function ProfileHeader({
   following = 0,
   postsCount = 0,
 }: Props) {
-  const initials =
-    name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U";
+  const initials = name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U";
 
   return (
     <View style={{ padding: 16, gap: 16 }}>

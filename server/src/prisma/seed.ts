@@ -1,5 +1,7 @@
 // server/src/prisma/seed.ts
 import { Prisma, PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import "dotenv/config"; // load .env for DATABASE_URL
 import * as crypto from 'node:crypto';
 
 const prisma = new PrismaClient();
@@ -39,7 +41,7 @@ async function main() {
     create: {
       email: 'alice@example.com',
       name: 'Alice',
-      passwordHash: hash('password1'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 
@@ -49,7 +51,7 @@ async function main() {
     create: {
       email: 'bob@example.com',
       name: 'Bob',
-      passwordHash: hash('password2'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 
@@ -59,7 +61,7 @@ async function main() {
     create: {
       email: 'charlie@example.com',
       name: 'Charlie',
-      passwordHash: hash('password3'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 
