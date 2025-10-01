@@ -12,9 +12,9 @@ export default function Index() {
   useEffect(() => {
     if (!isLoading) {
       if (session) {
-        router.replace("/HomeScreen");
+        router.replace("/home");
       } else {
-        router.replace("/AuthScreen");
+        router.replace("/auth");
       }
     }
   }, [session, isLoading, router]);

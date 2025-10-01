@@ -1,22 +1,23 @@
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ProfileHeader } from "../components/profile/profile-header";
-import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
-import { ProfileTopBar } from "../components/profile/profile-top-bar";
+import { ProfileHeader } from "../../components/profile/profile-header";
+import { ProfilePostsGrid } from "../../components/profile/profile-posts-grid";
+import { ProfileTopBar } from "../../components/profile/profile-top-bar";
 
 export default function ProfilePage() {
-  const { data: feed, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
+  const targetUserId = Number.parseInt(useLocalSearchParams<'/profile/[userId]'>()?.userId);
+  const { user, signOut } = useSession();
+  const { data: feed, isLoading: isPostsLoading } = trpc.post.forUser.useQuery({ id: targetUserId });
   const { data: profile, isLoading: isProfileLoading } = trpc.profile.get.useQuery();
-  const { signOut } = useSession();
   const router = useRouter();
 
   const handleLogout = async () => {
     await signOut();  
-    router.replace("/AuthScreen"); 
+    router.replace("/auth"); 
   };
 
   if (isPostsLoading || isProfileLoading || !feed || !profile) {

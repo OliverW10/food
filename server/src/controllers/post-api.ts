@@ -99,6 +99,12 @@ export const postApi = router({
 
       return { items: mapped, nextCursor };
     }),
+  forUser: protectedProcedure
+    .input(idInputSchema)
+    .query(async ({ input }) => {
+      const posts = await db.post.findMany({ where: { authorId: input.id }})
+      return posts;
+    }),
   delete: protectedProcedure
     .input(idInputSchema)
     .mutation(async ({ input }) => {

@@ -1,4 +1,4 @@
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateHTTPContextOptions } from '@trpc/server/dist/adapters/standalone.cjs';
 import { IncomingMessage, ServerResponse } from 'http';
 import superjson from 'superjson';
@@ -39,11 +39,17 @@ const isAuthed = t.middleware<AuthedContext>(({ ctx, next }) => {
     try {
         const decoded = verifyAccessToken(token);
         if (typeof decoded === 'string') {
-            throw new Error('Invalid token');
+            throw new TRPCError({
+                message: "Invalid token",
+                code: "PARSE_ERROR",
+            });
         }
         return next({ ctx: { ...ctx, user: decoded } });
     } catch {
-        throw new Error('Invlaid token');
+        throw new TRPCError({
+            message: "Invalid token",
+            code: "UNAUTHORIZED",
+        });
     }
 });
 

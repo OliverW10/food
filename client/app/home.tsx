@@ -107,7 +107,7 @@ export default function Home() {
         onEndReached={() => { if (hasNextPage) fetchNextPage(); }}
       />
 
-      <CornerButton isTop={false} onPress={() => session ? router.push("/post") : router.push("/AuthScreen")}>
+      <CornerButton isTop={false} onPress={() => session ? router.push("/create-post") : router.push("/auth")}>
         <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>+</Text>
       </CornerButton>
       <CommentsSheet

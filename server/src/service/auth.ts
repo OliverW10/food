@@ -8,7 +8,7 @@ console.log(process.env.DATABASE_URL);
 console.log(process.env.JWT_SECRET);
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_EXPIRES_IN: SignOptions['expiresIn'] = '15m';
+const JWT_EXPIRES_IN: SignOptions['expiresIn'] = 15;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 const REFRESH_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '7d';
 
