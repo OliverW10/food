@@ -1,6 +1,6 @@
 import { parse, stringify } from "flatted";
 
 export const flattedTransformer = {
-  serialize: (object: any) => stringify(object),
-  deserialize: (object: string) => parse(object),
+  serialize: (object: unknown) => stringify(object),
+  deserialize: (object: unknown) => parse(object as string),
 };
