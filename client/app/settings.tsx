@@ -14,7 +14,7 @@ export default function SettingsPage() {
     if (!isLoading && !user) {
       router.replace("/auth");
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, router]);
 
   if (!user) {
     return null;

@@ -16,7 +16,7 @@ export default function ProfilePage() {
     if (!isLoading && !user) {
       router.replace("/auth");
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, router]);
 
   const userId = user?.id;
   const { data: userPostsData, isLoading: isUserPostsLoading } =
@@ -39,7 +39,6 @@ export default function ProfilePage() {
   };
 
   if (!session) {
-    // router.replace("/auth");
     return (
       <SafeAreaView
         style={{
@@ -57,7 +56,6 @@ export default function ProfilePage() {
 
   if (userId === undefined) {
     router.push("/auth");
-    // throw new Error("Not logged in TODO: redirect");
   }
 
   const userPosts = userPostsData ?? [];
