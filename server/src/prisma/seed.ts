@@ -221,7 +221,6 @@ async function main() {
   await prisma.follow.createMany({
     data: [
       { followerId: charlie.id, followingId: alice.id },
-      { followerId: charlie.id, followingId: bob.id },
       { followerId: charlie.id, followingId: diana.id },
       { followerId: charlie.id, followingId: helen.id },
       { followerId: charlie.id, followingId: laura.id },
@@ -231,7 +230,6 @@ async function main() {
 
   await prisma.follow.createMany({
     data: [
-      { followerId: bob.id, followingId: charlie.id },
       { followerId: edward.id, followingId: charlie.id },
       { followerId: ian.id, followingId: charlie.id },
       { followerId: jessica.id, followingId: charlie.id },
