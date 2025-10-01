@@ -1,5 +1,5 @@
 import { useSession } from "@/hooks/user-context";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import { ProfileButton } from "../../components/profile/profile-button";
@@ -21,6 +21,7 @@ export function ProfileHeader({
   postsCount = 0,
 }: Props) {
   const { signOut } = useSession();
+  const router = useRouter();
 
   const initials =
     name
@@ -30,7 +31,7 @@ export function ProfileHeader({
       .slice(0, 2)
       .toUpperCase() ?? "U";
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     signOut();
     router.replace("/auth");
   };
@@ -96,7 +97,7 @@ export function ProfileHeader({
               variant="ghost"
               icon="enter"
               label="Log Out"
-              onPress={async () => await handleLogout()}
+              onPress={() => handleLogout()}
             />
           </View>
         </View>
