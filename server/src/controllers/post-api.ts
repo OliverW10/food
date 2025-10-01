@@ -2,9 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { idInputSchema } from "../api-schema/app-schema";
-import {
-  createPostInputSchema,
-} from "../api-schema/post-schemas";
+import { createPostInputSchema } from "../api-schema/post-schemas";
 import { db } from "../db";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
@@ -25,15 +23,13 @@ export const postApi = router({
       });
       return post;
     }),
-  getById: publicProcedure
-    .input(idInputSchema)
-    .query(async ({ input }) => {
-      const post = await db.post.findUnique({
-        where: { id: input.id },
-        include: { image: true },
-      });
-      return post ?? undefined;
-    }),
+  getById: publicProcedure.input(idInputSchema).query(async ({ input }) => {
+    const post = await db.post.findUnique({
+      where: { id: input.id },
+      include: { image: true },
+    });
+    return post ?? undefined;
+  }),
   // Cursor-paginated feed for HomeScreen
   getFeed: protectedProcedure
     .input(
@@ -44,7 +40,6 @@ export const postApi = router({
       })
     )
     .query(async ({ input, ctx }) => {
-
       // Build base where clause
       const where: Prisma.PostWhereInput = { published: true };
 
@@ -75,6 +70,7 @@ export const postApi = router({
         take: input.limit + 1,
         include: {
           author: { select: { id: true, email: true } },
+          image: { select: { storageUrl: true } },
         },
       });
 
@@ -95,16 +91,15 @@ export const postApi = router({
         likesCount: 0, // TODO
         likedByMe: false,
         commentsCount: 0,
+        imageUrl: p.image?.storageUrl || "",
       }));
 
       return { items: mapped, nextCursor };
     }),
-  forUser: protectedProcedure
-    .input(idInputSchema)
-    .query(async ({ input }) => {
-      const posts = await db.post.findMany({ where: { authorId: input.id }})
-      return posts;
-    }),
+  forUser: protectedProcedure.input(idInputSchema).query(async ({ input }) => {
+    const posts = await db.post.findMany({ where: { authorId: input.id } });
+    return posts;
+  }),
   delete: protectedProcedure
     .input(idInputSchema)
     .mutation(async ({ input }) => {
@@ -120,5 +115,3 @@ export const postApi = router({
       return existing;
     }),
 });
-
-

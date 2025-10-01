@@ -1,6 +1,13 @@
-import trpc from '@/services/trpc';
-import React from 'react';
-import { Text, TouchableOpacity, View, ViewProps } from 'react-native';
+import trpc from "@/services/trpc";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from "react-native";
 
 export type PostUI = {
   id: number;
@@ -10,6 +17,7 @@ export type PostUI = {
   likesCount: number;
   likedByMe: boolean;
   commentsCount: number;
+  imageUrl: string;
 };
 
 type FoodPostProps = {
@@ -17,12 +25,16 @@ type FoodPostProps = {
   onOpenComments?: () => void;
 } & ViewProps;
 
-export function FoodPost({
-  review,
-  onOpenComments,
-}: FoodPostProps ) {
+export function FoodPost({ review, onOpenComments }: FoodPostProps) {
   const utils = (trpc as any).useUtils?.() ?? {
-    post: { getFeed: { cancel: () => {}, getInfiniteData: () => undefined, setInfiniteData: () => {}, invalidate: () => {} } }
+    post: {
+      getFeed: {
+        cancel: () => {},
+        getInfiniteData: () => undefined,
+        setInfiniteData: () => {},
+        invalidate: () => {},
+      },
+    },
   };
 
   const likeMutation = (trpc as any).post?.likeToggle?.useMutation?.({
@@ -37,7 +49,11 @@ export function FoodPost({
             ...pg,
             items: pg.items.map((p: any) =>
               p.id === postId
-                ? { ...p, likedByMe: like, likesCount: p.likesCount + (like ? 1 : -1) }
+                ? {
+                    ...p,
+                    likedByMe: like,
+                    likesCount: p.likesCount + (like ? 1 : -1),
+                  }
                 : p
             ),
           })),
@@ -46,7 +62,8 @@ export function FoodPost({
       return { previous };
     },
     onError: (_e: any, _v: any, ctx: any) => {
-      if (ctx?.previous) utils.post.getFeed.setInfiniteData(undefined, ctx.previous);
+      if (ctx?.previous)
+        utils.post.getFeed.setInfiniteData(undefined, ctx.previous);
     },
     onSettled: () => {
       utils.post.getFeed.invalidate();
@@ -57,20 +74,66 @@ export function FoodPost({
     likeMutation.mutate({ postId: review.id, like: !review.likedByMe });
   };
 
+  // Make the post square based on screen width and 2 columns
+  const screenWidth = Dimensions.get("window").width;
+  const size = (screenWidth - 36) / 2; // 12px padding on each side, 12px gap between
+
   return (
-    <View style={{ padding:12, borderBottomWidth:1, borderColor:'#eee' }}>
-      <Text style={{ fontWeight:'700', color: 'white' }}>{review.title}</Text>
-      <Text style={{ color:'#6b7280', marginTop:4 }}>{review.description}</Text>
-
-      <View style={{ flexDirection:'row', gap:16, marginTop:10 }}>
-        <TouchableOpacity accessibilityLabel="Like post" onPress={toggleLike}>
-          <Text>{review.likedByMe ? '♥' : '♡'} {review.likesCount}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity accessibilityLabel="Open comments" onPress={onOpenComments}>
-          <Text>💬 {review.commentsCount}</Text>
-        </TouchableOpacity>
-      </View>
+    <View
+      style={{
+        width: size,
+        height: size,
+        margin: 6,
+        borderRadius: 12,
+        overflow: "hidden",
+        backgroundColor: "#181e25",
+      }}
+    >
+      <TouchableOpacity
+        style={{ flex: 1 }}
+        onPress={onOpenComments}
+        activeOpacity={0.85}
+      >
+        <Image
+          source={{ uri: review.imageUrl }}
+          style={{ width: "100%", height: "70%", resizeMode: "cover" }}
+        />
+        <View style={{ padding: 8, flex: 1, justifyContent: "space-between" }}>
+          <Text
+            style={{ fontWeight: "700", color: "white", fontSize: 35 }}
+            numberOfLines={1}
+          >
+            {review.title}
+          </Text>
+          <Text style={{ color: "#6b7280", fontSize: 18 }} numberOfLines={1}>
+            {review.description}
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 12,
+              marginTop: 6,
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              accessibilityLabel="Like post"
+              onPress={toggleLike}
+              style={{ marginRight: 8 }}
+            >
+              <Text style={{ color: review.likedByMe ? "#ef4444" : "#fff" }}>
+                {review.likedByMe ? "♥" : "♡"} {review.likesCount}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              accessibilityLabel="Open comments"
+              onPress={onOpenComments}
+            >
+              <Text style={{ color: "#fff" }}>💬 {review.commentsCount}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
