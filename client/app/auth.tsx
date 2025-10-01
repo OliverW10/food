@@ -1,3 +1,68 @@
+// Common styles for auth forms
+const containerStyle = {
+  backgroundColor: "#111827",
+  padding: 24,
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: "#1f2937",
+  width: 320,
+};
+
+const titleStyle = {
+  color: "#fff",
+  fontSize: 22,
+  fontWeight: "700" as const,
+  marginBottom: 8,
+  textAlign: "center" as const,
+};
+
+const inputStyle = {
+  backgroundColor: "#1f2937",
+  color: "#fff",
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: "#374151",
+  padding: 12,
+  marginBottom: 8,
+};
+
+const buttonStyle = {
+  backgroundColor: "#1f2937",
+  borderRadius: 10,
+  paddingVertical: 12,
+  alignItems: "center" as const,
+  marginBottom: 8,
+  borderWidth: 1,
+  borderColor: "#374151",
+};
+
+const linkStyle = {
+  alignItems: "center" as const,
+  marginTop: 4,
+};
+
+const linkTextStyle = {
+  color: "#9ca3af",
+};
+
+function AuthInput(props: React.ComponentProps<typeof TextInput>) {
+  return <TextInput {...props} style={[inputStyle, props.style]} />;
+}
+
+function AuthButton({ onPress, children, loading, style, ...rest }: any) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[buttonStyle, style]}
+      disabled={loading}
+      {...rest}
+    >
+      <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
+        {children}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -11,7 +76,6 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // TODO: could show loading indicator
   const router = useRouter();
-
   const handleLogin = async () => {
     if (!email || !password) {
       alert("Email and password are required");
@@ -27,85 +91,28 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
       setLoading(false);
     }
   };
-
   return (
-    <View
-      style={{
-        backgroundColor: "#111827",
-        padding: 24,
-        borderRadius: 14,
-        borderWidth: 1,
-        borderColor: "#1f2937",
-        width: 320,
-        gap: 18,
-        alignItems: "stretch",
-      }}
-    >
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: 22,
-          fontWeight: "700",
-          marginBottom: 8,
-          textAlign: "center",
-        }}
-      >
-        Login
-      </Text>
-      <TextInput
+    <View style={containerStyle}>
+      <Text style={titleStyle}>Login</Text>
+      <AuthInput
         placeholder="Email"
         placeholderTextColor="#6b7280"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#fff",
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-          padding: 12,
-          marginBottom: 8,
-        }}
       />
-      <TextInput
+      <AuthInput
         placeholder="Password"
         placeholderTextColor="#6b7280"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#fff",
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-          padding: 12,
-          marginBottom: 8,
-        }}
       />
-      <TouchableOpacity
-        onPress={handleLogin}
-        style={{
-          backgroundColor: "#1f2937",
-          borderRadius: 10,
-          paddingVertical: 12,
-          alignItems: "center",
-          marginBottom: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-        }}
-        disabled={loading}
-      >
-        <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
-          {loading ? "Logging in..." : "Log In"}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onSwitch}
-        style={{ alignItems: "center", marginTop: 4 }}
-      >
-        <Text style={{ color: "#9ca3af" }}>Create Account</Text>
+      <AuthButton onPress={handleLogin} loading={loading}>
+        {loading ? "Logging in..." : "Log In"}
+      </AuthButton>
+      <TouchableOpacity onPress={onSwitch} style={linkStyle}>
+        <Text style={linkTextStyle}>Create Account</Text>
       </TouchableOpacity>
     </View>
   );
@@ -115,9 +122,7 @@ function SignupForm({ onSwitch }: { onSwitch: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // TODO: could show loading indicator
-
   const registerMutation = trpc.auth.register.useMutation();
-
   const handleSignup = async () => {
     if (!email || !password) {
       alert("Email and password are required");
@@ -136,85 +141,28 @@ function SignupForm({ onSwitch }: { onSwitch: () => void }) {
       setLoading(false);
     }
   };
-
   return (
-    <View
-      style={{
-        backgroundColor: "#111827",
-        padding: 24,
-        borderRadius: 14,
-        borderWidth: 1,
-        borderColor: "#1f2937",
-        width: 320,
-        gap: 18,
-        alignItems: "stretch",
-      }}
-    >
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: 22,
-          fontWeight: "700",
-          marginBottom: 8,
-          textAlign: "center",
-        }}
-      >
-        Register
-      </Text>
-      <TextInput
+    <View style={containerStyle}>
+      <Text style={titleStyle}>Register</Text>
+      <AuthInput
         placeholder="Email"
         placeholderTextColor="#6b7280"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#fff",
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-          padding: 12,
-          marginBottom: 8,
-        }}
       />
-      <TextInput
+      <AuthInput
         placeholder="Password"
         placeholderTextColor="#6b7280"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#fff",
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-          padding: 12,
-          marginBottom: 8,
-        }}
       />
-      <TouchableOpacity
-        onPress={handleSignup}
-        style={{
-          backgroundColor: "#1f2937",
-          borderRadius: 10,
-          paddingVertical: 12,
-          alignItems: "center",
-          marginBottom: 8,
-          borderWidth: 1,
-          borderColor: "#374151",
-        }}
-        disabled={loading}
-      >
-        <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
-          {loading ? "Signing up..." : "Sign Up"}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onSwitch}
-        style={{ alignItems: "center", marginTop: 4 }}
-      >
-        <Text style={{ color: "#9ca3af" }}>Log In to Existing Account</Text>
+      <AuthButton onPress={handleSignup} loading={loading}>
+        {loading ? "Signing up..." : "Sign Up"}
+      </AuthButton>
+      <TouchableOpacity onPress={onSwitch} style={linkStyle}>
+        <Text style={linkTextStyle}>Log In to Existing Account</Text>
       </TouchableOpacity>
     </View>
   );
