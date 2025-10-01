@@ -1,13 +1,9 @@
 // server/src/prisma/seed.ts
 import { Prisma, PrismaClient } from '@prisma/client';
-import * as crypto from 'node:crypto';
+import bcrypt from 'bcrypt';
+import "dotenv/config"; // load .env for DATABASE_URL
 
 const prisma = new PrismaClient();
-
-// simple SHA256 only for demo — replace with bcrypt/argon2 in production
-function hash(pw: string) {
-  return crypto.createHash('sha256').update(pw).digest('hex');
-}
 
 async function upsertCategory(name: string) {
   return prisma.category.upsert({
@@ -39,7 +35,7 @@ async function main() {
     create: {
       email: 'alice@example.com',
       name: 'Alice',
-      passwordHash: hash('password1'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 
@@ -49,7 +45,7 @@ async function main() {
     create: {
       email: 'bob@example.com',
       name: 'Bob',
-      passwordHash: hash('password2'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 
@@ -59,7 +55,7 @@ async function main() {
     create: {
       email: 'charlie@example.com',
       name: 'Charlie',
-      passwordHash: hash('password3'),
+      passwordHash: await bcrypt.hash('password1', 10),
     },
   });
 

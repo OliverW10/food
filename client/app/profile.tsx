@@ -3,23 +3,51 @@ import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ProfileHeader } from "../components/profile/profile-header";
 import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
 import { ProfileTopBar } from "../components/profile/profile-top-bar";
 
 export default function ProfilePage() {
-  const { data: feed, isLoading: isPostsLoading } = trpc.post.getAll.useQuery();
-  const { data: profile, isLoading: isProfileLoading } = trpc.profile.get.useQuery();
-  const { signOut } = useSession();
   const router = useRouter();
+  const { user, session } = useSession();
+
+  if (!session) {
+    router.replace("/AuthScreen");
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color="#fff" />
+        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Redirecting…</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const userId = user?.id as number | string | undefined;
+
+  const { data: byUserPages, isLoading: isUserPostsLoading } =
+    (trpc as any).post.getByUserId?.useInfiniteQuery
+      ? (trpc as any).post.getByUserId.useInfiniteQuery(
+          { userId, limit: 24, cursor: null },
+          { getNextPageParam: (last: any) => last?.nextCursor ?? null }
+        )
+      : { data: null, isLoading: false };
+
+  const userPosts = byUserPages?.pages?.flatMap((p: any) => p.items) ?? [];
+
+  const isLoading = isUserPostsLoading;
+
+  const displayEmail = user?.email ?? "";
+  const displayName = "dn";
+
+  const followers = 0;
+  const following = 0;
+  const postsCount = userPosts?.length ?? 0;
 
   const handleLogout = async () => {
-    await signOut();  
-    router.replace("/AuthScreen"); 
+    router.replace("/AuthScreen");
   };
 
-  if (isPostsLoading || isProfileLoading || !feed || !profile) {
+  if (isLoading) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
@@ -30,25 +58,27 @@ export default function ProfilePage() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <ProfileTopBar username={profile.email} />
-            <View style={{ flex: 1 }}>
+      <ProfileTopBar username={displayEmail} />
+
+      <View style={{ flex: 1 }}>
         <ProfilePostsGrid
-          reviews={feed}
+          reviews={userPosts}
           header={
             <ProfileHeader
-              name={profile.email.split("@")[0]}
-              email={profile.email}
-              followers={profile.followers}
-              following={profile.following}
-              postsCount={feed.length}
+              name={displayName}
+              email={displayEmail}
+              followers={followers}
+              following={following}
+              postsCount={postsCount}
             />
           }
         />
-        <TouchableOpacity 
+
+        <TouchableOpacity
           onPress={handleLogout}
-          style={{ marginTop:14, padding:10, backgroundColor:'#371f1fFF', borderRadius:8 }}
+          style={{ marginTop: 14, marginHorizontal: 12, padding: 12, backgroundColor: "#1f2937", borderRadius: 10, alignItems: "center" }}
         >
-          <Text style={{ color:'#fff' }}>Logout</Text>
+          <Text style={{ color: "#fff", fontWeight: "600" }}>Logout</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
