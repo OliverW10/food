@@ -40,6 +40,8 @@ It looks like its possible to setup a github action to create an ios build (`xco
 
 # TODOS:
 
+- authorized routes reject when not signed in, send to auth page
+
 - auto refresh access token when api call fails with 401
 - decode and store user info from jwt in fe so i can access user id and email without extra api calls
 - mfa setup
