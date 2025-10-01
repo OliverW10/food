@@ -18,17 +18,22 @@ export default function ProfilePage() {
     }
   }, [user, isLoading]);
 
-  if (!user) {
-    return null;
-  }
+  const userId = user?.id;
+  const { data: userPostsData, isLoading: isUserPostsLoading } =
+    trpc.post.forUser.useQuery({ id: Number.parseInt(userId!) });
 
   const targetUserId = Number.parseInt(
     useLocalSearchParams<"/profile/[userId]">()?.userId?.toString() ?? "-1"
   );
+
+  if (!user) {
+    return null;
+  }
+
   if (targetUserId === -1) {
     throw new Error("Invalid id");
   }
-  const handleLogout = async () => {
+  const handleLogout = () => {
     signOut();
     router.replace("/auth");
   };
@@ -50,14 +55,11 @@ export default function ProfilePage() {
     );
   }
 
-  const userId = user?.id;
   if (userId === undefined) {
     router.push("/auth");
     // throw new Error("Not logged in TODO: redirect");
   }
 
-  const { data: userPostsData, isLoading: isUserPostsLoading } =
-    trpc.post.forUser.useQuery({ id: Number.parseInt(userId!) });
   const userPosts = userPostsData ?? [];
 
   const displayEmail = user?.email ?? "";
