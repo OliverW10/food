@@ -1,4 +1,10 @@
-// Common styles for auth forms
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSession } from "../hooks/user-context";
+import trpc from "../services/trpc";
+
 const containerStyle = {
   backgroundColor: "#111827",
   padding: 24,
@@ -63,12 +69,6 @@ function AuthButton({ onPress, children, loading, style, ...rest }: any) {
     </TouchableOpacity>
   );
 }
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useSession } from "../hooks/user-context";
-import trpc from "../services/trpc";
 
 function LoginForm({ onSwitch }: { onSwitch: () => void }) {
   const { signIn } = useSession();

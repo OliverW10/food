@@ -3,7 +3,7 @@ import { version } from "@/version";
 import { Text } from "react-native";
 
 export const VersionInfoComponent = () => {
-  const [versionInfo, versionInfoQuery] = trpc.versions.useSuspenseQuery();
+  const [versionInfo] = trpc.versions.useSuspenseQuery();
   return (
     <>
       <Text>Server url: {getTrpcServerUrl()}</Text>
