@@ -1,7 +1,7 @@
 // server/src/prisma/seed.ts
 import { Prisma, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import "dotenv/config"; // load .env for DATABASE_URL
+import "dotenv/config";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ async function upsertCategory(name: string) {
 
 async function upsertFood(categoryId: number, name: string) {
   return prisma.food.upsert({
-    where: { name }, // assuming names are unique-ish in your dataset
+    where: { name },
     update: { categoryId },
     create: { name, categoryId },
   });
@@ -152,13 +152,13 @@ async function main() {
     prisma.image.count(),
   ]);
 
-  console.log('✅ Seed complete');
+  console.log('Seed complete');
   console.table([{ users, posts, follows, categories, foods, images }]);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {
