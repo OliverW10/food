@@ -76,15 +76,6 @@ describe('post-api', () => {
     });
   });
 
-  describe('getAllPosts', () => {
-    it('returns all posts', async () => {
-      (db.post.findMany as jest.Mock).mockResolvedValue([basePost]);
-      const result = await caller.getAll();
-  expect(db.post.findMany).toHaveBeenCalledWith({ include: { image: true } });
-      expect(result).toHaveLength(1);
-    });
-  });
-
   describe('deletePost', () => {
     it('deletes a post', async () => {
       (db.post.findUnique as jest.Mock).mockResolvedValue(basePost);

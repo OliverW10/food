@@ -8,7 +8,7 @@ console.log(process.env.DATABASE_URL);
 console.log(process.env.JWT_SECRET);
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_EXPIRES_IN: SignOptions['expiresIn'] = '15m';
+const JWT_EXPIRES_IN: SignOptions['expiresIn'] = 15;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 const REFRESH_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '7d';
 
@@ -24,14 +24,21 @@ export function comparePassword(password: string, hash: string) {
     return bcrypt.compare(password, hash);
 }
 
+export interface UserClaims {
+    sub: number,
+    email: string,
+}
+
 export function createAccessToken(user: { id: number; email: string }) {
-    return jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, {
+    const claims: UserClaims = { sub: user.id, email: user.email };
+    return jwt.sign(claims, JWT_SECRET, {
         expiresIn: JWT_EXPIRES_IN,
     });
 }
 
 export function createRefreshToken(user: { id: number; email: string }) {
-    return jwt.sign({ sub: user.id, email: user.email }, REFRESH_TOKEN_SECRET, {
+    const claims: UserClaims = { sub: user.id, email: user.email };
+    return jwt.sign(claims, REFRESH_TOKEN_SECRET, {
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
 }

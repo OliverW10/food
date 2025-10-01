@@ -1,19 +1,23 @@
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ProfileHeader } from "../components/profile/profile-header";
-import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
-import { ProfileTopBar } from "../components/profile/profile-top-bar";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ProfileHeader } from "../../components/profile/profile-header";
+import { ProfilePostsGrid } from "../../components/profile/profile-posts-grid";
+import { ProfileTopBar } from "../../components/profile/profile-top-bar";
 
 export default function ProfilePage() {
+  const targetUserId = Number.parseInt(useLocalSearchParams<'/profile/[userId]'>()?.userId?.toString() ?? "-1");
+  if (targetUserId === -1){
+    throw new Error("Invalid id")
+  }
   const router = useRouter();
-  const { user, session } = useSession();
+  const { user, session, signOut } = useSession();
 
   if (!session) {
-    router.replace("/AuthScreen");
+    // router.replace("/auth");
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#fff" />
@@ -22,18 +26,13 @@ export default function ProfilePage() {
     );
   }
 
-  const userId = user?.id as number | string | undefined;
+  const userId = user?.id;
+  if (userId === undefined) {
+    throw new Error("Not logged in TODO: redirect")
+  }
 
-  const { data: byUserPages, isLoading: isUserPostsLoading } =
-    (trpc as any).post.getByUserId?.useInfiniteQuery
-      ? (trpc as any).post.getByUserId.useInfiniteQuery(
-          { userId, limit: 24, cursor: null },
-          { getNextPageParam: (last: any) => last?.nextCursor ?? null }
-        )
-      : { data: null, isLoading: false };
-
-  const userPosts = byUserPages?.pages?.flatMap((p: any) => p.items) ?? [];
-
+  const { data: userPostsData, isLoading: isUserPostsLoading } = trpc.post.forUser.useQuery({ id: Number.parseInt(userId) });
+  const userPosts = userPostsData ?? [];
   const isLoading = isUserPostsLoading;
 
   const displayEmail = user?.email ?? "";
@@ -44,7 +43,8 @@ export default function ProfilePage() {
   const postsCount = userPosts?.length ?? 0;
 
   const handleLogout = async () => {
-    router.replace("/AuthScreen");
+    await signOut();  
+    router.replace("/auth"); 
   };
 
   if (isLoading) {
