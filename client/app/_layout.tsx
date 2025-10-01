@@ -2,7 +2,7 @@ import "@/global.css";
 import { SessionProvider } from "@/hooks/user-context";
 import { fetchWithAuthRaw } from "@/services/fetch-with-auth";
 import { flattedTransformer } from "@/services/flattedTransformer";
-import trpc, { trpcServerUrl } from "@/services/trpc";
+import trpc, { getTrpcServerUrl } from "@/services/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { Stack } from "expo-router";
@@ -17,7 +17,7 @@ export default function RootLayout() {
       links: [
         httpBatchLink({
           transformer: flattedTransformer,
-          url: trpcServerUrl,
+          url: getTrpcServerUrl(),
           async fetch(url, options) {
             let result = await fetchWithAuthRaw(url, options);
             return result;
