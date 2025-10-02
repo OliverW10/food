@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   Alert,
   Button,
-  Image,
   ScrollView,
   Switch,
   Text,
@@ -68,9 +67,11 @@ export default function PostPage() {
       });
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
-        // Simulate async fetch/validation step (could add HEAD request etc.)
         setRemoteImageUri("http://localhost:3000" + created.image.storageUrl);
         setLoadingRemote(false);
+        console.log("Uploaded image URL:", remoteImageUri);
+        setImageUri(null);
+        setRemoteImageUri(null);
       }
       setTitle("");
       setDescription("");
@@ -234,23 +235,23 @@ export default function PostPage() {
               </Text>
             </View>
           )}
-          {remoteImageUri && (
-            <View style={{ marginBottom: 24 }}>
-              <Text style={{ fontWeight: "600", marginBottom: 8 }}>
-                Uploaded Image
-              </Text>
-              <Image
-                source={{ uri: remoteImageUri }}
-                style={{
-                  width: "100%",
-                  height: 220,
-                  borderRadius: 12,
-                  backgroundColor: "#f3f4f6",
-                }}
-                resizeMode="cover"
-              />
-            </View>
-          )}
+          {/* {remoteImageUri && (
+            // <View style={{ marginBottom: 24 }}>
+            //   <Text style={{ fontWeight: "600", marginBottom: 8 }}>
+            //     Uploaded Image
+            //   </Text>
+            //   <Image
+            //     source={{ uri: remoteImageUri }}
+            //     style={{
+            //       width: "100%",
+            //       height: 220,
+            //       borderRadius: 12,
+            //       backgroundColor: "#f3f4f6",
+            //     }}
+            //     resizeMode="cover"
+            //   />
+            // </View>
+          )} */}
 
           <View style={{ marginBottom: 40 }}>
             {createPostMutation.isPending ? (
