@@ -136,13 +136,56 @@ export const postApi = router({
 
   forUser: protectedProcedure
     .input(idInputSchema)
-    .query(async ({ input }) => {
-      const posts = await db.post.findMany({
-        where: { authorId: input.id },
-        include: { author: true, image: true },
-        orderBy: { createdAt: "desc" },
+    .query(async ({ input, ctx }) => {
+      const userId = Number(ctx.user?.sub);
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const postWithExtras = Prisma.validator<Prisma.PostDefaultArgs>()({
+        include: {
+          author: { select: { id: true, email: true, name: true } },
+          _count: { select: { likes: true, comments: true } },
+          likes: { select: { userId: true } },
+          comments: {
+            take: 2,
+            orderBy: { createdAt: "desc" },
+            include: {
+              author: { select: { id: true, name: true, email: true } },
+            },
+          },
+          image: true,
+        },
       });
-      return posts;
+
+      type PostWithExtras = Prisma.PostGetPayload<typeof postWithExtras>;
+
+      const rows: PostWithExtras[] = await db.post.findMany({
+        where: { authorId: input.id },
+        orderBy: { createdAt: "desc" },
+        ...postWithExtras,
+      });
+
+      const mapped = rows.map((p) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        author: {
+          id: p.author.id,
+          email: p.author.email,
+          name: p.author.name ?? p.author.email.split("@")[0],
+        },
+        likesCount: p._count.likes,
+        commentsCount: p._count.comments,
+        likedByMe: p.likes.some((l) => l.userId === userId),
+        recentComments: p.comments.map((c) => ({
+          id: c.id,
+          text: c.text,
+          author: c.author.name ?? c.author.email.split("@")[0],
+        })),
+        createdAt: p.createdAt,
+        imageUrl: p.image?.storageUrl,
+      }));
+
+      return mapped;
     }),
 
   delete: protectedProcedure

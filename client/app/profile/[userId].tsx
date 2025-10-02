@@ -1,4 +1,5 @@
 // app/profile/ProfileView.tsx
+import type { PostUI } from "@/components/FoodPost";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
 import { ProfileTopBar } from "@/components/profile/profile-top-bar";
@@ -69,10 +70,19 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     return <Text style={{ color: "#fff" }}>{error instanceof Error ? error.message : "Error"}</Text>;
   }
 
-  const posts = (profile?.posts ?? []).map(p => ({
-    ...p,
-    createdAt: new Date(p.createdAt),
-    imageId: -1, // not used, annoying typescript
+  const posts: PostUI[] = (profile?.posts ?? []).map((p) => ({
+    id: p.id,
+    title: p.title ?? "",
+    description: p.description ?? "",
+    author: {
+      id: userId,
+      email: profile?.email ?? "",
+      name: profile?.name ?? (profile?.email ? profile.email.split("@")[0] : ""),
+    },
+    likesCount: p.likesCount ?? 0,
+    likedByMe: p.likedByMe ?? false,
+    commentsCount: p.commentsCount ?? 0,
+    imageUrl: p.imageUrl,
   }));
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
