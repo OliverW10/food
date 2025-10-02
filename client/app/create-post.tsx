@@ -49,17 +49,16 @@ export default function PostPage() {
 
     try {
       //uploadImage
-      const imageId = await uploadImage();
-      if (!imageId) {
-        Alert.alert("Error", "Failed to upload image");
-        return;
-      }
+      // const imageId = await uploadImage();
+      // if (!imageId) {
+      //   Alert.alert("Error", "Failed to upload image");
+      //   return;
+      // }
 
       // create Post
       const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
-        imageId,
         authorId: parseInt(user.id, 10),
       });
       if (created?.image?.storageUrl) {
@@ -129,7 +128,7 @@ export default function PostPage() {
             Create Post
           </Text>
 
-          <View style={{ marginBottom: 18 }}>
+          <View style={{ marginBottom: 18, zIndex: 10 }}>
             <Text style={{ fontWeight: "600", marginBottom: 6 }}>Title</Text>
             <TypeSelect
               value={title}

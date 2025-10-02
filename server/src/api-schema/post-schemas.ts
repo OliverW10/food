@@ -6,6 +6,6 @@ export const createPostInputSchema = z.object({
   authorId: idSchema,
   foodId: idSchema.optional(),
   description: z.string().min(1).max(1000),
-  imageId: idSchema.optional(),
+  // imageId: idSchema.optional(),
 });
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
