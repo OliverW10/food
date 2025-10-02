@@ -1,6 +1,5 @@
 import { CommentsSheet } from "@/components/CommentsSheet";
 import CornerButton from "@/components/corner-button";
-import type { PostUI } from '@/components/FoodPost';
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
 import { useSession } from "@/hooks/user-context";
@@ -44,7 +43,7 @@ export default function Home() {
   const input = useMemo(() => ({
     mode,
     limit: 10,
-    cursor: undefined as number | undefined, // ✅ use undefined (not null) to satisfy TRPC input
+    cursor: undefined as number | undefined,
   }), [mode]);
 
   const {
@@ -59,7 +58,7 @@ export default function Home() {
     { getNextPageParam: (last) => last?.nextCursor ?? undefined, refetchOnWindowFocus: false }
   );
 
-  const posts = (data?.pages ?? []).flatMap((p: { items: PostUI[] }) => p.items);
+  const posts = (data?.pages ?? []).flatMap((p) => p.items);
 
   if (isLoading) {
     return (

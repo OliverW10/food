@@ -106,7 +106,7 @@ export const postApi = router({
         author: {
           id: p.author.id,
           email: p.author.email,
-          name: p.author.name ?? null,
+          name: p.author.name ?? p.author.email.split("@")[0],
         },
         likesCount: p._count.likes,
         commentsCount: p._count.comments,

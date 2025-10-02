@@ -6,7 +6,7 @@ export type PostUI = {
   id: number;
   title: string;
   description: string;
-  author: { id: number; name?: string; email: string };
+  author: { id: number; name: string; email: string };
   likesCount: number;
   likedByMe: boolean;
   commentsCount: number;
@@ -18,7 +18,6 @@ type FoodPostProps = {
 } & ViewProps;
 
 export function FoodPost({ review, onOpenComments }: FoodPostProps) {
-  // use any-typed utils so cache update calls don't complain about the input key type
   const utils: any = (trpc as any).useUtils?.() ?? {
     post: {
       getFeed: {
@@ -30,19 +29,13 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
     },
   };
 
-  // like toggle mutation (safe optional access; no TS error even if router doesn't have it yet)
   const likeMutation =
     (trpc as any).post?.likeToggle?.useMutation?.({
       onMutate: async (vars: { postId: number; like: boolean }) => {
         const { postId, like } = vars;
-
-        // cancel any ongoing refetches
         await utils.post.getFeed.cancel();
-
-        // snapshot previous cache (pass key as any to satisfy TS)
         const previous = utils.post.getFeed.getInfiniteData(undefined as any);
 
-        // optimistic update across all cached pages
         utils.post.getFeed.setInfiniteData(undefined as any, (data: any) => {
           if (!data) return data;
           return {
@@ -93,8 +86,21 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
         <Text style={{ color: '#9ca3af' }}>🍴 Food photo here</Text>
       </View>
 
+      {/* Title */}
+      <Text style={{ marginHorizontal: 12, marginTop: 8, fontSize: 18, fontWeight: '700', color: 'white' }}>
+        {review.title}
+      </Text>
+
+      {/* Caption */}
+      <Text style={{ marginHorizontal: 12, marginTop: 4, color: 'white' }}>
+        <Text style={{ fontWeight: '600' }}>
+          {review.author.name ?? review.author.email.split('@')[0]}
+        </Text>{' '}
+        {review.description}
+      </Text>
+
       {/* Actions */}
-      <View style={{ flexDirection: 'row', gap: 16, paddingHorizontal: 12, paddingTop: 8 }}>
+      <View style={{ flexDirection: 'row', gap: 16, paddingHorizontal: 12, paddingTop: 8, paddingBottom: 12 }}>
         <TouchableOpacity accessibilityLabel="Like post" onPress={toggleLike}>
           <Text style={{ fontSize: 18 }}>{review.likedByMe ? '♥' : '♡'} {review.likesCount}</Text>
         </TouchableOpacity>
@@ -102,12 +108,6 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
           <Text style={{ fontSize: 18 }}>💬 {review.commentsCount}</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Caption */}
-      <Text style={{ marginHorizontal: 12, marginTop: 4, color: 'white' }}>
-        <Text style={{ fontWeight: '600' }}>{review.author.name ?? review.author.email.split('@')[0]}</Text>{' '}
-        {review.description}
-      </Text>
     </View>
   );
 }
