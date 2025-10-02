@@ -33,7 +33,6 @@ async function main() {
     where: { email: "alice@example.com" },
     update: {},
     create: {
-      id: 1,
       email: "alice@example.com",
       name: "Alice",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -44,7 +43,6 @@ async function main() {
     where: { email: "bob@example.com" },
     update: {},
     create: {
-      id: 2,
       email: "bob@example.com",
       name: "Bob",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -55,7 +53,6 @@ async function main() {
     where: { email: "charlie@example.com" },
     update: {},
     create: {
-      id: 3,
       email: "charlie@example.com",
       name: "Charlie",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -66,7 +63,6 @@ async function main() {
     where: { email: "diana@example.com" },
     update: {},
     create: {
-      id: 4,
       email: "diana@example.com",
       name: "Diana",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -77,7 +73,6 @@ async function main() {
     where: { email: "edward@example.com" },
     update: {},
     create: {
-      id: 5,
       email: "edward@example.com",
       name: "Edward",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -88,7 +83,6 @@ async function main() {
     where: { email: "fiona@example.com" },
     update: {},
     create: {
-      id: 6,
       email: "fiona@example.com",
       name: "Fiona",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -99,7 +93,6 @@ async function main() {
     where: { email: "george@example.com" },
     update: {},
     create: {
-      id: 7,
       email: "george@example.com",
       name: "George",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -110,7 +103,6 @@ async function main() {
     where: { email: "helen@example.com" },
     update: {},
     create: {
-      id: 8,
       email: "helen@example.com",
       name: "Helen",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -121,7 +113,6 @@ async function main() {
     where: { email: "ian@example.com" },
     update: {},
     create: {
-      id: 9,
       email: "ian@example.com",
       name: "Ian",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -132,7 +123,6 @@ async function main() {
     where: { email: "jessica@example.com" },
     update: {},
     create: {
-      id: 10,
       email: "jessica@example.com",
       name: "Jessica",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -153,7 +143,6 @@ async function main() {
     where: { email: "laura@example.com" },
     update: {},
     create: {
-      id: 11,
       email: "laura@example.com",
       name: "Laura",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -164,7 +153,6 @@ async function main() {
     where: { email: "michael@example.com" },
     update: {},
     create: {
-      id: 12,
       email: "michael@example.com",
       name: "Michael",
       passwordHash: await bcrypt.hash("password1", 10),

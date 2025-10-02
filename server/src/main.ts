@@ -7,12 +7,14 @@ import { mkdirSync } from 'fs';
 import multer from 'multer';
 import path from 'path';
 import { authApi } from "./controllers/auth-api";
+import { commentsApi } from './controllers/comments-api';
 import { postApi } from './controllers/post-api';
 import { profileApi } from "./controllers/profile-api";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
 import { saveUploadedImage } from './service/upload-service';
 import { createContext, publicProcedure, router } from "./trpc";
+
 
 dotenv.config({ path: '.env.development' });
 
@@ -31,6 +33,7 @@ const appRouter = router({
   post: postApi,
   profile: profileApi,
   auth: authApi,
+  comments: commentsApi,
 });
 
 export type AppRouter = typeof appRouter;
