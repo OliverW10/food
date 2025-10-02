@@ -5,7 +5,7 @@ import { FoodPost, PostUI } from "../FoodPost";
 
 type Props = {
   reviews: Post[];
-  header?: React.ReactElement | null; // ← narrower than ReactNode
+  header?: React.ReactElement | null;
 };
 
 export function ProfilePostsGrid({ reviews, header }: Props) {
@@ -16,21 +16,21 @@ export function ProfilePostsGrid({ reviews, header }: Props) {
       numColumns={3}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 16 }}
-      ListHeaderComponent={header ?? null} // ← pass element (or null)
+      ListHeaderComponent={header ?? null}
       columnWrapperStyle={{ gap: 12, paddingHorizontal: 12 }}
       renderItem={({ item }) => (
-      <View style={{ width: "32%", marginBottom: 12 }}>
-        <FoodPost
-          review={postToPostUi(item)}
-          // onPress={() => router.push(`/post/${item.id ?? -1}`)}
-        />
-      </View>
+        <View style={{ width: "32%", marginBottom: 12 }}>
+          <FoodPost
+            review={postToPostUi(item)}
+            // onPress={() => router.push(`/post/${item.id ?? -1}`)}
+          />
+        </View>
       )}
     />
   );
 }
 
-function postToPostUi(post: Post): PostUI{
+function postToPostUi(post: Post): PostUI {
   return {
     author: { id: post.authorId, email: "todo" }, // TODO: lookup author
     commentsCount: -1,
@@ -39,5 +39,5 @@ function postToPostUi(post: Post): PostUI{
     likedByMe: false,
     likesCount: -1,
     title: post.title,
-  }
+  };
 }
