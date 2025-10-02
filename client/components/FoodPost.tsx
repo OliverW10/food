@@ -1,12 +1,7 @@
 import trpc from "@/services/trpc";
+import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewProps
-} from "react-native";
+import { Text, TouchableOpacity, View, ViewProps } from "react-native";
 
 export type PostUI = {
   id: number;
@@ -24,7 +19,8 @@ type FoodPostProps = {
 } & ViewProps;
 
 export function FoodPost({ review, onOpenComments }: FoodPostProps) {
-  const utils: any = (trpc as any).useUtils?.() ?? {
+  const router = useRouter();
+  const utils: any = trpc.useUtils?.() ?? {
     post: {
       getFeed: {
         cancel: async () => {},
@@ -77,23 +73,29 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
     likeMutation.mutate({ postId: review.id, like: !review.likedByMe });
   };
 
-  // Make the post square based on screen width and 2 columns
-  const screenWidth = Dimensions.get("window").width;
-  const size = (screenWidth - 36) / 2; // 12px padding on each side, 12px gap between
+  // Author/profile helpers
+
+  const authorDisplayName = review.author.name ?? review.author.email.split("@")[0];
+  const goToAuthorProfile = () => router.push(`/profile/${review.author.id}`);
 
   return (
     <View style={{ marginBottom: 20, backgroundColor: '#111827', borderRadius: 12, overflow: 'hidden' }}>
       {/* Header with author */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 12 }}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`View ${authorDisplayName}'s profile`}
+        onPress={goToAuthorProfile}
+        style={{ flexDirection: 'row', alignItems: 'center', padding: 12 }}
+      >
         <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#374151', marginRight: 8 }} />
         <Text style={{ fontWeight: '600', color: 'white' }}>
-          {review.author.name ?? review.author.email.split('@')[0]}
+          {authorDisplayName}
         </Text>
-      </View>
+      </TouchableOpacity>
 
       {/* Post image placeholder */}
       <View style={{ backgroundColor: '#1f2937', height: 200, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: '#9ca3af' }}>🍴 Food photo here</Text>
+        
       </View>
 
       {/* Title */}
@@ -104,7 +106,7 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
       {/* Caption */}
       <Text style={{ marginHorizontal: 12, marginTop: 4, color: 'white' }}>
         <Text style={{ fontWeight: '600' }}>
-          {review.author.name ?? review.author.email.split('@')[0]}
+          {authorDisplayName}
         </Text>{' '}
         {review.description}
       </Text>

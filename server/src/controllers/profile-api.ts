@@ -1,48 +1,18 @@
 // server/routers/profile.ts
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { idInputSchema } from "../api-schema/app-schema";
 import { db } from "../db";
 import { protectedProcedure, router } from "../trpc";
 
 export const profileApi = router({
   get: protectedProcedure
-    .input(
-      z
-        .object({
-          id: z.number().int().positive().optional(),
-          email: z.string().email().optional(),
-        })
-        .optional()
-    )
-    .query(async ({ ctx, input }) => {
-      // Precedence: explicit id → explicit email → claims.email
-      const claimsEmail = (ctx.user as { email?: string } | undefined)?.email;
-
-      const where:
-        | { id: number }
-        | { email: string }
-        | undefined =
-        input?.id != null
-          ? { id: input.id }
-          : input?.email
-          ? { email: input.email }
-          : claimsEmail
-          ? { email: claimsEmail }
-          : undefined;
-
-      if (!where) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Provide a user id/email or have an email in the auth claims.",
-        });
-      }
-
+    .input(idInputSchema)
+    .query(async ({ input }) => {
       const u = await db.user.findUnique({
-        where,
+        where: { id: input.id },
         include: {
           posts: true,
           _count: {
-            // ⚠ match your Prisma relation names (lowercase if your schema uses lowercase)
             select: { Followers: true, Following: true },
           },
         },

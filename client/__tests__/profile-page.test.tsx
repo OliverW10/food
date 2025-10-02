@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import ProfileView from '../app/profile/[userId]';
+import { ProfileViewInternal } from '../app/profile/[userId]';
 
 // Mock the same module path used by the component (uses alias "@/")
 jest.mock('@/hooks/user-context', () => ({
@@ -37,23 +37,15 @@ beforeEach(() => {
 });
 
 describe('ProfileView', () => {
-  it('shows sign-in prompt if no session', async () => {
-    const mocked = jest.requireMock('@/hooks/user-context') as any;
-    mocked.useSession.mockReturnValue({ user: undefined, session: undefined });
-    mockUseQuery.mockReturnValue({});
-    const { getByText } = render(<ProfileView />);
-    await waitFor(() => expect(getByText(/Please sign in/i)).toBeTruthy());
-  });
-
   it('renders loading state', async () => {
     mockUseQuery.mockReturnValue({ isLoading: true, isFetching: true });
-    const { getByText } = render(<ProfileView userId={42} />);
+    const { getByText } = render(<ProfileViewInternal userId={42} />);
     await waitFor(() => expect(getByText(/Loading profile/i)).toBeTruthy());
   });
 
   it('renders error message', async () => {
     mockUseQuery.mockReturnValue({ isError: true, error: new Error('Boom') });
-    const { getByText } = render(<ProfileView userId={42} />);
+    const { getByText } = render(<ProfileViewInternal userId={42} />);
     await waitFor(() => expect(getByText('Boom')).toBeTruthy());
   });
 
@@ -71,7 +63,7 @@ describe('ProfileView', () => {
         posts: [{ id: 1, title: 'Test', createdAt: nowISO }],
       },
     });
-    const { getAllByText } = render(<ProfileView userId={42} />);
+    const { getAllByText } = render(<ProfileViewInternal userId={42} />);
     await waitFor(() => {
       const matches = getAllByText(/jane@example.com/i);
       expect(matches.length).toBeGreaterThan(0);
@@ -83,7 +75,7 @@ describe('ProfileView', () => {
       data: { posts: [] },
       isLoading: false,
     });
-    const { getByText } = render(<ProfileView userId={42} />);
+    const { getByText } = render(<ProfileViewInternal userId={42} />);
     await waitFor(() => expect(getByText(/User/i)).toBeTruthy());
   });
 });
