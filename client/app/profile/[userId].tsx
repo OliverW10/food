@@ -1,39 +1,37 @@
+// app/profile/ProfileView.tsx
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
+import { ProfileTopBar } from "@/components/profile/profile-top-bar";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ProfileHeader } from "../../components/profile/profile-header";
-import { ProfilePostsGrid } from "../../components/profile/profile-posts-grid";
-import { ProfileTopBar } from "../../components/profile/profile-top-bar";
 
-export default function ProfilePage() {
+export default function ProfileView({ userId }: { userId?: number }) {
   const router = useRouter();
-  const { user, session, isLoading, signOut } = useSession();
+  const { user, session, signOut } = useSession();
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/auth");
-    }
-  }, [user, isLoading, router]);
+  const input = useMemo(() => {
+    if (userId != null) return { id: userId };
+    const raw = user?.id;
+    const authedId = typeof raw === "string" ? Number(raw) : raw;
+    if (authedId != null) return { id: authedId };
+    if (user?.email) return { email: user.email };
+    return undefined;
+  }, [userId, user?.id, user?.email]);
 
-  const userId = user?.id;
-  const { data: userPostsData, isLoading: isUserPostsLoading } =
-    trpc.post.forUser.useQuery({ id: Number.parseInt(userId!) });
+  const { data: profile, isLoading, isFetching, isError, error } =
+    trpc.profile.get.useQuery((input ?? { id: -1 }) as any, {
+      enabled: !!session && !!input && (input as any).id !== -1,
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+    });
 
-  const targetUserId = Number.parseInt(
-    useLocalSearchParams<"/profile/[userId]">()?.userId?.toString() ?? "-1"
-  );
-
-  if (!user) {
-    return null;
-  }
-
-  if (targetUserId === -1) {
-    throw new Error("Invalid id");
-  }
-  const handleLogout = () => {
+  const handleLogout = async () => {
     signOut();
     router.replace("/auth");
   };
@@ -49,25 +47,14 @@ export default function ProfilePage() {
         }}
       >
         <ActivityIndicator color="#fff" />
-        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Redirecting…</Text>
+        <Text style={{ color: "#9ca3af", marginTop: 8 }}>Please sign in…</Text>
       </SafeAreaView>
     );
   }
-
-  if (userId === undefined) {
-    router.push("/auth");
+  if (!input) {
+    return <Text style={{ color: "#fff" }}>No profile to load.</Text>;
   }
-
-  const userPosts = userPostsData ?? [];
-
-  const displayEmail = user?.email ?? "";
-  const displayName = "dn";
-
-  const followers = 0;
-  const following = 0;
-  const postsCount = userPosts?.length ?? 0;
-
-  if (isUserPostsLoading) {
+  if (isLoading || isFetching) {
     return (
       <SafeAreaView
         style={{
@@ -82,21 +69,27 @@ export default function ProfilePage() {
       </SafeAreaView>
     );
   }
+  if (isError) {
+    return <Text style={{ color: "#fff" }}>{error instanceof Error ? error.message : "Error"}</Text>;
+  }
 
+  const posts = (profile?.posts ?? []).map(p => ({
+    ...p,
+    createdAt: new Date(p.createdAt),
+  }));
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <ProfileTopBar username={displayEmail} />
-
+      <ProfileTopBar username={profile?.email ?? user?.email ?? ""} />
       <View style={{ flex: 1 }}>
         <ProfilePostsGrid
-          reviews={userPosts}
+          reviews={posts}
           header={
             <ProfileHeader
-              name={displayName}
-              email={displayEmail}
-              followers={followers}
-              following={following}
-              postsCount={postsCount}
+              name={profile?.name ?? "User"}
+              email={profile?.email ?? ""}
+              followers={profile?.followers ?? 0}
+              following={profile?.following ?? 0}
+              postsCount={posts.length}
             />
           }
         />
