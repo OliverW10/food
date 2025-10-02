@@ -580,7 +580,7 @@ async function main() {
         imageId: imgPizza.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Beef Tacos",
         description: "Crispy shells, pico de gallo, lime",
         published: true,
@@ -588,7 +588,7 @@ async function main() {
         imageId: imgTacos.id,
       },
       {
-        authorId: charlie.id,
+        authorId: kevin.id,
         title: "Sushi Platter",
         description: "Salmon, tuna, and tamago",
         published: true,
@@ -596,7 +596,7 @@ async function main() {
         imageId: imgSushi.id,
       },
       {
-        authorId: bob.id,
+        authorId: helen.id,
         title: "Avocado Toast",
         description: "Sourdough + chilli flakes",
         published: true,
@@ -604,7 +604,7 @@ async function main() {
         imageId: imgAvoToast.id,
       },
       {
-        authorId: charlie.id,
+        authorId: george.id,
         title: "Pocky Sticks",
         description: "Chocolate-covered biscuit sticks",
         published: true,
@@ -612,7 +612,7 @@ async function main() {
         imageId: imgPockySticks.id,
       },
       {
-        authorId: bob.id,
+        authorId: laura.id,
         title: "Dorayaki Pancakes",
         description: "Fluffy pancakes filled with sweet red bean paste",
         published: true,
@@ -636,7 +636,7 @@ async function main() {
         imageId: imgChickenKatsuCurry.id,
       },
       {
-        authorId: charlie.id,
+        authorId: michael.id,
         title: "Salmon Nigiri",
         description: "Fresh salmon over sushi rice",
         published: true,
@@ -644,7 +644,7 @@ async function main() {
         imageId: imgSalmonNigiri.id,
       },
       {
-        authorId: bob.id,
+        authorId: diana.id,
         title: "Tonkotsu Ramen",
         description: "Rich and creamy pork broth",
         published: true,
@@ -652,7 +652,7 @@ async function main() {
         imageId: imgTonkotsuRamen.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Takoyaki",
         description: "Octopus balls with takoyaki sauce",
         published: true,
@@ -660,7 +660,7 @@ async function main() {
         imageId: imgTakoyaki.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Okonomiyaki",
         description: "Savory pancake with cabbage and pork",
         published: true,
@@ -668,7 +668,7 @@ async function main() {
         imageId: imgOkonomiyaki.id,
       },
       {
-        authorId: charlie.id,
+        authorId: alice.id,
         title: "Miso Soup",
         description: "Savory soup with tofu and seaweed",
         published: true,
@@ -700,7 +700,7 @@ async function main() {
         imageId: imgChashuRiceBowl.id,
       },
       {
-        authorId: charlie.id,
+        authorId: kevin.id,
         title: "Matcha Ice Cream",
         description: "Creamy ice cream with matcha flavor",
         published: true,
@@ -716,7 +716,7 @@ async function main() {
         imageId: imgSpaghettiCarbonara.id,
       },
       {
-        authorId: charlie.id,
+        authorId: laura.id,
         title: "Lasagna",
         description: "Layers of pasta, meat, and cheese",
         published: true,
@@ -724,7 +724,7 @@ async function main() {
         imageId: imgLasagna.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Fettuccine Alfredo",
         description: "Creamy Alfredo sauce with fettuccine",
         published: true,
@@ -740,7 +740,7 @@ async function main() {
         imageId: imgCapreseSalad.id,
       },
       {
-        authorId: bob.id,
+        authorId: fiona.id,
         title: "Risotto alla Milanese",
         description: "Creamy risotto with saffron",
         published: true,
@@ -756,7 +756,7 @@ async function main() {
         imageId: imgBruschetta.id,
       },
       {
-        authorId: bob.id,
+        authorId: edward.id,
         title: "Gnocchi with Pesto",
         description: "Potato gnocchi with basil pesto",
         published: true,
@@ -772,7 +772,7 @@ async function main() {
         imageId: imgTiramisu.id,
       },
       {
-        authorId: bob.id,
+        authorId: ian.id,
         title: "Stuffed Cannelloni",
         description: "Pasta tubes stuffed with ricotta and spinach",
         published: true,
@@ -788,7 +788,7 @@ async function main() {
         imageId: imgEggplantParmigiana.id,
       },
       {
-        authorId: bob.id,
+        authorId: jessica.id,
         title: "Minestrone Soup",
         description: "Hearty vegetable soup",
         published: true,
@@ -812,7 +812,7 @@ async function main() {
         imageId: imgArancini.id,
       },
       {
-        authorId: charlie.id,
+        authorId: jessica.id,
         title: "Panna Cotta",
         description: "Creamy dessert with berry sauce",
         published: true,
@@ -828,7 +828,7 @@ async function main() {
         imageId: imgBologneseSauce.id,
       },
       {
-        authorId: charlie.id,
+        authorId: michael.id,
         title: "Chicken Enchiladas",
         description: "Tortillas filled with chicken and cheese",
         published: true,
@@ -844,7 +844,7 @@ async function main() {
         imageId: imgCarneAsada.id,
       },
       {
-        authorId: charlie.id,
+        authorId: ian.id,
         title: "Chiles Rellenos",
         description: "Stuffed poblano peppers",
         published: true,
@@ -860,7 +860,7 @@ async function main() {
         imageId: imgTamales.id,
       },
       {
-        authorId: charlie.id,
+        authorId: diana.id,
         title: "Huevos Rancheros",
         description: "Eggs served on tortillas with salsa",
         published: true,
@@ -876,7 +876,7 @@ async function main() {
         imageId: imgFishTacos.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Quesadillas",
         description: "Grilled tortillas with melted cheese",
         published: true,
@@ -892,7 +892,7 @@ async function main() {
         imageId: imgPozole.id,
       },
       {
-        authorId: charlie.id,
+        authorId: alice.id,
         title: "Guacamole & Chips",
         description: "Fresh guacamole with tortilla chips",
         published: true,
@@ -932,7 +932,7 @@ async function main() {
         imageId: imgSopaDeLima.id,
       },
       {
-        authorId: bob.id,
+        authorId: ian.id,
         title: "Ceviche",
         description: "Marinated raw fish with lime and cilantro",
         published: true,
@@ -940,7 +940,7 @@ async function main() {
         imageId: imgCeviche.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Carnitas",
         description: "Slow-cooked shredded pork",
         published: true,
@@ -948,7 +948,7 @@ async function main() {
         imageId: imgCarnitas.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Pancakes with Syrup",
         description: "Fluffy pancakes topped with maple syrup",
         published: true,
@@ -964,7 +964,7 @@ async function main() {
         imageId: imgScrambledEggs.id,
       },
       {
-        authorId: bob.id,
+        authorId: michael.id,
         title: "French Toast",
         description: "Golden-brown French toast with powdered sugar",
         published: true,
@@ -980,7 +980,7 @@ async function main() {
         imageId: imgBreakfastBurrito.id,
       },
       {
-        authorId: bob.id,
+        authorId: edward.id,
         title: "Eggs Benedict",
         description: "Poached eggs on English muffins with hollandaise sauce",
         published: true,
@@ -996,7 +996,7 @@ async function main() {
         imageId: imgGreekYogurtParfait.id,
       },
       {
-        authorId: bob.id,
+        authorId: fiona.id,
         title: "Oatmeal with Berries",
         description: "Warm oatmeal topped with fresh berries and honey",
         published: true,
@@ -1012,7 +1012,7 @@ async function main() {
         imageId: imgBagel.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Sausage & Egg Muffin",
         description: "Breakfast sandwich with sausage patty and egg",
         published: true,
@@ -1028,7 +1028,7 @@ async function main() {
         imageId: imgBananaSmoothie.id,
       },
       {
-        authorId: bob.id,
+        authorId: george.id,
         title: "Cinnamon Rolls",
         description: "Soft cinnamon rolls with icing",
         published: true,
@@ -1044,7 +1044,7 @@ async function main() {
         imageId: imgGranola.id,
       },
       {
-        authorId: bob.id,
+        authorId: george.id,
         title: "Veggie Omelette",
         description: "Omelette filled with fresh vegetables and cheese",
         published: true,

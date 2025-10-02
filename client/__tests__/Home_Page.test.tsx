@@ -14,21 +14,84 @@ jest.mock("expo-router", () => ({
 }));
 
 const mockLikeMutate = jest.fn();
-let mockCommentSuccess: (() => void) | null = null;
-const mockCommentMutate = jest.fn((_vars, opts) => {
-  mockCommentSuccess = () => opts?.onSuccess?.();
+const mockCommentMutate = jest.fn();
+let currentCommentsCount = 2;
+
+// ✅ Wrap mutate so it actually calls our spy
+const mockUseCommentMutation = () => ({
+  mutate: (vars: any, opts?: any) => {
+    mockCommentMutate(vars, opts);
+    // immediately simulate success so UI updates
+    opts?.onSuccess?.();
+    // bump comment count in cache
+    currentCommentsCount++;
+  },
 });
 
-jest.mock("../services/trpc", () => {
-  let currentCommentsCount = 2;
-
-  return {
-    __esModule: true,
-    default: {
+jest.mock("../services/trpc", () => ({
+  __esModule: true,
+  default: {
+    post: {
+      getFeed: {
+        useInfiniteQuery: () => ({
+          data: {
+            pages: [
+              {
+                items: [
+                  {
+                    id: 1,
+                    title: "Ramen",
+                    description: "Yum",
+                    likedByMe: false,
+                    likesCount: 0,
+                    commentsCount: currentCommentsCount,
+                    author: { id: 5, email: "alice@example.com", name: "Alice" },
+                  },
+                ],
+              },
+            ],
+          },
+          isLoading: false,
+          isFetching: false,
+          fetchNextPage: jest.fn(),
+          hasNextPage: false,
+          refetch: jest.fn(),
+        }),
+      },
+      likeToggle: {
+        useMutation: () => ({ mutate: mockLikeMutate }),
+      },
+    },
+    comments: {
+      list: {
+        useInfiniteQuery: () => ({
+          data: {
+            pages: [
+              {
+                items: [
+                  {
+                    id: 10,
+                    text: "nice!",
+                    author: { id: 6, email: "bob@example.com", name: "Bob" },
+                  },
+                ],
+              },
+            ],
+          },
+          isLoading: false,
+          refetch: jest.fn(),
+        }),
+      },
+      add: {
+        useMutation: mockUseCommentMutation,
+      },
+    },
+    useUtils: () => ({
       post: {
         getFeed: {
-          useInfiniteQuery: () => ({
-            data: {
+          invalidate: jest.fn(),
+          setInfiniteData: jest.fn((_, updater) => {
+            const prev = {
               pages: [
                 {
                   items: [
@@ -39,92 +102,23 @@ jest.mock("../services/trpc", () => {
                       likedByMe: false,
                       likesCount: 0,
                       commentsCount: currentCommentsCount,
-                      author: {
-                        id: 5,
-                        email: "alice@example.com",
-                        name: "Alice",
-                      },
+                      author: { id: 5, email: "alice@example.com", name: "Alice" },
                     },
                   ],
                 },
               ],
-            },
-            isLoading: false,
-            isFetching: false,
-            fetchNextPage: jest.fn(),
-            hasNextPage: false,
-            refetch: jest.fn(),
+            };
+            const next = updater(prev);
+            currentCommentsCount = next.pages[0].items[0].commentsCount;
+            return next;
           }),
-        },
-        likeToggle: {
-          useMutation: () => ({ mutate: mockLikeMutate }),
+          cancel: jest.fn(),
+          getInfiniteData: jest.fn(),
         },
       },
-      comments: {
-        list: {
-          useInfiniteQuery: () => ({
-            data: {
-              pages: [
-                {
-                  items: [
-                    {
-                      id: 10,
-                      text: "nice!",
-                      author: { id: 6, email: "bob@example.com", name: "Bob" },
-                    },
-                  ],
-                },
-              ],
-            },
-            isLoading: false,
-            refetch: jest.fn(),
-          }),
-        },
-        add: {
-          useMutation: () => ({
-            mutate: mockCommentMutate,
-          }),
-        },
-      },
-      useUtils: () => ({
-        post: {
-          getFeed: {
-            invalidate: jest.fn(),
-            setInfiniteData: jest.fn((_, updater) => {
-              const prev = {
-                pages: [
-                  {
-                    items: [
-                      {
-                        id: 1,
-                        title: "Ramen",
-                        description: "Yum",
-                        likedByMe: false,
-                        likesCount: 0,
-                        commentsCount: currentCommentsCount,
-                        author: {
-                          id: 5,
-                          email: "alice@example.com",
-                          name: "Alice",
-                        },
-                      },
-                    ],
-                  },
-                ],
-              };
-              const next = updater(prev);
-              // update count for future renders
-              currentCommentsCount = next.pages[0].items[0].commentsCount;
-              return next;
-            }),
-            cancel: jest.fn(),
-            getInfiniteData: jest.fn(),
-          },
-        },
-      }),
-    },
-  };
-});
+    }),
+  },
+}));
 
 describe("Home features", () => {
   it("renders following feed", async () => {
@@ -176,13 +170,11 @@ describe("Home features", () => {
     fireEvent.press(getByText("Post"));
 
     expect(mockCommentMutate).toHaveBeenCalledWith(
-      expect.objectContaining({ postId: 1, text: "so yum!" })
+      expect.objectContaining({ postId: 1, text: "so yum!" }),
+      expect.anything()
     );
 
-    // simulate success callback (comment saved + count bump)
-    mockCommentSuccess?.();
-
-    // comment count should update to 3
+    // count should bump
     await waitFor(() => expect(queryByText(/💬 3/)).toBeTruthy());
   });
 

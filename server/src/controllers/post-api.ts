@@ -33,13 +33,13 @@ export const postApi = router({
       return post ?? undefined;
     }),
 
-  // Cursor-paginated feed for HomeScreen
+  // Feed for HomeScreen
   getFeed: protectedProcedure
     .input(
       z.object({
         mode: z.enum(["following", "explore"]),
         limit: z.number().int().min(1).max(50).default(10),
-        cursor: z.number().int().positive().nullable().default(null),
+        cursor: z.date().nullable().default(null), // use createdAt as cursor
       })
     )
     .query(async ({ input, ctx }) => {
@@ -49,7 +49,7 @@ export const postApi = router({
       if (!userIdStr) throw new Error("Invalid token subject");
       const userId = Number(userIdStr);
 
-      // restrict following mode
+      // === FOLLOWING MODE ===
       if (input.mode === "following") {
         const followees = await db.follow.findMany({
           where: { followerId: userId },
@@ -57,13 +57,13 @@ export const postApi = router({
         });
         const followingIds = followees.map((f) => f.followingId);
         if (followingIds.length === 0) {
-          return { items: [], nextCursor: null as number | null };
+          return { items: [], nextCursor: null as Date | null };
         }
         where.authorId = { in: followingIds };
-      }
 
-      if (input.cursor) {
-        where.id = { lt: input.cursor };
+        if (input.cursor) {
+          where.createdAt = { lt: input.cursor };
+        }
       }
 
       const postWithExtras = Prisma.validator<Prisma.PostDefaultArgs>()({
@@ -81,21 +81,33 @@ export const postApi = router({
         },
       });
 
-
       type PostWithExtras = Prisma.PostGetPayload<typeof postWithExtras>;
 
-      const rows: PostWithExtras[] = await db.post.findMany({
-        where,
-        orderBy: { id: "desc" },
-        take: input.limit + 1,
-        ...postWithExtras,
-      });
+      let rows: PostWithExtras[];
 
-      let nextCursor: number | null = null;
+      if (input.mode === "explore") {
+        // 🚀 EXPLORE: return ALL posts from everyone, newest first (no limit/pagination)
+        rows = await db.post.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          ...postWithExtras,
+        });
+      } else {
+        // FOLLOWING: paginated with cursor
+        rows = await db.post.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          take: input.limit + 1,
+          ...postWithExtras,
+        });
+      }
+
+      let nextCursor: Date | null = null;
       let items = rows;
-      if (rows.length > input.limit) {
+
+      if (input.mode === "following" && rows.length > input.limit) {
         const next = rows[input.limit];
-        nextCursor = next?.id ?? null;
+        nextCursor = next?.createdAt ?? null;
         items = rows.slice(0, input.limit);
       }
 
@@ -116,6 +128,7 @@ export const postApi = router({
           text: c.text,
           author: c.author.name ?? c.author.email.split("@")[0],
         })),
+        createdAt: p.createdAt,
       }));
 
       return { items: mapped, nextCursor };
@@ -127,6 +140,7 @@ export const postApi = router({
       const posts = await db.post.findMany({
         where: { authorId: input.id },
         include: { author: true, image: true },
+        orderBy: { createdAt: "desc" },
       });
       return posts;
     }),
