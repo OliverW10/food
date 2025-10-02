@@ -21,16 +21,7 @@ export function CommentsSheet({
 }) {
   const [text, setText] = useState('');
 
-  const utils: any = (trpc as any).useUtils?.() ?? {
-    post: {
-      getFeed: {
-        cancel: async () => {},
-        getInfiniteData: () => undefined,
-        setInfiniteData: () => {},
-        invalidate: () => {},
-      },
-    },
-  };
+  const utils = trpc.useUtils();
 
   const input = useMemo(
     () => ({
@@ -41,48 +32,67 @@ export function CommentsSheet({
     [postId]
   );
 
-  const commentsListQ =
-    (trpc as any).comments?.list?.useInfiniteQuery?.(input, {
-      enabled: visible && !!postId,
-      getNextPageParam: (last: any) => last?.nextCursor ?? null,
-    }) ?? {
-      isLoading: false,
-      data: { pages: [{ items: [] }] },
-      refetch: () => {},
-    };
+  const commentsListQ = trpc.comments.list.useInfiniteQuery(input, {
+    enabled: visible && !!postId,
+    getNextPageParam: (last) => last?.nextCursor ?? null,
+  });
 
-  const addMutation =
-    (trpc as any).comments?.add?.useMutation?.({
-      onMutate: async (vars: { postId: number; text: string }) => {
-        // optimistic bump in feed
-        await utils.post.getFeed.cancel();
-        utils.post.getFeed.setInfiniteData(undefined as any, (data: any) => {
-          if (!data) return data;
-          return {
-            ...data,
-            pages: data.pages.map((pg: any) => ({
-              ...pg,
-              items: pg.items.map((p: any) =>
-                p.id === vars.postId
-                  ? { ...p, commentsCount: p.commentsCount + 1 }
-                  : p
-              ),
-            })),
-          };
-        });
-      },
-      onSuccess: () => {
-        setText('');
-        commentsListQ.refetch();
-      },
-      onSettled: () => {
-        utils.post.getFeed.invalidate();
-      },
-    }) ?? { mutate: () => {} };
+  const addMutation = trpc.comments.add.useMutation({
+    onMutate: async (vars) => {
+      // cancel any ongoing queries
+      await utils.post.getFeed.cancel();
+      await utils.comments.list.cancel();
 
-  const items = (commentsListQ.data?.pages ?? []).flatMap(
-    (p: any) => p.items
-  );
+      // Optimistically update feed comment count
+      utils.post.getFeed.setInfiniteData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((pg) => ({
+            ...pg,
+            items: pg.items.map((p) =>
+              p.id === vars.postId
+                ? { ...p, commentsCount: p.commentsCount + 1 }
+                : p
+            ),
+          })),
+        };
+      });
+
+      // Optimistically insert comment into list
+      utils.comments.list.setInfiniteData(input, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((pg, i) =>
+            i === 0
+              ? {
+                  ...pg,
+                  items: [
+                    {
+                      id: Date.now(), // temp ID
+                      text: vars.text,
+                      author: { name: 'You', email: '' },
+                    },
+                    ...pg.items,
+                  ],
+                }
+              : pg
+          ),
+        };
+      });
+    },
+    onSuccess: () => {
+      setText('');
+      // ensure server truth
+      utils.comments.list.invalidate();
+    },
+    onSettled: () => {
+      utils.post.getFeed.invalidate();
+    },
+  });
+
+  const items = (commentsListQ.data?.pages ?? []).flatMap((p) => p.items);
 
   return (
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
@@ -139,9 +149,7 @@ export function CommentsSheet({
                   }}
                 >
                   <Text style={{ fontWeight: '600', color: '#fff' }}>
-                    {c.author?.name ??
-                      c.author?.email?.split?.('@')[0] ??
-                      'user'}
+                    {c.author?.name ?? c.author?.email?.split?.('@')[0] ?? 'user'}
                   </Text>
                   <Text style={{ color: '#9ca3af' }}>{c.text}</Text>
                 </View>
