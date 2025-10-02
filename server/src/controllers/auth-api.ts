@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { db } from '../db';
 import { comparePassword, createAccessToken, createRefreshToken, hashPassword, verifyRefreshToken } from '../service/auth';
-import { publicProcedure, router } from '../trpc';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 export const authApi = router({
     login: publicProcedure
@@ -91,5 +91,36 @@ export const authApi = router({
                     name: user.name,
                 },
             };
+        }),
+    getName: protectedProcedure
+        .query(async ({ ctx }) => {
+            const userId = Number(ctx.user?.sub);
+            if (!userId) throw new Error("Unauthorized");
+            const user = await db.user.findUnique({ where: { id: userId } });
+            if (!user) throw new Error("User not found");
+            return { name: user.name ?? "" };
+        }),
+    updateName: protectedProcedure
+        .input(z.object({ name: z.string().min(1).max(100) }))
+        .mutation(async ({ input, ctx }) => {
+            // Get user from context
+            const userId = Number(ctx.user?.sub);
+            if (!userId) throw new Error("Unauthorized");
+                // Check if name is already used by another user
+                const existingUser = await db.user.findFirst({
+                    where: {
+                        name: input.name,
+                        NOT: { id: userId }
+                    }
+                });
+                if (existingUser) {
+                    throw new Error("Name is already taken");
+                }
+            // Update name in DB
+            await db.user.update({
+                where: { id: userId },
+                data: { name: input.name },
+            });
+            return { success: true };
         }),
 });

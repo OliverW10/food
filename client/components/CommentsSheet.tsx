@@ -20,6 +20,7 @@ export function CommentsSheet({
   onClose: () => void;
 }) {
   const [text, setText] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
 
@@ -39,12 +40,13 @@ export function CommentsSheet({
 
   const addMutation = trpc.comments.add.useMutation({
     onMutate: async (vars) => {
+      setError(null);
       // cancel any ongoing queries
       await utils.post.getFeed.cancel();
       await utils.comments.list.cancel();
 
       // Optimistically update feed comment count
-      utils.post.getFeed.setInfiniteData(undefined, (old) => {
+      utils.post.getFeed.setInfiniteData({ mode: "following" }, (old) => {
         if (!old) return old;
         return {
           ...old,
@@ -84,6 +86,7 @@ export function CommentsSheet({
     },
     onSuccess: () => {
       setText('');
+      setError(null);
       // ensure server truth
       utils.comments.list.invalidate();
     },
@@ -173,6 +176,9 @@ export function CommentsSheet({
                 backgroundColor: '#1f2937',
               }}
             />
+            {error && (
+              <Text style={{ color: '#ef4444', marginBottom: 8 }}>{error}</Text>
+            )}
             <TouchableOpacity
               style={{
                 padding: 12,
@@ -180,11 +186,15 @@ export function CommentsSheet({
                 borderRadius: 8,
                 alignItems: 'center',
               }}
-              onPress={() =>
-                postId &&
-                text.trim() &&
-                addMutation.mutate({ postId, text: text.trim() })
-              }
+              onPress={() => {
+                if (!text.trim()) {
+                  setError('Comment cannot be empty.');
+                  return;
+                }
+                if (postId) {
+                  addMutation.mutate({ postId, text: text.trim() });
+                }
+              }}
             >
               <Text style={{ color: '#fff', fontWeight: '600' }}>Post</Text>
             </TouchableOpacity>
