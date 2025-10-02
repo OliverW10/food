@@ -30,10 +30,12 @@ model User {
 
 model Follow {
   id          Int  @id @default(autoincrement())
-  follower    User @relation("Follower", fields: [followerId], references: [id])
   followerId  Int
-  following   User @relation("Following", fields: [followingId], references: [id])
   followingId Int
+  // a User's Followers are all Follow's with followingId=id
+  follower    User @relation("Follower", fields: [followingId], references: [id])
+  // a User's Following are all Follow's with followerId=id
+  following   User @relation("Following", fields: [followerId], references: [id])
 
   @@unique([followerId, followingId])
   @@index([followerId])
