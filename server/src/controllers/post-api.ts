@@ -33,19 +33,16 @@ export const postApi = router({
       return post ?? undefined;
     }),
 
-  // Feed for HomeScreen
   getFeed: protectedProcedure
     .input(
       z.object({
         mode: z.enum(["following", "explore"]),
         limit: z.number().int().min(1).max(50).default(10),
-        cursor: z.date().nullable().default(null), // use createdAt as cursor
-      })
-    )
+      cursor: z.date().nullable().default(null), // use createdAt as cursor
+    })
+  )
     .query(async ({ input, ctx }) => {
       const where: Prisma.PostWhereInput = { published: true };
-      let orderBy: Prisma.PostOrderByWithRelationInput | undefined = undefined;
-      let useCursor = false;
 
       const userIdStr = ctx.user?.sub;
       if (!userIdStr) throw new Error("Invalid token subject");
@@ -88,14 +85,12 @@ export const postApi = router({
       let rows: PostWithExtras[];
 
       if (input.mode === "explore") {
-        // 🚀 EXPLORE: return ALL posts from everyone, newest first (no limit/pagination)
         rows = await db.post.findMany({
           where,
           orderBy: { createdAt: "desc" },
           ...postWithExtras,
         });
       } else {
-        // FOLLOWING: paginated with cursor
         rows = await db.post.findMany({
           where,
           orderBy: { createdAt: "desc" },
@@ -134,7 +129,8 @@ export const postApi = router({
       }));
 
       return { items: mapped, nextCursor };
-    }),
+  }),
+
 
   forUser: protectedProcedure
     .input(idInputSchema)
