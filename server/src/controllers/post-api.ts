@@ -77,6 +77,7 @@ export const postApi = router({
               author: { select: { id: true, name: true, email: true } },
             },
           },
+          image: true,
         },
       });
 
@@ -126,6 +127,7 @@ export const postApi = router({
           author: c.author.name ?? c.author.email.split("@")[0],
         })),
         createdAt: p.createdAt,
+        imageUrl: p.image?.storageUrl
       }));
 
       return { items: mapped, nextCursor };

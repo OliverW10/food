@@ -3,8 +3,9 @@ import { FlatList, View } from "react-native";
 import type { Post } from "../../../server/src/generated/prisma";
 import { FoodPost, PostUI } from "../FoodPost";
 
+type PostWithImage = Post & { imageUrl: string | undefined };
 type Props = {
-  reviews: Post[];
+  reviews: PostWithImage[];
   header?: React.ReactElement | null;
 };
 
@@ -30,14 +31,15 @@ export function ProfilePostsGrid({ reviews, header }: Props) {
   );
 }
 
-function postToPostUi(post: Post): PostUI {
+function postToPostUi(post: PostWithImage): PostUI {
   return {
-    author: { id: post.authorId, email: "todo" }, // TODO: lookup author
+    author: { id: post.authorId, email: "todo", name: "todo" },
     commentsCount: -1,
     description: post.description,
     id: post.id,
     likedByMe: false,
     likesCount: -1,
     title: post.title,
+    imageUrl: post.imageUrl
   };
 }
