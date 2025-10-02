@@ -72,6 +72,7 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
   const posts = (profile?.posts ?? []).map(p => ({
     ...p,
     createdAt: new Date(p.createdAt),
+    imageId: -1, // not used, annoying typescript
   }));
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>

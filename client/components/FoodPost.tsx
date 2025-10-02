@@ -1,7 +1,7 @@
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View, ViewProps } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View, ViewProps } from "react-native";
 
 export type PostUI = {
   id: number;
@@ -11,6 +11,7 @@ export type PostUI = {
   likesCount: number;
   likedByMe: boolean;
   commentsCount: number;
+  imageUrl: string | undefined;
 };
 
 type FoodPostProps = {
@@ -78,6 +79,13 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
   const authorDisplayName = review.author.name ?? review.author.email.split("@")[0];
   const goToAuthorProfile = () => router.push(`/profile/${review.author.id}`);
 
+  const imageStyle = StyleSheet.create({
+    my_image: {
+      width: "100%",
+      height: "100%",
+    }
+  });
+
   return (
     <View style={{ marginBottom: 20, backgroundColor: '#111827', borderRadius: 12, overflow: 'hidden' }}>
       {/* Header with author */}
@@ -95,7 +103,7 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
 
       {/* Post image placeholder */}
       <View style={{ backgroundColor: '#1f2937', height: 200, justifyContent: 'center', alignItems: 'center' }}>
-        
+        <Image source={review.imageUrl as ImageSourcePropType} style={imageStyle.my_image} />
       </View>
 
       {/* Title */}

@@ -11,7 +11,7 @@ export const profileApi = router({
       const u = await db.user.findUnique({
         where: { id: input.id },
         include: {
-          posts: true,
+          posts: { include: { image: true } },
           _count: {
             select: { Followers: true, Following: true },
           },
@@ -34,7 +34,7 @@ export const profileApi = router({
           description: p.description ?? "",
           authorId: p.authorId,
           foodId: p.foodId ?? null,
-          imageId: p.imageId ?? null,
+          imageUrl: p.image?.storageUrl,
           createdAt: p.createdAt,
           published: p.published ?? false,
         })),
