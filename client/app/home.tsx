@@ -96,17 +96,17 @@ export default function Home() {
      <FlatList
         testID="feed-list"
         data={posts}
-        numColumns={1} // ⬅️ single column like Instagram
+        numColumns={1}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <View style={{ marginVertical: 40 }}> 
-            {/* ⬅️ big gap between posts */}
+            {}
             <FoodPost
               review={item}
               onOpenComments={() => setActivePostId(item.id)}
               style={{
-                aspectRatio: 1,     // ⬅️ square
-                width: "100%",      // full width
+                aspectRatio: 1, 
+                width: "100%",
                 borderRadius: 12,
                 overflow: "hidden",
               }}

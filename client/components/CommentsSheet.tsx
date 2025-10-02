@@ -73,7 +73,7 @@ export function CommentsSheet({
       },
       onSuccess: () => {
         setText('');
-        commentsListQ.refetch(); // refresh detail view
+        commentsListQ.refetch();
       },
       onSettled: () => {
         utils.post.getFeed.invalidate();
