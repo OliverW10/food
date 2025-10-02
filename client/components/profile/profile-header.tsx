@@ -6,6 +6,7 @@ import { ProfileButton } from "../../components/profile/profile-button";
 import { StatBadge } from "../stat-badge";
 
 type Props = {
+  userId?: number;
   name?: string;
   email?: string;
   followers?: number;
@@ -14,14 +15,19 @@ type Props = {
 };
 
 export function ProfileHeader({
+  userId,
   name,
   email,
   followers = 0,
   following = 0,
   postsCount = 0,
 }: Props) {
-  const { signOut } = useSession();
+  const { user, signOut } = useSession();
   const router = useRouter();
+
+  const myId = typeof user?.id === "string" ? Number(user.id) : user?.id ?? -1;
+  const targetUserId = userId ?? myId;
+  const isMe = targetUserId === myId;
 
   const initials =
     name
@@ -34,6 +40,16 @@ export function ProfileHeader({
   const handleLogout = () => {
     signOut();
     router.replace("/auth");
+  };
+
+  const goFollowers = () => {
+    if (isMe) router.push("/followers");
+    else router.push(`/followers?userId=${targetUserId}`);
+  };
+
+  const goFollowing = () => {
+    if (isMe) router.push("/following");
+    else router.push(`/following?userId=${targetUserId}`);
   };
 
   return (
@@ -97,7 +113,7 @@ export function ProfileHeader({
               variant="ghost"
               icon="enter"
               label="Log Out"
-              onPress={() => handleLogout()}
+              onPress={handleLogout}
             />
           </View>
         </View>
@@ -121,13 +137,13 @@ export function ProfileHeader({
           <ProfileButton
             icon="people-outline"
             label={`Followers: ${followers}`}
-            onPress={() => router.push("/follows")}
+            onPress={goFollowers}
             style={{ flex: 1 }}
           />
           <ProfileButton
             icon="person-outline"
             label={`Following: ${following}`}
-            onPress={() => router.push("/follows")}
+            onPress={goFollowing}
             style={{ flex: 1 }}
           />
         </View>

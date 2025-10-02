@@ -9,6 +9,7 @@ import path from 'path';
 import { authApi } from "./controllers/auth-api";
 import { postApi } from './controllers/post-api';
 import { profileApi } from "./controllers/profile-api";
+import { searchApi } from "./controllers/search-api";
 import { db } from "./db";
 import { checkMigrations } from "./db-versions";
 import { saveUploadedImage } from './service/upload-service';
@@ -31,6 +32,7 @@ const appRouter = router({
   post: postApi,
   profile: profileApi,
   auth: authApi,
+  search: searchApi,
 });
 
 export type AppRouter = typeof appRouter;
@@ -71,10 +73,8 @@ const upload = multer({
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// Health check
 app.get('/health', (_req: Request, res: Response) => res.json({ status: 'ok' }));
 
-// Image upload REST endpoint
 app.post('/api/upload', upload.single('image'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
