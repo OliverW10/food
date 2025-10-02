@@ -7,9 +7,9 @@ Expo client app, tRPC backend with prisma and postgreSql
 1. If you don't already have nodejs installed (tested with 22 & 24), install it ([nvm](https://github.com/coreybutler/nvm-windows) is very good), then do `npm i` in the project root to install the packages for both the backend and frontend.
 
 1. Setup database.
-    - Use the docker-compose.yml to run the database, you cant install docker desktop on work laptops so I use podman instead. You can also used docker through WSL, but had some issue with network access with that.
-    - Install podman desktop and podman compose. PgAdmin is also helpful to have
-    - Run `podman compose -f docker-compose.yaml up -d`
+   - Use the docker-compose.yml to run the database, you cant install docker desktop on work laptops so I use podman instead. You can also used docker through WSL, but had some issue with network access with that.
+   - Install podman desktop and podman compose. PgAdmin is also helpful to have
+   - Run `podman compose -f docker-compose.yaml up -d`
 1. Run `npx prisma migrate dev` in `server/src/prisma/` to apply the schema to the database and generate prisma client files
 
 You should then be able to run `npm run dev` in both the server and client directories and use the website version of the app. To use an emulator follow the below instuctions.
@@ -32,7 +32,16 @@ It looks like its possible to setup a github action to create an ios build (`xco
 
 <https://docs.expo.dev/guides/local-app-development/#local-app-compilation>
 
+# Convenient Prisma Scripts:
+
+- when the db is not up to date with the schema and you want to keep the data: `npx prisma migrate dev --name your_migration_name`
+- when the db is not up to date with the schema and you don't care about the data: `npx prisma db push --force-reset` or `npx prisma migrate reset`
+- for viewing db in web: `npx prisma studio`
+
 # TODOS:
+
+- authorized routes reject when not signed in, send to auth page
+
 - auto refresh access token when api call fails with 401
 - decode and store user info from jwt in fe so i can access user id and email without extra api calls
 - mfa setup

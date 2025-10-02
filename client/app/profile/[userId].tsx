@@ -4,12 +4,14 @@ import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
 import { ProfileTopBar } from "@/components/profile/profile-top-bar";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
+import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileView({ userId }: { userId?: number }) {
-  const { user, session } = useSession();
+  const router = useRouter();
+  const { user, session, signOut } = useSession();
 
   const input = useMemo(() => {
     if (userId != null) return { id: userId };
@@ -29,9 +31,21 @@ export default function ProfileView({ userId }: { userId?: number }) {
       refetchOnWindowFocus: false,
     });
 
+  const handleLogout = async () => {
+    signOut();
+    router.replace("/auth");
+  };
+
   if (!session) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#0b0f16",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <ActivityIndicator color="#fff" />
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Please sign in…</Text>
       </SafeAreaView>
@@ -42,7 +56,14 @@ export default function ProfileView({ userId }: { userId?: number }) {
   }
   if (isLoading || isFetching) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#0b0f16",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <ActivityIndicator color="#fff" />
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading profile…</Text>
       </SafeAreaView>
@@ -72,6 +93,20 @@ export default function ProfileView({ userId }: { userId?: number }) {
             />
           }
         />
+
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            marginTop: 14,
+            marginHorizontal: 12,
+            padding: 12,
+            backgroundColor: "#1f2937",
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "600" }}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
