@@ -10,12 +10,19 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileView() {
+  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
+  if (targetUserId === -1){
+    return <Text>Loading</Text>
+  }
+  return <ProfileViewInternal userId={targetUserId} />
+}
+
+export function ProfileViewInternal({ userId }: { userId: number }) {
   const router = useRouter();
   const { user, session, signOut } = useSession();
-  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
 
   const { data: profile, isLoading, isFetching, isError, error } =
-    trpc.profile.get.useQuery({ id: (targetUserId ?? -1) }, {
+    trpc.profile.get.useQuery({ id: userId }, {
       // enabled: !!session && !!userId,
       staleTime: 0,
       refetchOnMount: "always",
