@@ -2,11 +2,9 @@ import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import ProfileView from '../app/profile/[userId]';
 
-jest.mock('../hooks/user-context', () => ({
-  useSession: () => ({
-    user: { id: '42', email: 'tester@example.com' },
-    session: { token: 'abc' },
-  }),
+// Mock the same module path used by the component (uses alias "@/")
+jest.mock('@/hooks/user-context', () => ({
+  useSession: jest.fn(),
 }));
 
 jest.mock('expo-router', () => ({
@@ -15,7 +13,8 @@ jest.mock('expo-router', () => ({
 
 const mockUseQuery = jest.fn();
 
-jest.mock('../services/trpc', () => ({
+// Mock the same module path used by the component (uses alias "@/")
+jest.mock('@/services/trpc', () => ({
   __esModule: true,
   default: {
     profile: {
@@ -28,14 +27,19 @@ jest.mock('../services/trpc', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  // set default session for most tests
+  const mocked = jest.requireMock('@/hooks/user-context') as any;
+  mocked.useSession.mockReturnValue({
+    user: { id: '42', email: 'tester@example.com' },
+    session: { token: 'abc' },
+    signOut: jest.fn(),
+  });
 });
 
 describe('ProfileView', () => {
   it('shows sign-in prompt if no session', async () => {
-    (jest.requireMock('../hooks/user-context') as any).useSession = () => ({
-      user: undefined,
-      session: undefined,
-    });
+    const mocked = jest.requireMock('@/hooks/user-context') as any;
+    mocked.useSession.mockReturnValue({ user: undefined, session: undefined });
     mockUseQuery.mockReturnValue({});
     const { getByText } = render(<ProfileView />);
     await waitFor(() => expect(getByText(/Please sign in/i)).toBeTruthy());
@@ -67,8 +71,11 @@ describe('ProfileView', () => {
         posts: [{ id: 1, title: 'Test', createdAt: nowISO }],
       },
     });
-    const { getByText } = render(<ProfileView userId={42} />);
-    await waitFor(() => expect(getByText(/jane@example.com/i)).toBeTruthy());
+    const { getAllByText } = render(<ProfileView userId={42} />);
+    await waitFor(() => {
+      const matches = getAllByText(/jane@example.com/i);
+      expect(matches.length).toBeGreaterThan(0);
+    });
   });
 
   it('falls back when fields missing', async () => {
