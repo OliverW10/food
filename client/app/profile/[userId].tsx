@@ -4,27 +4,19 @@ import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
 import { ProfileTopBar } from "@/components/profile/profile-top-bar";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProfileView({ userId }: { userId?: number }) {
+export default function ProfileView() {
   const router = useRouter();
   const { user, session, signOut } = useSession();
-
-  const input = useMemo(() => {
-    if (userId != null) return { id: userId };
-    const raw = user?.id;
-    const authedId = typeof raw === "string" ? Number(raw) : raw;
-    if (authedId != null) return { id: authedId };
-    if (user?.email) return { email: user.email };
-    return undefined;
-  }, [userId, user?.id, user?.email]);
+  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
 
   const { data: profile, isLoading, isFetching, isError, error } =
-    trpc.profile.get.useQuery((input ?? { id: -1 }) as any, {
-      enabled: !!session && !!input && (input as any).id !== -1,
+    trpc.profile.get.useQuery({ id: (targetUserId ?? -1) }, {
+      // enabled: !!session && !!userId,
       staleTime: 0,
       refetchOnMount: "always",
       refetchOnReconnect: true,
@@ -50,9 +42,6 @@ export default function ProfileView({ userId }: { userId?: number }) {
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Please sign in…</Text>
       </SafeAreaView>
     );
-  }
-  if (!input) {
-    return <Text style={{ color: "#fff" }}>No profile to load.</Text>;
   }
   if (isLoading || isFetching) {
     return (
