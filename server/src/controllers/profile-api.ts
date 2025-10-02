@@ -7,11 +7,22 @@ import { protectedProcedure, router } from "../trpc";
 export const profileApi = router({
   get: protectedProcedure
     .input(idInputSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      const viewerId = Number(ctx.user?.sub);
+      if (!viewerId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       const u = await db.user.findUnique({
         where: { id: input.id },
         include: {
-          posts: { include: { image: true } },
+          posts: {
+            orderBy: { createdAt: "desc" },
+            include: {
+              image: true,
+              author: { select: { id: true, email: true, name: true } },
+              _count: { select: { likes: true, comments: true } },
+              likes: { select: { userId: true } },
+            },
+          },
           _count: {
             select: { Followers: true, Following: true },
           },
@@ -32,11 +43,17 @@ export const profileApi = router({
           id: p.id,
           title: p.title,
           description: p.description ?? "",
-          authorId: p.authorId,
-          foodId: p.foodId ?? null,
-          imageUrl: p.image?.storageUrl,
+          author: {
+            id: p.author.id,
+            email: p.author.email,
+            name: p.author.name ?? p.author.email.split("@")[0],
+          },
+          likesCount: p._count.likes,
+          commentsCount: p._count.comments,
+          likedByMe: p.likes.some((l) => l.userId === viewerId),
+          recentComments: undefined, // not needed for profile view currently
           createdAt: p.createdAt,
-          published: p.published ?? false,
+          imageUrl: p.image?.storageUrl,
         })),
       };
     }),

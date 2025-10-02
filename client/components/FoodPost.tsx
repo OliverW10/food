@@ -122,10 +122,10 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: 16, paddingHorizontal: 12, paddingTop: 8, paddingBottom: 12 }}>
         <TouchableOpacity accessibilityLabel="Like post" onPress={toggleLike}>
-          <Text style={{ fontSize: 18 }}>{review.likedByMe ? '♥' : '♡'} {review.likesCount}</Text>
+          <Text style={{ fontSize: 18, color: review.likedByMe ? "red" : "white" }}>{review.likedByMe ? '♥' : '♡'} {review.likesCount}</Text>
         </TouchableOpacity>
         <TouchableOpacity accessibilityLabel="Open comments" onPress={onOpenComments}>
-          <Text style={{ fontSize: 18 }}>💬 {review.commentsCount}</Text>
+          <Text style={{ fontSize: 18, color: "white" }}>💬 {review.commentsCount}</Text>
         </TouchableOpacity>
       </View>
     </View>
