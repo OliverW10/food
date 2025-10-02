@@ -487,76 +487,76 @@ async function main() {
     "https://picsum.photos/seed/fishtacos/800/600"
   );
   const imgQuesadillas = await createImage(
-    "https://picsum.photos/seed/quesadillas/800/600"
+    "https://www.recipetineats.com/tachyon/2018/06/Quesadillas_4.jpg"
   );
   const imgPozole = await createImage(
-    "https://picsum.photos/seed/pozole/800/600"
+    "https://hips.hearstapps.com/hmg-prod/images/pozole-index-655b86b9eeb3f.jpg?crop=0.502xw:1.00xh;0.0561xw,0&resize=1200:*"
   );
   const imgGuacamoleChips = await createImage(
-    "https://picsum.photos/seed/guacamolechips/800/600"
+    "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2019/04/Guacamole-3-2.jpg"
   );
   const imgElote = await createImage(
-    "https://picsum.photos/seed/elote/800/600"
+    "https://cdn.loveandlemons.com/wp-content/uploads/2023/06/elote.jpg"
   );
   const imgChurros = await createImage(
-    "https://picsum.photos/seed/churros/800/600"
+    "https://www.allrecipes.com/thmb/zfiXdLbitO4XtOuKobYCmnDoPg4=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-recipe-24700-churros-VAT-hero-03-4x3-a7f6af1860934b0385f84ab9f13f2613.jpg"
   );
   const imgMolePoblano = await createImage(
-    "https://picsum.photos/seed/molepoblano/800/600"
+    "https://www.mexicoinmykitchen.com/wp-content/uploads/2009/02/Mole-Poblano-recipe-2-500x500.jpg"
   );
   const imgSopaDeLima = await createImage(
-    "https://picsum.photos/seed/sopadelima/800/600"
+    "https://www.seriouseats.com/thmb/9lylUmOSkIlUH1_hNa6zTmenGl4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2016__05__20160505-sopa-de-lima-22-a78c408efb60416d8b6e36b45e3977fa.jpg"
   );
   const imgCeviche = await createImage(
-    "https://picsum.photos/seed/ceviche/800/600"
+    "https://www.feastingathome.com/wp-content/uploads/2015/04/Ceviche-Recipe.jpg"
   );
   const imgCarnitas = await createImage(
-    "https://picsum.photos/seed/carnitas/800/600"
+    "https://www.recipetineats.com/tachyon/2018/05/Pork-Carnitas-1000px.jpg?resize=500%2C375"
   );
   const imgPancakes = await createImage(
-    "https://picsum.photos/seed/pancakes/800/600"
+    "https://www.marthastewart.com/thmb/Vgb9cQSlegZz5fcoSbkkqyHPmHY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/338185-basic-pancakes-09-00b18f8418fd4e52bb2050173d083d04.jpg"
   );
   const imgScrambledEggs = await createImage(
-    "https://picsum.photos/seed/scrambledeggs/800/600"
+    "https://hips.hearstapps.com/hmg-prod/images/scrambled-eggs-socialindex-web-0066-lp-del039925-67eb04f9a151b.jpg?crop=0.8887545953568011xw:1xh;center,top&resize=1200:*"
   );
   const imgFrenchToast = await createImage(
-    "https://picsum.photos/seed/frenchtoast/800/600"
+    "https://www.allrecipes.com/thmb/GHsW45mTpy_2EFSjCNEPdeo7Tek=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-recipe-16895-fluffy-french-toast-hero-01-ddmfs-4x3-7fd61e054f2c4f0f868b7ab0dd8767ae.jpg"
   );
   const imgBreakfastBurrito = await createImage(
-    "https://picsum.photos/seed/breakfastburrito/800/600"
+    "https://hips.hearstapps.com/hmg-prod/images/breakfast-burrito-index-66a7e23ca6c89.jpg?crop=0.669xw:1.00xh;0.261xw,0&resize=1200:*"
   );
   const imgEggsBenedict = await createImage(
     "https://www.allrecipes.com/thmb/eJzkN3OxGGhkDHCU0puFRtyBmls=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/17205-eggs-benedict-DDMFS-4x3-a0042d5ae1da485fac3f468654187db0.jpg"
   );
   const imgGreekYogurtParfait = await createImage(
-    "https://picsum.photos/seed/greekyogurtparfait/800/600"
+    "https://foolproofliving.com/wp-content/uploads/2017/12/Greek-Yogurt-Parfait-Recipe.jpg"
   );
   const imgOatmeal = await createImage(
-    "https://picsum.photos/seed/oatmeal/800/600"
+    "https://www.veggiesdontbite.com/wp-content/uploads/2020/04/vegan-oatmeal-recipe-FI-500x500.jpg"
   );
   const imgBagel = await createImage(
-    "https://picsum.photos/seed/bagel/800/600"
+    "https://www.layersofhappiness.com/wp-content/uploads/2023/07/Everything-Bagel-Breakfast-Sandwich-6-700x1050.jpg"
   );
   const imgSausageMuffin = await createImage(
-    "https://picsum.photos/seed/sausagemuffin/800/600"
+    "https://www.recipetineats.com/tachyon/2016/05/Sausage-Egg-McMuffins_5.jpg"
   );
   const imgBananaSmoothie = await createImage(
-    "https://picsum.photos/seed/bananasmoothie/800/600"
+    "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2023/06/Banana-Smoothie-5.jpg"
   );
   const imgCinnamonRolls = await createImage(
-    "https://picsum.photos/seed/cinnamonrolls/800/600"
+    "https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_4:3/k%2FPhoto%2FRecipes%2F2024-11-cinnamon-rolls%2Fcinnamon-rolls-211"
   );
   const imgGranola = await createImage(
-    "https://picsum.photos/seed/granola/800/600"
+    "https://cookieandkate.com/images/2015/10/best-granola-recipe-1.jpg"
   );
   const imgVeggieOmelette = await createImage(
-    "https://picsum.photos/seed/veggieomelette/800/600"
+    "https://www.healthyfood.com/wp-content/uploads/2018/02/Basic-omelette.jpg"
   );
   const imgFruitSalad = await createImage(
-    "https://picsum.photos/seed/fruitsalad/800/600"
+    "https://cdn.loveandlemons.com/wp-content/uploads/2025/06/fruit-salad.jpg"
   );
   const imgWaffles = await createImage(
-    "https://picsum.photos/seed/waffles/800/600"
+    "https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/c6ea15c4-52ab-4119-b886-a7fb1d052f45/Derivates/b18fcddc-3b31-4ae9-9cd1-5a81751d91b3.jpg"
   );
 
   // === POSTS ===
