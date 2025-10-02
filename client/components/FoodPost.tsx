@@ -19,7 +19,8 @@ type FoodPostProps = {
   onOpenComments?: () => void;
 } & ViewProps;
 
-export function FoodPost({ review, onOpenComments }: FoodPostProps) {
+
+export function FoodPost({ review, onOpenComments, ...viewProps }: FoodPostProps) {
   const router = useRouter();
   const utils: any = trpc.useUtils?.() ?? {
     post: {
@@ -78,6 +79,7 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
 
   const authorDisplayName = review.author.name ?? review.author.email.split("@")[0];
   const goToAuthorProfile = () => router.push(`/profile/${review.author.id}`);
+  const goToPost = () => router.push(`/post/${review.id}`);
 
   const imageStyle = StyleSheet.create({
     my_image: {
@@ -87,7 +89,12 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
   });
 
   return (
-    <View style={{ marginBottom: 20, backgroundColor: '#111827', borderRadius: 12, overflow: 'hidden' }}>
+    <TouchableOpacity
+      activeOpacity={0.93}
+      onPress={goToPost}
+      style={{ marginBottom: 20, backgroundColor: '#111827', borderRadius: 12, overflow: 'hidden' }}
+      {...viewProps}
+    >
       {/* Header with author */}
       <TouchableOpacity
         accessibilityRole="button"
@@ -128,6 +135,6 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
           <Text style={{ fontSize: 18, color: "white" }}>💬 {review.commentsCount}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

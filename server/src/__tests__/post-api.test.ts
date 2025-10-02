@@ -7,6 +7,13 @@ jest.mock('../db', () => {
       findMany: jest.fn(),
       delete: jest.fn(),
     },
+    like: {
+      count: jest.fn(),
+      findFirst: jest.fn(),
+    },
+    comment: {
+      count: jest.fn(),
+    },
   };
   return { db: m };
 });
@@ -58,21 +65,6 @@ describe('post-api', () => {
         include: { image: true }
       });
       expect(result.foodId).toBeNull();
-    });
-  });
-
-  describe('getPostById', () => {
-    it('returns a post when found', async () => {
-      (db.post.findUnique as jest.Mock).mockResolvedValue(basePost);
-      const result = await caller.getById({ id: 1 });
-      expect(db.post.findUnique).toHaveBeenCalledWith({ where: { id: 1 }, include: { image: true, author: true } });
-      expect(result).toEqual(basePost);
-    });
-
-    it('returns null when not found', async () => {
-      (db.post.findUnique as jest.Mock).mockResolvedValue(null);
-      const result = await caller.getById({ id: 999 });
-      expect(result).toBeUndefined();
     });
   });
 

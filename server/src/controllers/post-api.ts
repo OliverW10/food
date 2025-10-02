@@ -4,7 +4,7 @@ import { z } from "zod";
 import { idInputSchema } from "../api-schema/app-schema";
 import { createPostInputSchema } from "../api-schema/post-schemas";
 import { db } from "../db";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const postApi = router({
   create: protectedProcedure
@@ -23,14 +23,48 @@ export const postApi = router({
       return post;
     }),
 
-  getById: publicProcedure
+  getById: protectedProcedure
     .input(idInputSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      // Get userId if available (for likedByMe)
+      let userId: number | null = null;
+      if (ctx?.user?.sub) {
+        userId = Number(ctx.user.sub);
+      }
+
       const post = await db.post.findUnique({
         where: { id: input.id },
-        include: { image: true, author: true },
+        include: {
+          author: true,
+          image: true,
+        },
       });
-      return post ?? undefined;
+      if (!post) return undefined;
+
+      // Likes count
+      const likesCount = await db.like.count({ where: { postId: post.id } });
+      // Comments count
+      const commentsCount = await db.comment.count({ where: { postId: post.id } });
+      // Liked by me
+      let likedByMe = false;
+      if (userId) {
+        likedByMe = !!(await db.like.findFirst({ where: { postId: post.id, userId } }));
+      }
+
+      return {
+        id: post.id,
+        title: post.title,
+        description: post.description,
+        author: {
+          id: post.author.id,
+          email: post.author.email,
+          name: post.author.name ?? post.author.email.split("@")[0],
+        },
+        likesCount,
+        commentsCount,
+        likedByMe,
+        imageUrl: post.image?.storageUrl,
+      };
     }),
 
   getFeed: protectedProcedure

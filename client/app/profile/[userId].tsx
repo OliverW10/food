@@ -68,6 +68,20 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
   if (isError) {
     return <Text style={{ color: "#fff" }}>{error instanceof Error ? error.message : "Error"}</Text>;
   }
+  if (!profile) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#0b0f16",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>User does not exist.</Text>
+      </SafeAreaView>
+    );
+  }
 
   const posts: PostUI[] = (profile?.posts ?? []).map((p) => ({
     id: p.id,
