@@ -1,7 +1,7 @@
 // server/src/prisma/seed.ts
-import { Prisma, PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import "dotenv/config"; // load .env for DATABASE_URL
+import { Prisma, PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import "dotenv/config";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ async function upsertCategory(name: string) {
 
 async function upsertFood(categoryId: number, name: string) {
   return prisma.food.upsert({
-    where: { name }, // assuming names are unique-ish in your dataset
+    where: { name },
     update: { categoryId },
     create: { name, categoryId },
   });
@@ -33,7 +33,6 @@ async function main() {
     where: { email: "alice@example.com" },
     update: {},
     create: {
-      id: 1,
       email: "alice@example.com",
       name: "Alice",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -44,7 +43,6 @@ async function main() {
     where: { email: "bob@example.com" },
     update: {},
     create: {
-      id: 2,
       email: "bob@example.com",
       name: "Bob",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -55,7 +53,6 @@ async function main() {
     where: { email: "charlie@example.com" },
     update: {},
     create: {
-      id: 3,
       email: "charlie@example.com",
       name: "Charlie",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -66,7 +63,6 @@ async function main() {
     where: { email: "diana@example.com" },
     update: {},
     create: {
-      id: 4,
       email: "diana@example.com",
       name: "Diana",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -77,7 +73,6 @@ async function main() {
     where: { email: "edward@example.com" },
     update: {},
     create: {
-      id: 5,
       email: "edward@example.com",
       name: "Edward",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -88,7 +83,6 @@ async function main() {
     where: { email: "fiona@example.com" },
     update: {},
     create: {
-      id: 6,
       email: "fiona@example.com",
       name: "Fiona",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -99,7 +93,6 @@ async function main() {
     where: { email: "george@example.com" },
     update: {},
     create: {
-      id: 7,
       email: "george@example.com",
       name: "George",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -110,7 +103,6 @@ async function main() {
     where: { email: "helen@example.com" },
     update: {},
     create: {
-      id: 8,
       email: "helen@example.com",
       name: "Helen",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -121,7 +113,6 @@ async function main() {
     where: { email: "ian@example.com" },
     update: {},
     create: {
-      id: 9,
       email: "ian@example.com",
       name: "Ian",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -132,7 +123,6 @@ async function main() {
     where: { email: "jessica@example.com" },
     update: {},
     create: {
-      id: 10,
       email: "jessica@example.com",
       name: "Jessica",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -153,7 +143,6 @@ async function main() {
     where: { email: "laura@example.com" },
     update: {},
     create: {
-      id: 11,
       email: "laura@example.com",
       name: "Laura",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -164,7 +153,6 @@ async function main() {
     where: { email: "michael@example.com" },
     update: {},
     create: {
-      id: 12,
       email: "michael@example.com",
       name: "Michael",
       passwordHash: await bcrypt.hash("password1", 10),
@@ -594,7 +582,7 @@ async function main() {
         imageId: imgPizza.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Beef Tacos",
         description:
           "Taco night is a tradition in my house, and these beef tacos are always the star. I love piling on fresh pico de gallo and a squeeze of lime, then gathering around the table with friends. The crunch of the shell and the burst of flavors always spark laughter and stories about our favorite street food adventures.",
@@ -603,7 +591,7 @@ async function main() {
         imageId: imgTacos.id,
       },
       {
-        authorId: charlie.id,
+        authorId: kevin.id,
         title: "Sushi Platter",
         description:
           "I spent the afternoon learning how to shape sushi rice and slice fish just right. My first attempt at a sushi platter was far from perfect, but the salmon, tuna, and tamago brought a taste of the sea to my kitchen. Sharing it with my roommate, we laughed at our clumsy rolls and dreamed of visiting Tsukiji Market someday.",
@@ -612,7 +600,7 @@ async function main() {
         imageId: imgSushi.id,
       },
       {
-        authorId: bob.id,
+        authorId: helen.id,
         title: "Avocado Toast",
         description:
           "This morning’s breakfast was a simple pleasure: thick slices of sourdough, toasted until golden, topped with creamy avocado and a sprinkle of chili flakes. I ate it on the balcony, watching the city wake up, and felt grateful for the little rituals that make each day feel special.",
@@ -621,7 +609,7 @@ async function main() {
         imageId: imgAvoToast.id,
       },
       {
-        authorId: charlie.id,
+        authorId: george.id,
         title: "Pocky Sticks",
         description:
           "Whenever I need a pick-me-up, I reach for a box of Pocky. There’s something nostalgic about these chocolate-covered biscuit sticks—they remind me of after-school snacks and late-night study sessions. Today, I shared them with a friend over coffee, and we reminisced about our favorite childhood treats.",
@@ -630,7 +618,7 @@ async function main() {
         imageId: imgPockySticks.id,
       },
       {
-        authorId: bob.id,
+        authorId: laura.id,
         title: "Dorayaki Pancakes",
         description:
           "Making dorayaki pancakes is a labor of love. The batter sizzles on the pan, and the sweet red bean paste oozes out with every bite. I made a batch for my neighbor, who grew up in Japan, and she said they tasted just like home. That’s the best compliment I could hope for.",
@@ -657,7 +645,7 @@ async function main() {
         imageId: imgChickenKatsuCurry.id,
       },
       {
-        authorId: charlie.id,
+        authorId: michael.id,
         title: "Salmon Nigiri",
         description:
           "There’s an art to making salmon nigiri. I spent the afternoon perfecting the rice and slicing the salmon just so. When I finally got it right, I felt a quiet sense of accomplishment. Sharing the nigiri with friends, we toasted to small victories and good company.",
@@ -666,7 +654,7 @@ async function main() {
         imageId: imgSalmonNigiri.id,
       },
       {
-        authorId: bob.id,
+        authorId: diana.id,
         title: "Tonkotsu Ramen",
         description:
           "I’ve always been intimidated by tonkotsu ramen, but today I finally gave it a try. The broth simmered for hours, filling my home with an irresistible aroma. When I took my first bite, I couldn’t believe I’d made something so rich and flavorful. It’s a recipe I’ll return to again and again.",
@@ -675,7 +663,7 @@ async function main() {
         imageId: imgTonkotsuRamen.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Takoyaki",
         description:
           "Making takoyaki is always a fun, messy adventure. The batter sizzles in the special pan, and I try to flip each ball just right. My friends and I compete to see whose takoyaki turns out the roundest, and we always end up laughing and covered in flour.",
@@ -684,7 +672,7 @@ async function main() {
         imageId: imgTakoyaki.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Okonomiyaki",
         description:
           "Okonomiyaki is my go-to dish when I want something hearty and satisfying. I love mixing the batter, adding cabbage and pork, and watching it all come together on the griddle. Topped with a swirl of mayo and a sprinkle of bonito flakes, it’s pure comfort on a plate.",
@@ -693,7 +681,7 @@ async function main() {
         imageId: imgOkonomiyaki.id,
       },
       {
-        authorId: charlie.id,
+        authorId: alice.id,
         title: "Miso Soup",
         description:
           "Whenever I’m feeling under the weather, I make a pot of miso soup. The gentle flavors of tofu and seaweed are soothing, and the steam warms me from the inside out. It’s a simple recipe, but it always makes me feel cared for.",
@@ -729,7 +717,7 @@ async function main() {
         imageId: imgChashuRiceBowl.id,
       },
       {
-        authorId: charlie.id,
+        authorId: kevin.id,
         title: "Matcha Ice Cream",
         description:
           "On a hot afternoon, I decided to make matcha ice cream from scratch. The earthy aroma of the matcha powder filled my kitchen as I whisked it into the creamy base. After hours of anticipation, the first spoonful was a revelation—smooth, slightly bitter, and perfectly sweet. I sat on the porch, letting the coolness melt on my tongue, and thought about the tea ceremonies I’d read about in old Japanese novels. It’s amazing how a simple dessert can transport you to another world, even if just for a moment. Sharing it with friends, we laughed about our failed attempts at other desserts and agreed that this one was a keeper.",
@@ -747,7 +735,7 @@ async function main() {
         imageId: imgSpaghettiCarbonara.id,
       },
       {
-        authorId: charlie.id,
+        authorId: laura.id,
         title: "Lasagna",
         description:
           "Lasagna is a labor of love. I spent the afternoon simmering the sauce, layering noodles, and grating cheese. The house filled with the scent of garlic and tomatoes, and I couldn’t wait to dig in. When I finally pulled the bubbling dish from the oven, it was golden and perfect. Each bite was a reminder of family dinners and laughter around the table. I shared leftovers with my neighbor, who said it tasted just like her grandmother’s. That’s the highest praise I could hope for.",
@@ -756,7 +744,7 @@ async function main() {
         imageId: imgLasagna.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Fettuccine Alfredo",
         description:
           "There’s something indulgent about fettuccine Alfredo. I made the sauce with real butter and cream, tossing it with fresh pasta until every strand was coated. The result was rich and satisfying, the kind of meal that makes you want to linger at the table. I paired it with a glass of white wine and a good book, savoring the quiet evening. Sometimes, the best meals are the ones you make just for yourself.",
@@ -774,7 +762,7 @@ async function main() {
         imageId: imgCapreseSalad.id,
       },
       {
-        authorId: bob.id,
+        authorId: fiona.id,
         title: "Risotto alla Milanese",
         description:
           "Making risotto alla Milanese is a test of patience. I stirred the rice slowly, adding broth one ladle at a time, until it was creamy and tender. The saffron gave it a beautiful golden hue, and the flavor was delicate but rich. I served it with a sprinkle of parmesan and a glass of wine, feeling like I’d brought a little bit of Milan into my kitchen.",
@@ -792,7 +780,7 @@ async function main() {
         imageId: imgBruschetta.id,
       },
       {
-        authorId: bob.id,
+        authorId: edward.id,
         title: "Gnocchi with Pesto",
         description:
           "I made gnocchi with pesto for dinner tonight, and it was a hit. The pillowy potato dumplings soaked up the bright, herby sauce, and every bite was a delight. Cooking from scratch takes time, but the results are always worth it. I shared the meal with friends, and we lingered at the table long after the plates were empty.",
@@ -810,7 +798,7 @@ async function main() {
         imageId: imgTiramisu.id,
       },
       {
-        authorId: bob.id,
+        authorId: ian.id,
         title: "Stuffed Cannelloni",
         description:
           "Stuffed cannelloni is a weekend project. I made the pasta from scratch, rolled it out thin, and filled each tube with a mixture of ricotta and spinach. Baked in a rich tomato sauce, it was the ultimate comfort food. I invited friends over to share, and we spent the evening eating, drinking, and catching up.",
@@ -828,7 +816,7 @@ async function main() {
         imageId: imgEggplantParmigiana.id,
       },
       {
-        authorId: bob.id,
+        authorId: jessica.id,
         title: "Minestrone Soup",
         description:
           "Minestrone soup is my answer to chilly days. I chop whatever vegetables I have on hand, simmer them with beans and pasta, and let the flavors meld together. The result is a hearty, nourishing soup that warms you from the inside out. I like to make a big pot and eat it throughout the week.",
@@ -855,7 +843,7 @@ async function main() {
         imageId: imgArancini.id,
       },
       {
-        authorId: charlie.id,
+        authorId: jessica.id,
         title: "Panna Cotta",
         description:
           "Panna cotta is my go-to dessert for dinner parties. It’s elegant but surprisingly easy to make. I infuse the cream with vanilla, let it set, and serve it with a homemade berry sauce. The contrast of creamy and tart is irresistible, and it always impresses guests.",
@@ -873,7 +861,7 @@ async function main() {
         imageId: imgBologneseSauce.id,
       },
       {
-        authorId: charlie.id,
+        authorId: michael.id,
         title: "Chicken Enchiladas",
         description:
           "Chicken enchiladas are my favorite way to use up leftover roast chicken. I roll the meat in tortillas, smother them in sauce and cheese, and bake until bubbly. The result is a comforting, satisfying meal that always disappears fast. I like to serve them with a side of rice and beans.",
@@ -891,7 +879,7 @@ async function main() {
         imageId: imgCarneAsada.id,
       },
       {
-        authorId: charlie.id,
+        authorId: ian.id,
         title: "Chiles Rellenos",
         description:
           "Chiles rellenos are a labor of love. I roast and peel the poblano peppers, stuff them with cheese, and dip them in a light batter before frying. The result is a dish that’s crispy on the outside, gooey on the inside, and full of flavor. It’s always worth the effort.",
@@ -909,7 +897,7 @@ async function main() {
         imageId: imgTamales.id,
       },
       {
-        authorId: charlie.id,
+        authorId: diana.id,
         title: "Huevos Rancheros",
         description:
           "Huevos rancheros is my go-to breakfast on lazy weekends. I fry eggs, place them on warm tortillas, and top them with spicy salsa. The combination of flavors and textures is unbeatable. I like to eat it outside, with a cup of coffee and the morning sun on my face.",
@@ -927,7 +915,7 @@ async function main() {
         imageId: imgFishTacos.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Quesadillas",
         description:
           "Quesadillas are my favorite midnight snack. I fill tortillas with cheese, grill them until golden, and cut them into wedges. Sometimes I add beans, chicken, or veggies, depending on what I have in the fridge. They’re quick, easy, and always satisfying.",
@@ -945,7 +933,7 @@ async function main() {
         imageId: imgPozole.id,
       },
       {
-        authorId: charlie.id,
+        authorId: alice.id,
         title: "Guacamole & Chips",
         description:
           "Guacamole and chips are a staple at every party I host. I mash ripe avocados with lime, cilantro, and a bit of jalapeño, then serve it with crunchy tortilla chips. It’s the perfect snack for sharing, and it always disappears fast.",
@@ -990,7 +978,7 @@ async function main() {
         imageId: imgSopaDeLima.id,
       },
       {
-        authorId: bob.id,
+        authorId: ian.id,
         title: "Ceviche",
         description:
           "Ceviche is my favorite dish for hot days. I marinate fresh fish in lime juice, toss it with cilantro, onions, and tomatoes, and serve it cold. The flavors are bright and zesty, and it’s the perfect appetizer for a summer party.",
@@ -999,7 +987,7 @@ async function main() {
         imageId: imgCeviche.id,
       },
       {
-        authorId: charlie.id,
+        authorId: fiona.id,
         title: "Carnitas",
         description:
           "Carnitas are a weekend project. I slow-cook pork until it’s tender, then crisp it up in a hot pan. The result is juicy, flavorful meat that’s perfect for tacos, burritos, or just eating straight from the pan. I like to serve it with pickled onions and fresh salsa.",
@@ -1008,7 +996,7 @@ async function main() {
         imageId: imgCarnitas.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Pancakes with Syrup",
         description:
           "Pancakes with syrup are my favorite way to start the weekend. I make a big stack, drizzle them with maple syrup, and eat them while still in my pajamas. It’s a simple pleasure that never gets old.",
@@ -1026,7 +1014,7 @@ async function main() {
         imageId: imgScrambledEggs.id,
       },
       {
-        authorId: bob.id,
+        authorId: michael.id,
         title: "French Toast",
         description:
           "French toast is my favorite way to use up stale bread. I soak thick slices in a mixture of eggs, milk, and cinnamon, then fry them until golden. A dusting of powdered sugar and a drizzle of syrup make it extra special.",
@@ -1044,7 +1032,7 @@ async function main() {
         imageId: imgBreakfastBurrito.id,
       },
       {
-        authorId: bob.id,
+        authorId: edward.id,
         title: "Eggs Benedict",
         description:
           "Eggs Benedict is my go-to brunch dish. I poach eggs, place them on toasted English muffins, and top them with homemade hollandaise sauce. It’s a bit of a project, but the results are always worth it.",
@@ -1062,7 +1050,7 @@ async function main() {
         imageId: imgGreekYogurtParfait.id,
       },
       {
-        authorId: bob.id,
+        authorId: fiona.id,
         title: "Oatmeal with Berries",
         description:
           "Oatmeal with berries is my go-to breakfast in the winter. I cook the oats until creamy, then top them with a handful of fresh berries and a drizzle of honey. It’s warm, comforting, and keeps me full all morning.",
@@ -1080,7 +1068,7 @@ async function main() {
         imageId: imgBagel.id,
       },
       {
-        authorId: bob.id,
+        authorId: alice.id,
         title: "Sausage & Egg Muffin",
         description:
           "Sausage and egg muffins are my favorite breakfast on the go. I cook sausage patties, fry an egg, and sandwich them between toasted English muffins. They’re quick, portable, and always hit the spot.",
@@ -1098,7 +1086,7 @@ async function main() {
         imageId: imgBananaSmoothie.id,
       },
       {
-        authorId: bob.id,
+        authorId: george.id,
         title: "Cinnamon Rolls",
         description:
           "Cinnamon rolls are my favorite weekend baking project. I make the dough from scratch, roll it up with cinnamon sugar, and bake until golden. A drizzle of icing makes them extra special. They’re best enjoyed warm, with a cup of coffee and good company.",
@@ -1116,7 +1104,7 @@ async function main() {
         imageId: imgGranola.id,
       },
       {
-        authorId: bob.id,
+        authorId: george.id,
         title: "Veggie Omelette",
         description:
           "Veggie omelettes are my favorite way to start the day. I sauté whatever vegetables I have on hand, then fold them into fluffy eggs with a bit of cheese. It’s a healthy, filling breakfast that keeps me going all morning.",
@@ -1156,13 +1144,13 @@ async function main() {
     prisma.image.count(),
   ]);
 
-  console.log("✅ Seed complete");
+  console.log('Seed complete');
   console.table([{ users, posts, follows, categories, foods, images }]);
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seed failed:", e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

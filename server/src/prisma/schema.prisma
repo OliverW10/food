@@ -9,17 +9,20 @@ datasource db {
 
 model SystemData {
   key   String @id @db.VarChar(100)
-  value String
+  value String @db.Text
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
   name         String?
-  passwordHash String
-  Followers    Follow[] @relation("Follower")
-  Following    Follow[] @relation("Following")
   posts        Post[]
+  passwordHash String
+  Followers    Follow[]  @relation("Follower")
+  Following    Follow[]  @relation("Following")
+
+  likes    Like[]
+  comments Comment[]
 }
 
 model Follow {
@@ -37,17 +40,22 @@ model Follow {
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  title       String   @db.VarChar(255)
-  description String
-  published   Boolean  @default(false)
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  title       String    @db.VarChar(255)
+  description String    @db.Text
+  published   Boolean   @default(false)
+
+  author      User      @relation(fields: [authorId], references: [id])
   authorId    Int
+
+  food        Food?     @relation(fields: [foodId], references: [id])
   foodId      Int?
-  imageId     Int?     @unique
-  author      User     @relation(fields: [authorId], references: [id])
-  food        Food?    @relation(fields: [foodId], references: [id])
-  image       Image?   @relation(fields: [imageId], references: [id])
+  image       Image?    @relation(fields: [imageId], references: [id])
+  imageId     Int?      @unique
+
+  likes       Like[]
+  comments    Comment[]
 
   @@index([authorId])
   @@index([authorId, createdAt])
@@ -71,4 +79,24 @@ model Image {
   id         Int    @id @default(autoincrement())
   storageUrl String
   Posts      Post?
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@unique([postId, userId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  author    User     @relation(fields: [userId], references: [id])
+  userId    Int
 }

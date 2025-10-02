@@ -14,76 +14,125 @@ jest.mock("expo-router", () => ({
 }));
 
 const mockLikeMutate = jest.fn();
+const mockCommentMutate = jest.fn();
 
-jest.mock("../services/trpc", () => ({
-  __esModule: true,
-  default: {
-    post: {
-      getFeed: {
-        useInfiniteQuery: () => ({
-          data: {
-            pages: [
-              {
-                items: [
-                  {
-                    id: 1,
-                    title: "Ramen",
-                    description: "Yum",
-                    likedByMe: false,
-                    likesCount: 0,
-                    commentsCount: 2,
-                    author: { id: 5, email: "alice@example.com" },
-                  },
-                ],
-              },
-            ],
-          },
-          isLoading: false,
-          isFetching: false,
-          fetchNextPage: jest.fn(),
-          hasNextPage: false,
-          refetch: jest.fn(),
-        }),
-      },
-      likeToggle: {
-        useMutation: () => ({ mutate: mockLikeMutate }),
-      },
+jest.mock("../services/trpc", () => {
+  let mockCurrentCommentsCount = 2;
+
+  const mockUseCommentMutation = () => ({
+    mutate: (vars: any, opts?: any) => {
+      mockCommentMutate(vars, opts);
+      // Simulate server success immediately
+      opts?.onSuccess?.();
+      mockCurrentCommentsCount++;
     },
-    comments: {
-      list: {
-        useInfiniteQuery: () => ({
-          data: {
-            pages: [
-              {
-                items: [
-                  {
-                    id: 10,
-                    text: "nice!",
-                    author: { id: 6, email: "bob@example.com" },
-                  },
-                ],
-              },
-            ],
-          },
-          isLoading: false,
-        }),
-      },
-      add: {
-        useMutation: () => ({ mutate: jest.fn() }),
-      },
-    },
-    useUtils: () => ({
+  });
+
+  return {
+    __esModule: true,
+    default: {
       post: {
         getFeed: {
-          invalidate: jest.fn(),
-          setInfiniteData: jest.fn(),
-          cancel: jest.fn(),
-          getInfiniteData: jest.fn(),
+          useInfiniteQuery: () => ({
+            data: {
+              pages: [
+                {
+                  items: [
+                    {
+                      id: 1,
+                      title: "Ramen",
+                      description: "Yum",
+                      likedByMe: false,
+                      likesCount: 0,
+                      commentsCount: mockCurrentCommentsCount,
+                      author: {
+                        id: 5,
+                        email: "alice@example.com",
+                        name: "Alice",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            isLoading: false,
+            isFetching: false,
+            fetchNextPage: jest.fn(),
+            hasNextPage: false,
+            refetch: jest.fn(),
+          }),
+        },
+        likeToggle: {
+          useMutation: () => ({ mutate: mockLikeMutate }),
         },
       },
-    }),
-  },
-}));
+      comments: {
+        list: {
+          useInfiniteQuery: () => ({
+            data: {
+              pages: [
+                {
+                  items: [
+                    {
+                      id: 10,
+                      text: "nice!",
+                      author: {
+                        id: 6,
+                        email: "bob@example.com",
+                        name: "Bob",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            isLoading: false,
+            refetch: jest.fn(),
+          }),
+        },
+        add: {
+          useMutation: mockUseCommentMutation,
+        },
+      },
+      useUtils: () => ({
+        post: {
+          getFeed: {
+            invalidate: jest.fn(),
+            setInfiniteData: jest.fn((_, updater) => {
+              const prev = {
+                pages: [
+                  {
+                    items: [
+                      {
+                        id: 1,
+                        title: "Ramen",
+                        description: "Yum",
+                        likedByMe: false,
+                        likesCount: 0,
+                        commentsCount: mockCurrentCommentsCount,
+                        author: {
+                          id: 5,
+                          email: "alice@example.com",
+                          name: "Alice",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              };
+              const next = updater(prev);
+              mockCurrentCommentsCount =
+                next.pages[0].items[0].commentsCount;
+              return next;
+            }),
+            cancel: jest.fn(),
+            getInfiniteData: jest.fn(),
+          },
+        },
+      }),
+    },
+  };
+});
 
 describe("Home features", () => {
   it("renders following feed", async () => {
@@ -91,23 +140,30 @@ describe("Home features", () => {
     await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
   });
 
-  it("optimistic like toggles UI", async () => {
+  it("optimistic like toggles UI and calls mutation", async () => {
     const { getByLabelText, getByText } = render(<Home />);
     await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
     const likeBtn = getByLabelText("Like post");
+
     fireEvent.press(likeBtn);
-    expect(mockLikeMutate).toHaveBeenCalled();
+
+    expect(mockLikeMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ postId: 1, like: true })
+    );
   });
 
-  it("opens comments sheet", async () => {
+  it("opens comments sheet and shows existing comments", async () => {
     const { getByLabelText, getByText } = render(<Home />);
     await waitFor(() => expect(getByText("Ramen")).toBeTruthy());
+
     const commentsBtn = getByLabelText("Open comments");
     fireEvent.press(commentsBtn);
+
     await waitFor(() => expect(getByText(/Comments/i)).toBeTruthy(), {
       timeout: 3000,
     });
-    await waitFor(() => expect(getByText("nice!")).toBeTruthy());
+
+    expect(getByText("nice!")).toBeTruthy();
   });
 
   it("shows FAB", async () => {

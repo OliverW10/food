@@ -1,6 +1,5 @@
 import { CommentsSheet } from "@/components/CommentsSheet";
 import CornerButton from "@/components/corner-button";
-import type { PostUI } from "@/components/FoodPost";
 import { FoodPost } from "@/components/FoodPost";
 import { TopNav } from "@/components/TopNav";
 import { useSession } from "@/hooks/user-context";
@@ -17,15 +16,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Toggle = ({
-  mode,
-  setMode,
-}: {
-  mode: "following" | "explore";
-  setMode: (m: any) => void;
-}) => (
-  <View style={{ flexDirection: "row", gap: 8, padding: 12 }}>
-    {(["following", "explore"] as const).map((m) => (
+const Toggle = ({ mode, setMode }: { mode: 'following' | 'explore'; setMode: (m: 'following' | 'explore') => void }) => (
+  <View style={{ flexDirection: 'row', gap: 8, padding: 12 }}>
+    {(['following', 'explore'] as const).map(m => (
       <TouchableOpacity
         key={m}
         onPress={() => setMode(m)}
@@ -33,16 +26,14 @@ const Toggle = ({
           paddingVertical: 8,
           paddingHorizontal: 14,
           borderRadius: 999,
-          backgroundColor: mode === m ? "#1f2937" : "#374151",
+          backgroundColor: mode === m ? '#1f2937' : '#374151'
         }}
       >
-        <Text
-          style={{
-            color: mode === m ? "#fff" : "#9ca3af",
-            fontWeight: "600",
-            textTransform: "capitalize",
-          }}
-        >
+        <Text style={{
+          color: mode === m ? '#fff' : '#9ca3af',
+          fontWeight: '600',
+          textTransform: 'capitalize'
+        }}>
           {m}
         </Text>
       </TouchableOpacity>
@@ -53,25 +44,28 @@ const Toggle = ({
 export default function Home() {
   const router = useRouter();
   const { session } = useSession();
-  const [mode, setMode] = useState<"following" | "explore">(
-    session ? "following" : "explore"
-  );
+  const [mode, setMode] = useState<'following' | 'explore'>(session ? 'following' : 'explore');
   const [activePostId, setActivePostId] = useState<number | null>(null);
 
-  const input = useMemo(
-    () => ({ mode, limit: 6, cursor: null as number | null }),
-    [mode]
+  const input = useMemo(() => ({
+    mode,
+    limit: 10,
+    cursor: undefined as number | undefined,
+  }), [mode]);
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = trpc.post.getFeed.useInfiniteQuery(
+    input,
+    { getNextPageParam: (last) => last?.nextCursor ?? undefined, refetchOnWindowFocus: false }
   );
 
-  const { data, isLoading, isFetching, refetch, fetchNextPage, hasNextPage } =
-    trpc.post.getFeed.useInfiniteQuery(input, {
-      getNextPageParam: (last: any) => last?.nextCursor ?? null,
-      refetchOnWindowFocus: false,
-    });
-
-  const posts = (data?.pages ?? []).flatMap(
-    (p: { items: PostUI[] }) => p.items
-  );
+  const posts = (data?.pages ?? []).flatMap((p) => p.items);
 
   if (isLoading) {
     return (
@@ -90,34 +84,20 @@ export default function Home() {
   }
 
   const EmptyState = () => (
-    <View style={{ padding: 24, alignItems: "center" }}>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: "700",
-          marginBottom: 6,
-          color: "#fff",
-        }}
-      >
-        {mode === "following"
-          ? "You’re not following anyone yet"
-          : "No posts yet"}
+    <View style={{ padding: 24, alignItems: 'center' }}>
+      <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 6, color: '#fff' }}>
+        {mode === 'following' ? "You’re not following anyone yet" : "No posts yet"}
       </Text>
-      <Text style={{ color: "#9ca3af", textAlign: "center" }}>
-        {mode === "following"
+      <Text style={{ color: '#9ca3af', textAlign: 'center' }}>
+        {mode === 'following'
           ? "Explore trending posts to find people to follow."
           : "Be the first to share something tasty!"}
       </Text>
       <TouchableOpacity
-        onPress={() => setMode("explore")}
-        style={{
-          marginTop: 14,
-          padding: 10,
-          backgroundColor: "#1f2937",
-          borderRadius: 8,
-        }}
+        onPress={() => setMode('explore')}
+        style={{ marginTop: 14, padding: 10, backgroundColor: '#1f2937', borderRadius: 8 }}
       >
-        <Text style={{ color: "#fff" }}>Explore</Text>
+        <Text style={{ color: '#fff' }}>Explore</Text>
       </TouchableOpacity>
     </View>
   );
@@ -127,41 +107,41 @@ export default function Home() {
       <TopNav />
       <Toggle mode={mode} setMode={setMode} />
 
-      <FlatList
+     <FlatList
         testID="feed-list"
         data={posts}
+        numColumns={1}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <FoodPost
-            review={item}
-            onOpenComments={() => setActivePostId(item.id)}
-          />
+          <View style={{ marginVertical: 40 }}> 
+            {}
+            <FoodPost
+              review={item}
+              onOpenComments={() => setActivePostId(item.id)}
+              style={{
+                aspectRatio: 1, 
+                width: "100%",
+                borderRadius: 12,
+                overflow: "hidden",
+              }}
+            />
+          </View>
         )}
         ListEmptyComponent={<EmptyState />}
-        contentContainerStyle={{ paddingHorizontal: 6, paddingBottom: 24 }}
+        contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
         refreshControl={
-          <RefreshControl
-            refreshing={isFetching && !data}
-            onRefresh={() => refetch()}
-          />
+          <RefreshControl refreshing={isFetching && !data} onRefresh={() => refetch()} />
         }
         onEndReachedThreshold={0.4}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage();
         }}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: "flex-start" }}
       />
 
-      <CornerButton
-        isTop={false}
-        onPress={() =>
-          session ? router.push("/create-post") : router.push("/auth")
-        }
-      >
-        <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>
-          +
-        </Text>
+
+
+      <CornerButton isTop={false} onPress={() => session ? router.push("/create-post") : router.push("/auth")}>
+        <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>+</Text>
       </CornerButton>
       <CommentsSheet
         postId={activePostId}

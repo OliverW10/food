@@ -65,7 +65,7 @@ describe('post-api', () => {
     it('returns a post when found', async () => {
       (db.post.findUnique as jest.Mock).mockResolvedValue(basePost);
       const result = await caller.getById({ id: 1 });
-  expect(db.post.findUnique).toHaveBeenCalledWith({ where: { id: 1 }, include: { image: true } });
+      expect(db.post.findUnique).toHaveBeenCalledWith({ where: { id: 1 }, include: { image: true, author: true } });
       expect(result).toEqual(basePost);
     });
 

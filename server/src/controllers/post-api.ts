@@ -1,10 +1,9 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { idInputSchema } from "../api-schema/app-schema";
 import { createPostInputSchema } from "../api-schema/post-schemas";
 import { db } from "../db";
-
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const postApi = router({
@@ -23,141 +22,155 @@ export const postApi = router({
       });
       return post;
     }),
-  getById: publicProcedure.input(idInputSchema).query(async ({ input }) => {
-    const post = await db.post.findUnique({
-      where: { id: input.id },
-      include: { image: true },
-    });
-    return post ?? undefined;
-  }),
-  // Cursor-paginated feed for HomeScreen
+
+  getById: publicProcedure
+    .input(idInputSchema)
+    .query(async ({ input }) => {
+      const post = await db.post.findUnique({
+        where: { id: input.id },
+        include: { image: true, author: true },
+      });
+      return post ?? undefined;
+    }),
+
   getFeed: protectedProcedure
     .input(
       z.object({
         mode: z.enum(["following", "explore"]),
-        limit: z.number().int().min(1).max(50).default(6),
-        cursor: z.number().int().positive().nullable().default(null),
-      })
-    )
+        limit: z.number().int().min(1).max(50).default(10),
+      cursor: z.date().nullable().default(null), // use createdAt as cursor
+    })
+  )
     .query(async ({ input, ctx }) => {
       const where: Prisma.PostWhereInput = { published: true };
-      let orderBy: Prisma.PostOrderByWithRelationInput | undefined = undefined;
-      let useCursor = false;
 
+      const userIdStr = ctx.user?.sub;
+      if (!userIdStr) throw new Error("Invalid token subject");
+      const userId = Number(userIdStr);
+
+      // === FOLLOWING MODE ===
       if (input.mode === "following") {
-        // Only posts from followed users
-        const userId = ctx.user?.sub;
-        if (userId == undefined) {
-          throw new Error("Invalid token subject");
-        }
         const followees = await db.follow.findMany({
           where: { followerId: userId },
           select: { followingId: true },
         });
         const followingIds = followees.map((f) => f.followingId);
         if (followingIds.length === 0) {
-          return { items: [], nextCursor: null as number | null };
+          return { items: [], nextCursor: null as Date | null };
         }
         where.authorId = { in: followingIds };
-        orderBy = { id: "desc" };
-        useCursor = true;
-      } else {
-        orderBy = {};
-        useCursor = false;
+
+        if (input.cursor) {
+          where.createdAt = { lt: input.cursor };
+        }
       }
 
-      let rows;
+      const postWithExtras = Prisma.validator<Prisma.PostDefaultArgs>()({
+        include: {
+          author: { select: { id: true, email: true, name: true } },
+          _count: { select: { likes: true, comments: true } },
+          likes: { select: { userId: true } },
+          comments: {
+            take: 2,
+            orderBy: { createdAt: "desc" },
+            include: {
+              author: { select: { id: true, name: true, email: true } },
+            },
+          },
+        },
+      });
+
+      type PostWithExtras = Prisma.PostGetPayload<typeof postWithExtras>;
+
+      let rows: PostWithExtras[];
+
       if (input.mode === "explore") {
-        rows = await db.$queryRawUnsafe(
-          `SELECT p.id, p.title, p.description, p."authorId", p."imageId", u.email as author_email, i."storageUrl" as image_url
-           FROM "Post" p
-           JOIN "User" u ON p."authorId" = u.id
-           LEFT JOIN "Image" i ON p."imageId" = i.id
-           WHERE p.published = true
-           ORDER BY RANDOM()
-           LIMIT $1`,
-          input.limit + 1
-        );
-      } else {
-        if (useCursor && input.cursor) {
-          where.id = { lt: input.cursor };
-        }
         rows = await db.post.findMany({
           where,
-          orderBy,
+          orderBy: { createdAt: "desc" },
+          ...postWithExtras,
+        });
+      } else {
+        rows = await db.post.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
           take: input.limit + 1,
-          include: {
-            author: { select: { id: true, email: true } },
-            image: { select: { storageUrl: true } },
-          },
+          ...postWithExtras,
         });
       }
 
-      let nextCursor: number | null = null;
-      type samplePost = {
-        id: number;
-        title: string;
-        description: string;
-        authorId: number;
-        imageId: number | null;
-        author_email?: string;
-        image_url?: string;
-        author: { id: number; email: string };
-      } & {
-        author: { id: number; email: string };
-        image?: { storageUrl: string };
-      };
-      let items: samplePost[] = Array.isArray(rows) ? rows : [];
-      if (items.length > input.limit) {
-        const next = items[input.limit];
-        nextCursor = next?.id ?? null;
-        items = items.slice(0, input.limit);
+      let nextCursor: Date | null = null;
+      let items = rows;
+
+      if (input.mode === "following" && rows.length > input.limit) {
+        const next = rows[input.limit];
+        nextCursor = next?.createdAt ?? null;
+        items = rows.slice(0, input.limit);
       }
 
-      // Map to PostUI expected by client
-      let mapped;
-      if (input.mode === "explore") {
-        mapped = items.map((p: samplePost) => ({
-          id: p.id,
-          title: p.title,
-          description: p.description,
-          author: { id: p.authorId, email: p.author_email },
-          likesCount: 0, // TODO
-          likedByMe: false,
-          commentsCount: 0,
-          imageUrl: p.image_url || "",
-        }));
-      } else {
-        mapped = items.map((p: samplePost) => ({
-          id: p.id,
-          title: p.title,
-          description: p.description,
-          author: { id: p.author.id, email: p.author.email },
-          likesCount: 0, // TODO
-          likedByMe: false,
-          commentsCount: 0,
-          imageUrl: p.image?.storageUrl || "",
-        }));
-      }
+      const mapped = items.map((p) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        author: {
+          id: p.author.id,
+          email: p.author.email,
+          name: p.author.name ?? p.author.email.split("@")[0],
+        },
+        likesCount: p._count.likes,
+        commentsCount: p._count.comments,
+        likedByMe: p.likes.some((l) => l.userId === userId),
+        recentComments: p.comments.map((c) => ({
+          id: c.id,
+          text: c.text,
+          author: c.author.name ?? c.author.email.split("@")[0],
+        })),
+        createdAt: p.createdAt,
+      }));
 
       return { items: mapped, nextCursor };
-    }),
-  forUser: protectedProcedure.input(idInputSchema).query(async ({ input }) => {
-    const posts = await db.post.findMany({ where: { authorId: input.id } });
-    return posts;
   }),
+
+
+  forUser: protectedProcedure
+    .input(idInputSchema)
+    .query(async ({ input }) => {
+      const posts = await db.post.findMany({
+        where: { authorId: input.id },
+        include: { author: true, image: true },
+        orderBy: { createdAt: "desc" },
+      });
+      return posts;
+    }),
+
   delete: protectedProcedure
     .input(idInputSchema)
     .mutation(async ({ input }) => {
-      const existing = await db.post.findUnique({
-        where: { id: input.id },
-      });
+      const existing = await db.post.findUnique({ where: { id: input.id } });
       if (!existing) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
       }
-      await db.post.delete({
-        where: { id: input.id },
-      });
+      await db.post.delete({ where: { id: input.id } });
       return existing;
+    }),
+
+  likeToggle: protectedProcedure
+    .input(z.object({ postId: z.number(), like: z.boolean() }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = Number(ctx.user?.sub);
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      if (input.like) {
+        await db.like.upsert({
+          where: { postId_userId: { postId: input.postId, userId } },
+          update: {},
+          create: { postId: input.postId, userId },
+        });
+      } else {
+        await db.like.deleteMany({
+          where: { postId: input.postId, userId },
+        });
+      }
+      return { success: true };
     }),
 });
