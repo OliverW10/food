@@ -22,6 +22,7 @@ jest.mock("../services/trpc", () => {
   const mockUseCommentMutation = () => ({
     mutate: (vars: any, opts?: any) => {
       mockCommentMutate(vars, opts);
+      // Simulate server success immediately
       opts?.onSuccess?.();
       mockCurrentCommentsCount++;
     },
