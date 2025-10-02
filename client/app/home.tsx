@@ -93,22 +93,38 @@ export default function Home() {
       <TopNav />
       <Toggle mode={mode} setMode={setMode} />
 
-      <FlatList
+     <FlatList
         testID="feed-list"
         data={posts}
+        numColumns={1} // ⬅️ single column like Instagram
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <FoodPost
-            review={item}
-            onOpenComments={() => setActivePostId(item.id)}
-          />
+          <View style={{ marginVertical: 40 }}> 
+            {/* ⬅️ big gap between posts */}
+            <FoodPost
+              review={item}
+              onOpenComments={() => setActivePostId(item.id)}
+              style={{
+                aspectRatio: 1,     // ⬅️ square
+                width: "100%",      // full width
+                borderRadius: 12,
+                overflow: "hidden",
+              }}
+            />
+          </View>
         )}
         ListEmptyComponent={<EmptyState />}
-        contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 24 }}
-        refreshControl={<RefreshControl refreshing={isFetching && !data} onRefresh={() => refetch()} />}
+        contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={isFetching && !data} onRefresh={() => refetch()} />
+        }
         onEndReachedThreshold={0.4}
-        onEndReached={() => { if (hasNextPage) fetchNextPage(); }}
+        onEndReached={() => {
+          if (hasNextPage) fetchNextPage();
+        }}
       />
+
+
 
       <CornerButton isTop={false} onPress={() => session ? router.push("/create-post") : router.push("/auth")}>
         <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>+</Text>
