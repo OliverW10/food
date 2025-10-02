@@ -2,8 +2,7 @@ import PostImagePicker from "@/components/PostImagePicker";
 import { TopNav } from "@/components/TopNav";
 import { SimplePreset, TypeSelect } from "@/components/type-select";
 import { useSession } from "@/hooks/user-context";
-import { fetchWithAuth } from "@/services/fetch-with-auth";
-import trpc, { getTrpcServerUrl } from "@/services/trpc";
+import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -48,23 +47,29 @@ export default function PostPage() {
     if (!isValid) return;
 
     try {
-      //uploadImage
-      // const imageId = await uploadImage();
-      // if (!imageId) {
-      //   Alert.alert("Error", "Failed to upload image");
-      //   return;
-      // }
+      // uploadImage
+      const imageId = await uploadImage();
+
+      console.log("Uploaded imageId:", imageId);
+
+      if (!imageId) {
+        Alert.alert("Error", "Failed to upload image");
+        return;
+      }
+
+      console.log("createing post with imageId:", imageId);
 
       // create Post
       const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
         authorId: parseInt(user.id, 10),
+        imageId: imageId,
       });
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
         // Simulate async fetch/validation step (could add HEAD request etc.)
-        setRemoteImageUri(getTrpcServerUrl() + created.image.storageUrl);
+        setRemoteImageUri("http://localhost:3000" + created.image.storageUrl);
         setLoadingRemote(false);
       }
       setTitle("");
@@ -88,9 +93,15 @@ export default function PostPage() {
       const formData = new FormData();
       formData.append("image", blob, "image.jpg");
 
-      const uploadResponse = await fetchWithAuth("api/upload", {
+      // Get token manually for REST endpoint
+      const token = await import("@/hooks/use-storage-state").then((m) =>
+        m.getStorageStateAsync("session")
+      );
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      const uploadResponse = await fetch("http://localhost:3000/api/upload", {
         method: "POST",
         body: formData,
+        headers,
       });
 
       if (!uploadResponse.ok) throw new Error("Failed to upload image");
