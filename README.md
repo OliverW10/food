@@ -48,3 +48,11 @@ It looks like its possible to setup a github action to create an ios build (`xco
 - store jwt in db, and revoke on logout
 - email verification after signup
 - logout of all devices slay
+
+# Group Member Feature Breakdown
+
+Rianna: Comments (validate empty), Feed
+Josh: Profile Page, Followers/Following
+Olivia: Posting page, Post view page (validate post contents)
+Mukund: Login, Likes (validate password creation)
+Oliver: Search, Settings page (validate new name)

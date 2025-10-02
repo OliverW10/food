@@ -1,4 +1,3 @@
-// app/profile/ProfileView.tsx
 import type { PostUI } from "@/components/FoodPost";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
