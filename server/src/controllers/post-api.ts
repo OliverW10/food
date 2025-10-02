@@ -44,6 +44,8 @@ export const postApi = router({
     )
     .query(async ({ input, ctx }) => {
       const where: Prisma.PostWhereInput = { published: true };
+      let orderBy: Prisma.PostOrderByWithRelationInput | undefined = undefined;
+      let useCursor = false;
 
       const userIdStr = ctx.user?.sub;
       if (!userIdStr) throw new Error("Invalid token subject");

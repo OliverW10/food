@@ -1,6 +1,12 @@
-import trpc from '@/services/trpc';
-import React from 'react';
-import { Text, TouchableOpacity, View, ViewProps } from 'react-native';
+import trpc from "@/services/trpc";
+import React from "react";
+import {
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewProps
+} from "react-native";
 
 export type PostUI = {
   id: number;
@@ -70,6 +76,10 @@ export function FoodPost({ review, onOpenComments }: FoodPostProps) {
   const toggleLike = () => {
     likeMutation.mutate({ postId: review.id, like: !review.likedByMe });
   };
+
+  // Make the post square based on screen width and 2 columns
+  const screenWidth = Dimensions.get("window").width;
+  const size = (screenWidth - 36) / 2; // 12px padding on each side, 12px gap between
 
   return (
     <View style={{ marginBottom: 20, backgroundColor: '#111827', borderRadius: 12, overflow: 'hidden' }}>

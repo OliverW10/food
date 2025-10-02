@@ -6,8 +6,15 @@ import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Toggle = ({ mode, setMode }: { mode: 'following' | 'explore'; setMode: (m: 'following' | 'explore') => void }) => (
   <View style={{ flexDirection: 'row', gap: 8, padding: 12 }}>
@@ -62,7 +69,14 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#0b0f16",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <ActivityIndicator color="#fff" />
         <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading feed…</Text>
       </SafeAreaView>
