@@ -41,9 +41,7 @@ export const searchApi = router({
         orderBy: { id: "asc" },
         take: input.limit + 1,
         include: {
-          // ⚠️ Use your actual relation casing (Followers vs followers)
           Followers: { where: { followerId: me.id }, select: { followerId: true } },
-          // If you have an avatar column/relation, include/select it here
         },
       });
 
@@ -56,7 +54,7 @@ export const searchApi = router({
           id: u.id,
           name: u.name,
           email: u.email,
-          avatarUrl: (u as any).avatarUrl ?? null, // change if you store avatars differently
+          avatarUrl: null, // TODO: profile pictures
           followedByMe: u.Followers.length > 0,    // ← drives “Follow/Following”
         })),
         nextCursor,
@@ -72,7 +70,6 @@ export const searchApi = router({
       const me = await db.user.findUnique({ where: { email }, select: { id: true } });
       if (!me) throw new Error("Unauthorized");
       if (me.id === input.targetUserId) return { ok: true }; // ignore self
-
       if (input.follow) {
         await db.follow.upsert({
           where: { followerId_followingId: { followerId: me.id, followingId: input.targetUserId } },
@@ -121,7 +118,7 @@ export const searchApi = router({
           id: u.id,
           name: u.name,
           email: u.email,
-          avatarUrl: (u as any).avatarUrl ?? null,
+          avatarUrl: null, // TODO: profile pictures
           followedByMe: u.Followers.length > 0,
         })),
         nextCursor,
@@ -160,8 +157,8 @@ export const searchApi = router({
           id: u.id,
           name: u.name,
           email: u.email,
-          avatarUrl: (u as any).avatarUrl ?? null,
-          followedByMe: u.Followers.length > 0, // should be true
+          avatarUrl: null, // TODO
+          followedByMe: u.Followers.length > 0,
         })),
         nextCursor,
       };
