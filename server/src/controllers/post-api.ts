@@ -40,7 +40,7 @@ export const postApi = router({
       })
     )
     .query(async ({ input, ctx }) => {
-      let where: Prisma.PostWhereInput = { published: true };
+      const where: Prisma.PostWhereInput = { published: true };
       let orderBy: Prisma.PostOrderByWithRelationInput | undefined = undefined;
       let useCursor = false;
 
@@ -94,7 +94,20 @@ export const postApi = router({
       }
 
       let nextCursor: number | null = null;
-      let items: any[] = Array.isArray(rows) ? rows : [];
+      type samplePost = {
+        id: number;
+        title: string;
+        description: string;
+        authorId: number;
+        imageId: number | null;
+        author_email?: string;
+        image_url?: string;
+        author: { id: number; email: string };
+      } & {
+        author: { id: number; email: string };
+        image?: { storageUrl: string };
+      };
+      let items: samplePost[] = Array.isArray(rows) ? rows : [];
       if (items.length > input.limit) {
         const next = items[input.limit];
         nextCursor = next?.id ?? null;
@@ -104,7 +117,7 @@ export const postApi = router({
       // Map to PostUI expected by client
       let mapped;
       if (input.mode === "explore") {
-        mapped = items.map((p: any) => ({
+        mapped = items.map((p: samplePost) => ({
           id: p.id,
           title: p.title,
           description: p.description,
@@ -115,7 +128,7 @@ export const postApi = router({
           imageUrl: p.image_url || "",
         }));
       } else {
-        mapped = items.map((p: any) => ({
+        mapped = items.map((p: samplePost) => ({
           id: p.id,
           title: p.title,
           description: p.description,
