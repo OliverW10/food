@@ -14,6 +14,7 @@ export function TopNav() {
     return <></>;
   }
   const username = user?.email.split("@")[0] ?? "Unknown";
+  const space = "   ";
 
   return (
     <>
@@ -28,26 +29,22 @@ export function TopNav() {
         }}
       >
         <Pressable onPress={() => setOpen(true)}>
-          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-            {username}&apos;s ▼
+          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 20 }}>
+            {username}&apos;s{space}▼
           </Text>
         </Pressable>
 
-        <View style={{ flexDirection: "row", gap: 16 }}>
-          <Pressable
-            onPress={() => router.push("/search")}
-            accessibilityLabel="Search"
-          >
-            <Ionicons name="search" size={20} color="#fff" />
+        <View style={{ flexDirection: "row", gap: 40 }}>
+          <Pressable onPress={() => router.push("/search")}>
+            <Ionicons name="search" size={30} color="#fff" />
           </Pressable>
           <Pressable
             onPress={() => {
               console.log(`Navigating to profile ${user.id}`);
               router.push(`/profile/${user.id}`);
             }}
-            accessibilityLabel="Profile"
           >
-            <Ionicons name="person-circle-outline" size={22} color="#fff" />
+            <Ionicons name="person-circle-outline" size={30} color="#fff" />
           </Pressable>
         </View>
       </View>
@@ -75,7 +72,9 @@ export function TopNav() {
                 setOpen(false);
               }}
             >
-              <Text style={{ color: "#fff", padding: 8 }}>Profile</Text>
+              <Text style={{ color: "#fff", padding: 8, fontSize: 20 }}>
+                Profile
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => {
@@ -83,7 +82,9 @@ export function TopNav() {
                 setOpen(false);
               }}
             >
-              <Text style={{ color: "#fff", padding: 8 }}>Home</Text>
+              <Text style={{ color: "#fff", padding: 8, fontSize: 20 }}>
+                Home
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => {
@@ -91,10 +92,14 @@ export function TopNav() {
                 setOpen(false);
               }}
             >
-              <Text style={{ color: "#fff", padding: 8 }}>Settings</Text>
+              <Text style={{ color: "#fff", padding: 8, fontSize: 20 }}>
+                Settings
+              </Text>
             </Pressable>
             <Pressable onPress={() => setOpen(false)}>
-              <Text style={{ color: "#ef4444", padding: 8 }}>Close</Text>
+              <Text style={{ color: "#ef4444", padding: 8, fontSize: 20 }}>
+                Close
+              </Text>
             </Pressable>
           </View>
         </Pressable>

@@ -94,6 +94,16 @@ jest.mock("../services/trpc", () => {
           useMutation: mockUseCommentMutation,
         },
       },
+      chat: {
+        sendMessage: {
+          useMutation: () => ({
+            mutateAsync: jest.fn().mockResolvedValue({
+              success: true,
+              message: "Hello! I'm Joshua Roy, your friendly food monkey!",
+            }),
+          }),
+        },
+      },
       useUtils: () => ({
         post: {
           getFeed: {
@@ -121,8 +131,7 @@ jest.mock("../services/trpc", () => {
                 ],
               };
               const next = updater(prev);
-              mockCurrentCommentsCount =
-                next.pages[0].items[0].commentsCount;
+              mockCurrentCommentsCount = next.pages[0].items[0].commentsCount;
               return next;
             }),
             cancel: jest.fn(),
@@ -169,5 +178,10 @@ describe("Home features", () => {
   it("shows FAB", async () => {
     const { getByText } = render(<Home />);
     await waitFor(() => expect(getByText("+")).toBeTruthy());
+  });
+
+  it("shows chat button", async () => {
+    const { getByText } = render(<Home />);
+    await waitFor(() => expect(getByText("Chat")).toBeTruthy());
   });
 });
