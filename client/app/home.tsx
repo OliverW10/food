@@ -134,17 +134,10 @@ export default function Home() {
         numColumns={1}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <View style={{ marginVertical: 40 }}>
-            {}
+          <View style={{ alignItems: "center", marginBottom: 40 }}>
             <FoodPost
               review={item}
               onOpenComments={() => setActivePostId(item.id)}
-              style={{
-                aspectRatio: 1,
-                width: "100%",
-                borderRadius: 12,
-                overflow: "hidden",
-              }}
             />
           </View>
         )}

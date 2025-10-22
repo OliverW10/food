@@ -110,10 +110,11 @@ export function FoodPost({
       activeOpacity={0.93}
       onPress={goToPost}
       style={{
-        marginBottom: 20,
+        marginBottom: 12,
         backgroundColor: "#111827",
         borderRadius: 12,
         overflow: "hidden",
+        width: "30%",
       }}
       {...viewProps}
     >
@@ -138,11 +139,11 @@ export function FoodPost({
         </Text>
       </TouchableOpacity>
 
-      {/* Post image placeholder */}
+      {/* Post image */}
       <View
         style={{
           backgroundColor: "#1f2937",
-          height: 200,
+          aspectRatio: 1,
           justifyContent: "center",
           alignItems: "center",
         }}
