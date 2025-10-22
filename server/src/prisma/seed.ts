@@ -1,6 +1,6 @@
 // server/src/prisma/seed.ts
-import { Prisma, PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { Prisma, PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 import "dotenv/config";
 
 const prisma = new PrismaClient();
@@ -367,8 +367,6 @@ async function main() {
   const foodWaffles = await upsertFood(catBreakfast.id, "Waffles with Berries");
 
   // === IMAGES ===
-  // Use any URLs that your app can display. If you serve from /uploads, seed those paths.
-  // Using picsum placeholders here:
   const imgRamen = await createImage(
     "https://www.allrecipes.com/thmb/FL-xnyAllLyHcKdkjUZkotVlHR8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/46822-indian-chicken-curry-ii-DDMFS-4x3-39160aaa95674ee395b9d4609e3b0988.jpg"
   ); // Ramen
@@ -445,46 +443,46 @@ async function main() {
     "https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/3A94F682-EF98-4805-AF10-607A8B69FC74/Derivates/F4247BBE-40EB-4264-A845-14BA911AD0C8.jpg"
   );
   const imgTiramisu = await createImage(
-    "https://picsum.photos/seed/tiramisu/800/600"
+    "https://bakewithzoha.com/wp-content/uploads/2025/06/tiramisu-featured.jpg"
   );
   const imgStuffedCannelloni = await createImage(
-    "https://picsum.photos/seed/stuffedcannelloni/800/600"
+    "https://www.recipetineats.com/tachyon/2017/09/Spinach-Ricotta-Cannelloni-1-copy-1.jpg"
   );
   const imgEggplantParmigiana = await createImage(
-    "https://picsum.photos/seed/eggplantparmigiana/800/600"
+    "https://www.recipetineats.com/tachyon/2021/05/Eggplant-Parmigiana_1-SQ.jpg"
   );
   const imgMinestroneSoup = await createImage(
-    "https://picsum.photos/seed/minestronesoup/800/600"
+    "https://www.aberdeenskitchen.com/wp-content/uploads/2019/10/Easy-Classic-Minestrone-Soup-1-FI-Thumbnail-1200X1200.jpg"
   );
   const imgFocacciaBread = await createImage(
-    "https://picsum.photos/seed/focacciabread/800/600"
+    "https://helloyummy.co/wp-content/uploads/2024/06/no-knead-foccacia-bread5.jpg"
   );
   const imgArancini = await createImage(
-    "https://picsum.photos/seed/arancini/800/600"
+    "https://www.allrecipes.com/thmb/hxUMuQmebF0imzrV0-dLQRBGK08=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/RM-57844-Arancini-ddmfs-3x4-6021-19619bf1fd4d41279000e464618dd411.jpg"
   );
   const imgPannaCotta = await createImage(
-    "https://picsum.photos/seed/pannacotta/800/600"
+    "https://www.recipetineats.com/tachyon/2025/09/Panna-cotta_8-close-up.jpg"
   );
   const imgBologneseSauce = await createImage(
-    "https://picsum.photos/seed/bolognesesauce/800/600"
+    "https://assets.bonappetit.com/photos/5c2f8fe22efb8f2d33e396ca/1:1/w_2560%2Cc_limit/bolognese.jpg"
   );
   const imgChickenEnchiladas = await createImage(
-    "https://picsum.photos/seed/chickenenchiladas/800/600"
+    "https://www.allrecipes.com/thmb/tc829Re3dQr_49ETCLFBZnKYb7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/8691-chicken-enchiladas-DDMFS-4x3-322-de64088bd2e248c7b6f86572e821e9f7.jpg"
   );
   const imgCarneAsada = await createImage(
-    "https://picsum.photos/seed/carneasada/800/600"
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Carne_asada_%284472586086%29.jpg/1200px-Carne_asada_%284472586086%29.jpg"
   );
   const imgChilesRellenos = await createImage(
-    "https://picsum.photos/seed/chilesrellenos/800/600"
+    "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/4/5/0/RX-FNM_050111-TTAH-0082_s4x3.jpg.rend.hgtvcom.1280.1280.suffix/1371595357950.webp"
   );
   const imgTamales = await createImage(
-    "https://picsum.photos/seed/tamales/800/600"
+    "https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480/img/recipe/ras/Assets/68D64DAE-9605-42AC-BDCF-328A509EC776/Derivates/7AC0E9FD-F0DA-410B-9D78-19D3C3BEA1F3.jpg"
   );
   const imgHuevosRancheros = await createImage(
-    "https://picsum.photos/seed/huevosrancheros/800/600"
+    "https://www.foodandwine.com/thmb/zdZ5CZRaAi1a8ahUM_hEmLl-ULs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/crispy-fish-tacos-FT-RECIPE0825-98c4bc48f8f44b4e88b9c8e6d69faad3.jpg"
   );
   const imgFishTacos = await createImage(
-    "https://picsum.photos/seed/fishtacos/800/600"
+    "https://i0.wp.com/espressoandlime.com/wp-content/uploads/2021/06/Fried-Fish-Tacos-06-scaled.jpg?fit=1706%2C2560&ssl=1"
   );
   const imgQuesadillas = await createImage(
     "https://www.recipetineats.com/tachyon/2018/06/Quesadillas_4.jpg"
@@ -1144,13 +1142,13 @@ async function main() {
     prisma.image.count(),
   ]);
 
-  console.log('Seed complete');
+  console.log("Seed complete");
   console.table([{ users, posts, follows, categories, foods, images }]);
 }
 
 main()
   .catch((e) => {
-    console.error('Seed failed:', e);
+    console.error("Seed failed:", e);
     process.exit(1);
   })
   .finally(async () => {

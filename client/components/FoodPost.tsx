@@ -25,11 +25,13 @@ export type PostUI = {
 type FoodPostProps = {
   review: PostUI;
   onOpenComments?: () => void;
+  gridView?: boolean;
 } & ViewProps;
 
 export function FoodPost({
   review,
   onOpenComments,
+  gridView = false,
   ...viewProps
 }: FoodPostProps) {
   const router = useRouter();
@@ -104,6 +106,32 @@ export function FoodPost({
   //     ? "http://localhost:3000" + review.imageUrl
   //     : review.imageUrl
   // );
+
+  if (gridView) {
+    // Compact grid view - just the image
+    return (
+      <TouchableOpacity
+        activeOpacity={0.93}
+        onPress={goToPost}
+        style={{
+          backgroundColor: "#111827",
+          borderRadius: 8,
+          overflow: "hidden",
+          aspectRatio: 1,
+        }}
+        {...viewProps}
+      >
+        <Image
+          source={
+            (review.imageUrl?.startsWith("/uploads/")
+              ? "http://localhost:3000" + review.imageUrl
+              : review.imageUrl) as ImageSourcePropType
+          }
+          style={{ width: "100%", height: "100%" }}
+        />
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity

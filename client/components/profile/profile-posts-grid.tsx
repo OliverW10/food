@@ -16,10 +16,14 @@ export function ProfilePostsGrid({ reviews, header }: Props) {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 16 }}
       ListHeaderComponent={header ?? null}
-      columnWrapperStyle={{ gap: 12, paddingHorizontal: 12 }}
+      columnWrapperStyle={{
+        justifyContent: "space-between",
+        paddingHorizontal: 8,
+        marginBottom: 8,
+      }}
       renderItem={({ item }) => (
-        <View style={{ width: "32%", marginBottom: 12 }}>
-          <FoodPost review={item} />
+        <View style={{ width: "32%" }}>
+          <FoodPost review={item} gridView={true} />
         </View>
       )}
     />
