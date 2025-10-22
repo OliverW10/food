@@ -126,7 +126,6 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
         style={{ flex: 1, backgroundColor: "#0b0f16" }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        {/* Header */}
         <View
           style={{
             flexDirection: "row",
@@ -202,7 +201,6 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
           )}
         </ScrollView>
 
-        {/* Input */}
         <View
           style={{
             flexDirection: "row",
