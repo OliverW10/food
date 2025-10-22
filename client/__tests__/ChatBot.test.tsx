@@ -67,7 +67,11 @@ describe("ChatBot Component", () => {
 
     // Just verify the component structure
     expect(getByText("Talk To Joshua Roy")).toBeTruthy();
-    expect(getByText("Hello! I'm your friendly food connoisseur Joshua Roy. Ask me anything!")).toBeTruthy();
+    expect(
+      getByText(
+        "Hello! I'm your friendly food connoisseur Joshua Roy. Ask me anything!"
+      )
+    ).toBeTruthy();
   });
 
   it("renders in a modal", () => {

@@ -35,7 +35,10 @@ export function TopNav() {
         </Pressable>
 
         <View style={{ flexDirection: "row", gap: 40 }}>
-          <Pressable onPress={() => router.push("/search")} accessibilityLabel="Search">
+          <Pressable
+            onPress={() => router.push("/search")}
+            accessibilityLabel="Search"
+          >
             <Ionicons name="search" size={30} color="#fff" />
           </Pressable>
           <Pressable
