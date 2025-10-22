@@ -35,7 +35,10 @@ export function TopNav() {
         </Pressable>
 
         <View style={{ flexDirection: "row", gap: 40 }}>
-          <Pressable onPress={() => router.push("/search")}>
+          <Pressable
+            onPress={() => router.push("/search")}
+            accessibilityLabel="Search"
+          >
             <Ionicons name="search" size={30} color="#fff" />
           </Pressable>
           <Pressable
@@ -43,6 +46,7 @@ export function TopNav() {
               console.log(`Navigating to profile ${user.id}`);
               router.push(`/profile/${user.id}`);
             }}
+            accessibilityLabel="Profile"
           >
             <Ionicons name="person-circle-outline" size={30} color="#fff" />
           </Pressable>
