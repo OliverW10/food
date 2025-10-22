@@ -6,17 +6,18 @@ import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
 // Mock the FoodPost component
 jest.mock("../components/FoodPost", () => {
   const MockFoodPost = ({ review, ...props }: any) => {
-    const { View: MockView, Text: MockText } = jest.requireActual("react-native");
+    const { View: MockView, Text: MockText } =
+      jest.requireActual("react-native");
     return (
       <MockView testID={`post-${review.id}`} {...props}>
         <MockText>{review.title}</MockText>
       </MockView>
     );
   };
-  
+
   // Set displayName for the mock component
   MockFoodPost.displayName = "FoodPost";
-  
+
   return {
     FoodPost: MockFoodPost,
   };

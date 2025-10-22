@@ -39,7 +39,9 @@ describe("ProfileHeader Component", () => {
   });
 
   it("displays correct stats", () => {
-    const { getByText, getAllByText } = render(<ProfileHeader {...defaultProps} />);
+    const { getByText, getAllByText } = render(
+      <ProfileHeader {...defaultProps} />
+    );
 
     expect(getAllByText("Posts")).toHaveLength(2); // Appears multiple times in UI
     expect(getByText("42")).toBeTruthy();

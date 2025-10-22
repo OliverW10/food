@@ -9,9 +9,9 @@ export function TopNav() {
   const router = useRouter();
   const { user } = useSession();
   if (user === undefined || user === null) {
-    console.log("no user on profile")
-    router.navigate("/auth")
-    return <></>
+    console.log("no user on profile");
+    router.navigate("/auth");
+    return <></>;
   }
   const username = user?.email.split("@")[0] ?? "Unknown";
 
@@ -34,13 +34,19 @@ export function TopNav() {
         </Pressable>
 
         <View style={{ flexDirection: "row", gap: 16 }}>
-          <Pressable onPress={() => router.push("/search")} accessibilityLabel="Search">
+          <Pressable
+            onPress={() => router.push("/search")}
+            accessibilityLabel="Search"
+          >
             <Ionicons name="search" size={20} color="#fff" />
           </Pressable>
-          <Pressable onPress={() =>{
-            console.log(`Navigating to profile ${user.id}`)
-            router.push(`/profile/${user.id}`)
-          }} accessibilityLabel="Profile">
+          <Pressable
+            onPress={() => {
+              console.log(`Navigating to profile ${user.id}`);
+              router.push(`/profile/${user.id}`);
+            }}
+            accessibilityLabel="Profile"
+          >
             <Ionicons name="person-circle-outline" size={22} color="#fff" />
           </Pressable>
         </View>
