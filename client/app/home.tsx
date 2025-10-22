@@ -1,3 +1,4 @@
+import { ChatBot } from "@/components/ChatBot";
 import { CommentsSheet } from "@/components/CommentsSheet";
 import CornerButton from "@/components/corner-button";
 import { FoodPost } from "@/components/FoodPost";
@@ -56,6 +57,7 @@ export default function Home() {
     session ? "following" : "explore"
   );
   const [activePostId, setActivePostId] = useState<number | null>(null);
+  const [showChatBot, setShowChatBot] = useState(false);
 
   const input = useMemo(
     () => ({
@@ -161,15 +163,40 @@ export default function Home() {
           session ? router.push("/create-post") : router.push("/auth")
         }
       >
-        <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>
+        <Text style={{ color: "#9ca3af", fontSize: 50, lineHeight: 50 }}>
           +
         </Text>
       </CornerButton>
+
+      <TouchableOpacity
+        onPress={() => setShowChatBot(true)}
+        style={{
+          position: "absolute",
+          bottom: 20,
+          left: 20,
+          padding: 12,
+          backgroundColor: "#1f2937",
+          borderRadius: 10,
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+        }}
+      >
+        <Text style={{ color: "#fff", fontWeight: "600" }}>
+          Meet Joshua Roy
+        </Text>
+      </TouchableOpacity>
+
       <CommentsSheet
         postId={activePostId}
         visible={activePostId !== null}
         onClose={() => setActivePostId(null)}
       />
+
+      <ChatBot visible={showChatBot} onClose={() => setShowChatBot(false)} />
     </View>
   );
 }
