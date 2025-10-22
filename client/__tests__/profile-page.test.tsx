@@ -2,7 +2,6 @@ import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { ProfileViewInternal } from '../app/profile/[userId]';
 
-// Mock the same module path used by the component (uses alias "@/")
 jest.mock('@/hooks/user-context', () => ({
   useSession: jest.fn(),
 }));
@@ -13,7 +12,6 @@ jest.mock('expo-router', () => ({
 
 const mockUseQuery = jest.fn();
 
-// Mock the same module path used by the component (uses alias "@/")
 jest.mock('@/services/trpc', () => ({
   __esModule: true,
   default: {
@@ -27,7 +25,6 @@ jest.mock('@/services/trpc', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // set default session for most tests
   const mocked = jest.requireMock('@/hooks/user-context') as any;
   mocked.useSession.mockReturnValue({
     user: { id: '42', email: 'tester@example.com' },
