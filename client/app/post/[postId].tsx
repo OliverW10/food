@@ -1,7 +1,7 @@
 import { CommentsSheet } from "@/components/CommentsSheet";
 import { FoodPost } from "@/components/FoodPost";
 import trpc from "@/services/trpc";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, SafeAreaView, Text, View } from "react-native";
 
@@ -72,26 +72,33 @@ export default function PostPage() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 16,
+    <>
+      <Stack.Screen
+        options={{
+          title: post.title,
         }}
-      >
-        <FoodPost
-          review={post}
-          onOpenComments={() => setShowComments(true)}
-          style={{ width: "30%" }}
-        />
-      </View>
-      <CommentsSheet
-        postId={post.id}
-        visible={showComments}
-        onClose={() => setShowComments(false)}
       />
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 16,
+          }}
+        >
+          <FoodPost
+            review={post}
+            onOpenComments={() => setShowComments(true)}
+            style={{ width: "30%" }}
+          />
+        </View>
+        <CommentsSheet
+          postId={post.id}
+          visible={showComments}
+          onClose={() => setShowComments(false)}
+        />
+      </SafeAreaView>
+    </>
   );
 }

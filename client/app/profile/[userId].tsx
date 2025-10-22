@@ -4,31 +4,53 @@ import { ProfilePostsGrid } from "@/components/profile/profile-posts-grid";
 import { ProfileTopBar } from "@/components/profile/profile-top-bar";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileView() {
-  const targetUserId = Number.parseInt(useLocalSearchParams()?.userId?.toString() ?? "-1");
-  if (targetUserId === -1){
-    return <Text>Loading</Text>
+  let username = useLocalSearchParams()?.username;
+
+  const targetUserId = Number.parseInt(
+    useLocalSearchParams()?.userId?.toString() ?? "-1"
+  );
+  if (targetUserId === -1) {
+    return <Text>Loading</Text>;
   }
-  return <ProfileViewInternal userId={targetUserId} />
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: (username as string) || "Profile",
+        }}
+      />
+      <ProfileViewInternal userId={targetUserId} />
+    </>
+  );
 }
 
 export function ProfileViewInternal({ userId }: { userId: number }) {
   const router = useRouter();
   const { user, session, signOut } = useSession();
 
-  const { data: profile, isLoading, isFetching, isError, error } =
-    trpc.profile.get.useQuery({ id: userId }, {
+  const {
+    data: profile,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } = trpc.profile.get.useQuery(
+    { id: userId },
+    {
       // enabled: !!session && !!userId,
       staleTime: 0,
       refetchOnMount: "always",
       refetchOnReconnect: true,
       refetchOnWindowFocus: false,
-    });
+    }
+  );
 
   const handleLogout = async () => {
     signOut();
@@ -66,7 +88,11 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     );
   }
   if (isError) {
-    return <Text style={{ color: "#fff" }}>{error instanceof Error ? error.message : "Error"}</Text>;
+    return (
+      <Text style={{ color: "#fff" }}>
+        {error instanceof Error ? error.message : "Error"}
+      </Text>
+    );
   }
   if (!profile) {
     return (
@@ -90,7 +116,8 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     author: {
       id: userId,
       email: profile?.email ?? "",
-      name: profile?.name ?? (profile?.email ? profile.email.split("@")[0] : ""),
+      name:
+        profile?.name ?? (profile?.email ? profile.email.split("@")[0] : ""),
     },
     likesCount: p.likesCount ?? 0,
     likedByMe: p.likedByMe ?? false,
