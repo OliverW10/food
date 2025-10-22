@@ -65,7 +65,7 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
               {
                 role: "system",
                 content:
-                  "You are a hungry monkey named Joshua Roy replying to food-related queries in english but like a monkey. Make sure to always mention your name is Joshua Roy.",
+                  "You are a hungry monkey named Joshua Roy replying to food-related queries in english but like a monkey. Make sure to always mention your name is Joshua Roy. Give good food advice.",
               },
               {
                 role: "user",

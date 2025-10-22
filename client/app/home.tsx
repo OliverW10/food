@@ -40,6 +40,7 @@ const Toggle = ({
           style={{
             color: mode === m ? "#fff" : "#9ca3af",
             fontWeight: "600",
+            fontSize: 20,
             textTransform: "capitalize",
           }}
         >
@@ -159,6 +160,7 @@ export default function Home() {
 
       <CornerButton
         isTop={false}
+        isLeft={false}
         onPress={() =>
           session ? router.push("/create-post") : router.push("/auth")
         }
@@ -173,20 +175,21 @@ export default function Home() {
         style={{
           position: "absolute",
           bottom: 20,
-          left: 20,
-          padding: 12,
-          backgroundColor: "#1f2937",
-          borderRadius: 10,
-          alignItems: "center",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
+          left: 12,
+          paddingVertical: 8,
+          paddingHorizontal: 14,
+          borderRadius: 999,
+          backgroundColor: "#374151",
         }}
       >
-        <Text style={{ color: "#fff", fontWeight: "600" }}>
-          Meet Joshua Roy
+        <Text
+          style={{
+            color: "#9ca3af",
+            fontWeight: "600",
+            fontSize: 26,
+          }}
+        >
+          Chat
         </Text>
       </TouchableOpacity>
 

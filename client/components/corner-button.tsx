@@ -13,8 +13,8 @@ export default function CornerButton({
 }) {
   return (
     <Pressable
-      className={`absolute right-4 ${isTop ? "top-4" : "bottom-4"} ${
-        isLeft ? "left-4" : ""
+      className={`${isTop ? "top-4" : "bottom-4"} ${
+        isLeft ? "left-4" : "absolute right-8"
       } p-2 bg-red text-white rounded-full shadow-md`}
       style={({ pressed, hovered }) => [
         {
