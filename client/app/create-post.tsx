@@ -1,6 +1,7 @@
 import PostImagePicker from "@/components/PostImagePicker";
 import { TopNav } from "@/components/TopNav";
 import { SimplePreset, TypeSelect } from "@/components/type-select";
+import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
@@ -95,9 +96,7 @@ export default function PostPage() {
       formData.append("image", blob, "image.jpg");
 
       // Get token manually for REST endpoint
-      const token = await import("@/hooks/use-storage-state").then((m) =>
-        m.getStorageStateAsync("session")
-      );
+      const token = await getStorageStateAsync("session");
       const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
       const uploadResponse = await fetch("http://localhost:3000/api/upload", {
         method: "POST",
