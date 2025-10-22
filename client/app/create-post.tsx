@@ -1,16 +1,15 @@
 import PostImagePicker from "@/components/PostImagePicker";
 import { TopNav } from "@/components/TopNav";
 import { SimplePreset, TypeSelect } from "@/components/type-select";
+import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { useSession } from "@/hooks/user-context";
-import { fetchWithAuth } from "@/services/fetch-with-auth";
-import trpc, { getTrpcServerUrl } from "@/services/trpc";
+import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Button,
-  Image,
   ScrollView,
   Switch,
   Text,
@@ -48,25 +47,32 @@ export default function PostPage() {
     if (!isValid) return;
 
     try {
-      //uploadImage
+      // uploadImage
       const imageId = await uploadImage();
+
+      console.log("Uploaded imageId:", imageId);
+
       if (!imageId) {
         Alert.alert("Error", "Failed to upload image");
         return;
       }
 
+      console.log("createing post with imageId:", imageId);
+
       // create Post
       const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
-        imageId,
         authorId: parseInt(user.id, 10),
+        imageId: imageId,
       });
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
-        // Simulate async fetch/validation step (could add HEAD request etc.)
-        setRemoteImageUri(getTrpcServerUrl() + created.image.storageUrl);
+        setRemoteImageUri("http://localhost:3000" + created.image.storageUrl);
         setLoadingRemote(false);
+        console.log("Uploaded image URL:", remoteImageUri);
+        setImageUri(null);
+        setRemoteImageUri(null);
       }
       setTitle("");
       setDescription("");
@@ -89,9 +95,13 @@ export default function PostPage() {
       const formData = new FormData();
       formData.append("image", blob, "image.jpg");
 
-      const uploadResponse = await fetchWithAuth("api/upload", {
+      // Get token manually for REST endpoint
+      const token = await getStorageStateAsync("session");
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      const uploadResponse = await fetch("http://localhost:3000/api/upload", {
         method: "POST",
         body: formData,
+        headers,
       });
 
       if (!uploadResponse.ok) throw new Error("Failed to upload image");
@@ -129,7 +139,7 @@ export default function PostPage() {
             Create Post
           </Text>
 
-          <View style={{ marginBottom: 18 }}>
+          <View style={{ marginBottom: 18, zIndex: 10 }}>
             <Text style={{ fontWeight: "600", marginBottom: 6 }}>Title</Text>
             <TypeSelect
               value={title}
@@ -224,23 +234,23 @@ export default function PostPage() {
               </Text>
             </View>
           )}
-          {remoteImageUri && (
-            <View style={{ marginBottom: 24 }}>
-              <Text style={{ fontWeight: "600", marginBottom: 8 }}>
-                Uploaded Image
-              </Text>
-              <Image
-                source={{ uri: remoteImageUri }}
-                style={{
-                  width: "100%",
-                  height: 220,
-                  borderRadius: 12,
-                  backgroundColor: "#f3f4f6",
-                }}
-                resizeMode="cover"
-              />
-            </View>
-          )}
+          {/* {remoteImageUri && (
+            // <View style={{ marginBottom: 24 }}>
+            //   <Text style={{ fontWeight: "600", marginBottom: 8 }}>
+            //     Uploaded Image
+            //   </Text>
+            //   <Image
+            //     source={{ uri: remoteImageUri }}
+            //     style={{
+            //       width: "100%",
+            //       height: 220,
+            //       borderRadius: 12,
+            //       backgroundColor: "#f3f4f6",
+            //     }}
+            //     resizeMode="cover"
+            //   />
+            // </View>
+          )} */}
 
           <View style={{ marginBottom: 40 }}>
             {createPostMutation.isPending ? (

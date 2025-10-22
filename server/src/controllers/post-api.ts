@@ -44,11 +44,15 @@ export const postApi = router({
       // Likes count
       const likesCount = await db.like.count({ where: { postId: post.id } });
       // Comments count
-      const commentsCount = await db.comment.count({ where: { postId: post.id } });
+      const commentsCount = await db.comment.count({
+        where: { postId: post.id },
+      });
       // Liked by me
       let likedByMe = false;
       if (userId) {
-        likedByMe = !!(await db.like.findFirst({ where: { postId: post.id, userId } }));
+        likedByMe = !!(await db.like.findFirst({
+          where: { postId: post.id, userId },
+        }));
       }
 
       return {
@@ -72,11 +76,11 @@ export const postApi = router({
       z.object({
         mode: z.enum(["following", "explore"]),
         limit: z.number().int().min(1).max(50).default(10),
-      cursor: z.date().nullable().default(null), // use createdAt as cursor
-    })
-  )
+        cursor: z.date().nullable().default(null), // use createdAt as cursor
+      })
+    )
     .query(async ({ input, ctx }) => {
-      const where: Prisma.PostWhereInput = { published: true };
+      const where: Prisma.PostWhereInput = {};
 
       const userIdStr = ctx.user?.sub;
       if (!userIdStr) throw new Error("Invalid token subject");
@@ -161,12 +165,11 @@ export const postApi = router({
           author: c.author.name ?? c.author.email.split("@")[0],
         })),
         createdAt: p.createdAt,
-        imageUrl: p.image?.storageUrl
+        imageUrl: p.image?.storageUrl,
       }));
 
       return { items: mapped, nextCursor };
-  }),
-
+    }),
 
   forUser: protectedProcedure
     .input(idInputSchema)
