@@ -182,6 +182,6 @@ describe("Home features", () => {
 
   it("shows chat button", async () => {
     const { getByText } = render(<Home />);
-    await waitFor(() => expect(getByText("💬 Chat")).toBeTruthy());
+    await waitFor(() => expect(getByText("Chat")).toBeTruthy());
   });
 });
