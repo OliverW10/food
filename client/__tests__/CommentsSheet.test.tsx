@@ -99,7 +99,7 @@ describe("CommentsSheet Component", () => {
       <CommentsSheet postId={1} visible={true} onClose={mockOnClose} />
     );
 
-    expect(getByPlaceholderText("Add a comment...")).toBeTruthy();
+    expect(getByPlaceholderText("Add a comment…")).toBeTruthy();
   });
 
   it("allows typing in comment input", () => {
@@ -107,26 +107,26 @@ describe("CommentsSheet Component", () => {
       <CommentsSheet postId={1} visible={true} onClose={mockOnClose} />
     );
 
-    const input = getByPlaceholderText("Add a comment...");
+    const input = getByPlaceholderText("Add a comment…");
     fireEvent.changeText(input, "New comment");
 
     expect(input.props.value).toBe("New comment");
   });
 
   it("shows send button", () => {
-    const { getByLabelText } = render(
+    const { getByText } = render(
       <CommentsSheet postId={1} visible={true} onClose={mockOnClose} />
     );
 
-    expect(getByLabelText("Send comment")).toBeTruthy();
+    expect(getByText("Post")).toBeTruthy();
   });
 
   it("calls onClose when close button is pressed", () => {
-    const { getByLabelText } = render(
+    const { getByText } = render(
       <CommentsSheet postId={1} visible={true} onClose={mockOnClose} />
     );
 
-    const closeButton = getByLabelText("Close comments");
+    const closeButton = getByText("Close");
     fireEvent.press(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);

@@ -1,5 +1,6 @@
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
+import { Text } from "react-native";
 import CornerButton from "../components/corner-button";
 
 describe("CornerButton Component", () => {
@@ -12,7 +13,7 @@ describe("CornerButton Component", () => {
   it("renders children correctly", () => {
     const { getByText } = render(
       <CornerButton onPress={mockOnPress} isTop={true}>
-        <span>Test Button</span>
+        <Text>Test Button</Text>
       </CornerButton>
     );
 
@@ -20,48 +21,48 @@ describe("CornerButton Component", () => {
   });
 
   it("calls onPress when pressed", () => {
-    const { getByRole } = render(
+    const { getByText } = render(
       <CornerButton onPress={mockOnPress} isTop={true}>
-        <span>Test Button</span>
+        <Text>Test Button</Text>
       </CornerButton>
     );
 
-    const button = getByRole("button");
+    const button = getByText("Test Button").parent;
     fireEvent.press(button);
 
     expect(mockOnPress).toHaveBeenCalledTimes(1);
   });
 
   it("renders with correct positioning - top", () => {
-    const { getByRole } = render(
+    const { getByText } = render(
       <CornerButton onPress={mockOnPress} isTop={true}>
-        <span>Top Button</span>
+        <Text>Top Button</Text>
       </CornerButton>
     );
 
-    const button = getByRole("button");
-    expect(button).toBeTruthy();
+    const text = getByText("Top Button");
+    expect(text).toBeTruthy();
   });
 
   it("renders with correct positioning - bottom", () => {
-    const { getByRole } = render(
+    const { getByText } = render(
       <CornerButton onPress={mockOnPress} isTop={false}>
-        <span>Bottom Button</span>
+        <Text>Bottom Button</Text>
       </CornerButton>
     );
 
-    const button = getByRole("button");
-    expect(button).toBeTruthy();
+    const text = getByText("Bottom Button");
+    expect(text).toBeTruthy();
   });
 
   it("renders with different children types", () => {
     const { getByText } = render(
       <CornerButton onPress={mockOnPress} isTop={true}>
-        <span>Different Child</span>
+        <Text>Different Child</Text>
       </CornerButton>
     );
 
-    const button = getByText("Different Child");
-    expect(button).toBeTruthy();
+    const text = getByText("Different Child");
+    expect(text).toBeTruthy();
   });
 });

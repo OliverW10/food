@@ -61,8 +61,8 @@ describe("FoodPost Component", () => {
     );
 
     expect(getByText("Test Post")).toBeTruthy();
-    expect(getByText("This is a test post description")).toBeTruthy();
-    expect(getByText("Test User")).toBeTruthy();
+    // The description is rendered together with author name in the same text element
+    expect(getByText("Test User This is a test post description")).toBeTruthy();
   });
 
   it("shows correct like count and state", () => {
@@ -70,7 +70,8 @@ describe("FoodPost Component", () => {
       <FoodPost review={mockPost} onOpenComments={mockOnOpenComments} />
     );
 
-    expect(getByText("♡ 5")).toBeTruthy(); // Unlike state
+    // Heart and count are in the same text element with newline
+    expect(getByText("♡\n\n            5")).toBeTruthy(); // Unlike state with count
   });
 
   it("shows liked state when post is liked", () => {
@@ -114,12 +115,12 @@ describe("FoodPost Component", () => {
   });
 
   it("renders in grid view mode", () => {
-    const { getByRole } = render(
-      <FoodPost review={mockPost} gridView={true} />
+    const { getByTestId } = render(
+      <FoodPost review={mockPost} gridView={true} testID="grid-post" />
     );
 
     // In grid view, it should render as a simple touchable with image
-    const touchable = getByRole("button");
+    const touchable = getByTestId("grid-post");
     expect(touchable).toBeTruthy();
   });
 

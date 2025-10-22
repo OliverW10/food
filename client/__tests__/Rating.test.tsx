@@ -4,21 +4,23 @@ import { Rating } from "../components/Rating";
 
 describe("Rating Component", () => {
   it("renders 4 full stars", () => {
-    const { getByText } = render(<Rating value={4} />);
+    const { getAllByText } = render(<Rating value={4} />);
 
     // Should show 4 full stars and 1 empty
-    const stars = getByText("★");
-    expect(stars).toBeTruthy();
+    const fullStars = getAllByText("★");
+    const emptyStars = getAllByText("☆");
+    expect(fullStars).toHaveLength(4);
+    expect(emptyStars).toHaveLength(1);
   });
 
   it("renders 4.5 rating with half star", () => {
-    const { getByText } = render(<Rating value={4.5} />);
+    const { getAllByText } = render(<Rating value={4.5} />);
 
     // Should show 4 full stars, 1 half star
-    const fullStar = getByText("★");
-    const halfStar = getByText("☆");
-    expect(fullStar).toBeTruthy();
-    expect(halfStar).toBeTruthy();
+    const fullStars = getAllByText("★");
+    const halfStars = getAllByText("☆");
+    expect(fullStars).toHaveLength(4);
+    expect(halfStars).toHaveLength(1); // This is the half star
   });
 
   it("handles maximum rating", () => {
@@ -38,10 +40,12 @@ describe("Rating Component", () => {
   });
 
   it("handles decimal ratings correctly", () => {
-    const { getByText } = render(<Rating value={3.7} />);
+    const { getAllByText } = render(<Rating value={3.7} />);
 
     // Should show 3 full stars and 2 empty (no half star for 0.7)
-    const star = getByText("★");
-    expect(star).toBeTruthy();
+    const fullStars = getAllByText("★");
+    const emptyStars = getAllByText("☆");
+    expect(fullStars).toHaveLength(3);
+    expect(emptyStars).toHaveLength(2);
   });
 });

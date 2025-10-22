@@ -38,11 +38,11 @@ describe("ProfileButton Component", () => {
   });
 
   it("calls onPress when pressed", () => {
-    const { getByRole } = render(
+    const { getByText } = render(
       <ProfileButton label="Follow" onPress={mockOnPress} />
     );
 
-    const button = getByRole("button");
+    const button = getByText("Follow");
     fireEvent.press(button);
 
     expect(mockOnPress).toHaveBeenCalledTimes(1);
