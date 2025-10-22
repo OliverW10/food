@@ -1,3 +1,4 @@
+import { ChatBot } from "@/components/ChatBot";
 import { CommentsSheet } from "@/components/CommentsSheet";
 import CornerButton from "@/components/corner-button";
 import { FoodPost } from "@/components/FoodPost";
@@ -39,6 +40,7 @@ const Toggle = ({
           style={{
             color: mode === m ? "#fff" : "#9ca3af",
             fontWeight: "600",
+            fontSize: 20,
             textTransform: "capitalize",
           }}
         >
@@ -56,6 +58,7 @@ export default function Home() {
     session ? "following" : "explore"
   );
   const [activePostId, setActivePostId] = useState<number | null>(null);
+  const [showChatBot, setShowChatBot] = useState(false);
 
   const input = useMemo(
     () => ({
@@ -157,19 +160,46 @@ export default function Home() {
 
       <CornerButton
         isTop={false}
+        isLeft={false}
         onPress={() =>
           session ? router.push("/create-post") : router.push("/auth")
         }
       >
-        <Text style={{ color: "#9ca3af", fontSize: 24, lineHeight: 24 }}>
+        <Text style={{ color: "#9ca3af", fontSize: 50, lineHeight: 50 }}>
           +
         </Text>
       </CornerButton>
+
+      <TouchableOpacity
+        onPress={() => setShowChatBot(true)}
+        style={{
+          position: "absolute",
+          bottom: 20,
+          left: 12,
+          paddingVertical: 8,
+          paddingHorizontal: 14,
+          borderRadius: 999,
+          backgroundColor: "#374151",
+        }}
+      >
+        <Text
+          style={{
+            color: "#9ca3af",
+            fontWeight: "600",
+            fontSize: 26,
+          }}
+        >
+          Chat
+        </Text>
+      </TouchableOpacity>
+
       <CommentsSheet
         postId={activePostId}
         visible={activePostId !== null}
         onClose={() => setActivePostId(null)}
       />
+
+      <ChatBot visible={showChatBot} onClose={() => setShowChatBot(false)} />
     </View>
   );
 }
