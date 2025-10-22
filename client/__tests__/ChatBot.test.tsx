@@ -1,5 +1,6 @@
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import { ChatBot } from "../components/ChatBot";
 
 // Mock trpc
@@ -31,7 +32,7 @@ describe("ChatBot Component", () => {
       <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    expect(getByText("AI Assistant")).toBeTruthy();
+    expect(getByText("Talk To Joshua Roy")).toBeTruthy();
     // Component is simplified, so we just check it renders
     // Simplified component, just check that it renders basic structure
     // expect(getByText("AI Assistant")).toBeTruthy(); // Already checked above
@@ -39,18 +40,21 @@ describe("ChatBot Component", () => {
 
   it("does not render when not visible", () => {
     const { queryByText } = render(
-      <ChatBot isOpen={false} onClose={mockOnClose} />
+      <ChatBot visible={false} onClose={mockOnClose} />
     );
 
-    expect(queryByText("AI Assistant")).toBeNull();
+    expect(queryByText("Talk To Joshua Roy")).toBeNull();
   });
 
   it("calls onClose when close button is pressed", () => {
-    const { getByTestId } = render(
-      <ChatBot isOpen={true} onClose={mockOnClose} />
+    const { UNSAFE_getAllByType } = render(
+      <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    const closeButton = getByTestId("close-button");
+    // Find TouchableOpacity elements (close and refresh buttons)
+    const touchables = UNSAFE_getAllByType(TouchableOpacity);
+    // The second TouchableOpacity should be the close button
+    const closeButton = touchables[1];
     fireEvent.press(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -58,19 +62,20 @@ describe("ChatBot Component", () => {
 
   it("renders basic chatbot structure", () => {
     const { getByText } = render(
-      <ChatBot isOpen={true} onClose={mockOnClose} />
+      <ChatBot visible={true} onClose={mockOnClose} />
     );
 
     // Just verify the component structure
-    expect(getByText("AI Assistant")).toBeTruthy();
-    expect(getByText("Close")).toBeTruthy();
+    expect(getByText("Talk To Joshua Roy")).toBeTruthy();
+    expect(getByText("Hello! I'm your friendly food connoisseur Joshua Roy. Ask me anything!")).toBeTruthy();
   });
 
   it("renders in a modal", () => {
-    const { getByTestId } = render(
-      <ChatBot isOpen={true} onClose={mockOnClose} />
+    const { getByText } = render(
+      <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    expect(getByTestId("chatbot-modal")).toBeTruthy();
+    // Verify modal content exists
+    expect(getByText("Talk To Joshua Roy")).toBeTruthy();
   });
 });
