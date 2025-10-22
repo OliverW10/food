@@ -1,3 +1,4 @@
+import trpc from "@/services/trpc";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -36,6 +37,8 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const chatMutation = trpc.chat.sendMessage.useMutation();
+
   const sendMessage = async () => {
     if (!inputText.trim()) return;
 
@@ -51,46 +54,17 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
-          },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are a hungry monkey named Joshua Roy replying to food-related queries in english but like a monkey. Make sure to always mention your name is Joshua Roy. Give good food advice.",
-              },
-              {
-                role: "user",
-                content: userMessage.text,
-              },
-            ],
-            max_tokens: 150,
-            temperature: 0.7,
-          }),
-        }
-      );
+      const result = await chatMutation.mutateAsync({
+        message: userMessage.text,
+      });
 
-      const data = await response.json();
-
-      if (data.choices && data.choices[0]) {
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: data.choices[0].message.content.trim(),
-          isUser: false,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      } else {
-        throw new Error("Invalid response from OpenAI");
-      }
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: result.message,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
