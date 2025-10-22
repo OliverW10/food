@@ -9,11 +9,11 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Button,
   ScrollView,
   Switch,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,15 +24,15 @@ export default function PostPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [didCook, setDidCook] = useState(true); // Not persisted yet – placeholder for future schema
+  const [didCook, setDidCook] = useState(true);
   const [touched, setTouched] = useState(false);
-  const [imageUri, setImageUri] = useState<string | null>(null); // local selected (pre-upload)
-  const [remoteImageUri, setRemoteImageUri] = useState<string | null>(null); // from API after save or existing post
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [remoteImageUri, setRemoteImageUri] = useState<string | null>(null);
   const [loadingRemote, setLoadingRemote] = useState(false);
 
   const createPostMutation = trpc.post.create.useMutation();
 
-  const setTitleAndPreset = (val: string, isPreset: boolean) => {
+  const setTitleAndPreset = (val: string) => {
     setTitle(val);
   };
 
@@ -47,33 +47,27 @@ export default function PostPage() {
     if (!isValid) return;
 
     try {
-      // uploadImage
       const imageId = await uploadImage();
-
-      console.log("Uploaded imageId:", imageId);
-
       if (!imageId) {
         Alert.alert("Error", "Failed to upload image");
         return;
       }
 
-      console.log("createing post with imageId:", imageId);
-
-      // create Post
       const created = await createPostMutation.mutateAsync({
         title: title.trim(),
         description: description.trim(),
         authorId: parseInt(user.id, 10),
-        imageId: imageId,
+        imageId,
       });
+
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
         setRemoteImageUri("http://localhost:3000" + created.image.storageUrl);
         setLoadingRemote(false);
-        console.log("Uploaded image URL:", remoteImageUri);
         setImageUri(null);
         setRemoteImageUri(null);
       }
+
       setTitle("");
       setDescription("");
       Alert.alert("Posted!", "Your post was created.", [
@@ -95,9 +89,9 @@ export default function PostPage() {
       const formData = new FormData();
       formData.append("image", blob, "image.jpg");
 
-      // Get token manually for REST endpoint
       const token = await getStorageStateAsync("session");
       const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
       const uploadResponse = await fetch("http://localhost:3000/api/upload", {
         method: "POST",
         body: formData,
@@ -128,19 +122,19 @@ export default function PostPage() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <View style={{ flex: 1, backgroundColor: "#0b0f16" }}>
       <TopNav />
-      <View style={{ flex: 1 }}>
+      <SafeAreaView edges={["left", "right", "bottom"]} style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={{ fontSize: 24, fontWeight: "700", marginBottom: 20 }}>
+          <Text style={{ fontSize: 24, fontWeight: "700", marginBottom: 20, color: "#fff" }}>
             Create Post
           </Text>
 
           <View style={{ marginBottom: 18, zIndex: 10 }}>
-            <Text style={{ fontWeight: "600", marginBottom: 6 }}>Title</Text>
+            <Text style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}>Title</Text>
             <TypeSelect
               value={title}
               onChange={setTitleAndPreset}
@@ -148,54 +142,51 @@ export default function PostPage() {
               placeholder="E.g. Homemade ramen"
             />
             {touched && title.trim().length === 0 && (
-              <Text style={{ color: "#dc2626", marginTop: 4 }}>
-                Title is required.
-              </Text>
+              <Text style={{ color: "#f87171", marginTop: 4 }}>Title is required.</Text>
             )}
           </View>
 
           <View style={{ marginBottom: 18 }}>
-            <Text style={{ fontWeight: "600", marginBottom: 6 }}>
-              Description (optional)
+            <Text style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}>
+              Description
             </Text>
             <TextInput
               value={description}
               onChangeText={setDescription}
               placeholder=""
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6b7280"
               multiline
               numberOfLines={5}
               style={{
                 borderWidth: 1,
-                borderColor: "#d1d5db",
-                padding: 10,
+                borderColor: "#374151",
+                padding: 12,
                 borderRadius: 8,
-                backgroundColor: "#f9fafb",
+                backgroundColor: "#111827",
                 textAlignVertical: "top",
                 minHeight: 120,
+                color: "#e5e7eb",
               }}
+              keyboardAppearance="dark"
               onBlur={() => setTouched(true)}
             />
             {touched && description.trim().length === 0 && (
-              <Text style={{ color: "#dc2626", marginTop: 4 }}>
-                Description is required.
-              </Text>
+              <Text style={{ color: "#f87171", marginTop: 4 }}>Description is required.</Text>
             )}
           </View>
 
-          <View
-            style={{
-              height: 1,
-              backgroundColor: "#e5e7eb",
-              marginVertical: 20,
-            }}
-          />
+          <View style={{ height: 1, backgroundColor: "#1f2937", marginVertical: 20 }} />
 
-          <PostImagePicker
-            value={imageUri}
-            onChange={(uri) => setImageUri(uri)}
-            label="Image (optional)"
-          />
+          <View style={{ marginBottom: 16 }}>
+            <Text style={{ fontWeight: "600", marginBottom: 8, color: "#e5e7eb" }}>
+              Image
+            </Text>
+            <PostImagePicker
+              value={imageUri}
+              onChange={(uri) => setImageUri(uri)}
+            />
+          </View>
+
           <View
             style={{
               marginBottom: 24,
@@ -205,70 +196,61 @@ export default function PostPage() {
             }}
           >
             <View style={{ flex: 1, paddingRight: 12 }}>
-              <Text style={{ fontWeight: "600" }}>
+              <Text style={{ fontWeight: "600", color: "#e5e7eb" }}>
                 I {didCook ? "cooked" : "ate"} this
               </Text>
               <Text style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>
                 (Not yet saved – future schema field)
               </Text>
             </View>
-            <Switch value={didCook} onValueChange={setDidCook} />
+            <Switch
+              value={didCook}
+              onValueChange={setDidCook}
+              trackColor={{ false: "#374151", true: "#1f2937" }}
+              thumbColor={didCook ? "#9ca3af" : "#9ca3af"}
+            />
           </View>
 
           {imageUri && !remoteImageUri && (
-            <Text style={{ marginBottom: 16, fontSize: 12, color: "#6b7280" }}>
+            <Text style={{ marginBottom: 16, fontSize: 12, color: "#9ca3af" }}>
               Image selected and ready to upload.
             </Text>
           )}
+
           {loadingRemote && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <ActivityIndicator size="small" />
-              <Text style={{ marginLeft: 8, fontSize: 12 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={{ marginLeft: 8, fontSize: 12, color: "#9ca3af" }}>
                 Loading uploaded image…
               </Text>
             </View>
           )}
-          {/* {remoteImageUri && (
-            // <View style={{ marginBottom: 24 }}>
-            //   <Text style={{ fontWeight: "600", marginBottom: 8 }}>
-            //     Uploaded Image
-            //   </Text>
-            //   <Image
-            //     source={{ uri: remoteImageUri }}
-            //     style={{
-            //       width: "100%",
-            //       height: 220,
-            //       borderRadius: 12,
-            //       backgroundColor: "#f3f4f6",
-            //     }}
-            //     resizeMode="cover"
-            //   />
-            // </View>
-          )} */}
 
-          <View style={{ marginBottom: 40 }}>
+          <View style={{ marginTop: 8 }}>
             {createPostMutation.isPending ? (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <ActivityIndicator color="#111827" />
-                <Text style={{ marginLeft: 12 }}>Posting…</Text>
+                <ActivityIndicator color="#fff" />
+                <Text style={{ marginLeft: 12, color: "#e5e7eb" }}>Posting…</Text>
               </View>
             ) : (
-              <Button
-                title={isValid ? "Post" : "Fill required fields"}
+              <TouchableOpacity
                 onPress={handleSubmit}
                 disabled={!isValid}
-                color={isValid ? undefined : "#9ca3af"}
-              />
+                style={{
+                  backgroundColor: isValid ? "#1f2937" : "#374151",
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>
+                  {isValid ? "Post" : "Fill required fields"}
+                </Text>
+              </TouchableOpacity>
             )}
           </View>
         </ScrollView>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
