@@ -4,7 +4,7 @@ import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Button, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Button, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsPage() {
@@ -18,6 +18,7 @@ export default function SettingsPage() {
   // Fetch user profile data (including post count)
   const profileQuery = trpc.profile.get.useQuery({ id: Number(user?.id) }, { enabled: !!user });
   const updateNameMutation = trpc.auth.updateName?.useMutation?.();
+  const deleteProfileMutation = trpc.profile.delete.useMutation();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -55,6 +56,28 @@ export default function SettingsPage() {
     }
   };
 
+  const handleDeleteProfile = async () => {
+    Alert.alert(
+      "Delete Profile",
+      "Are you sure you want to delete your profile? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteProfileMutation.mutateAsync({ id: user.id });
+              router.replace("/auth");
+            } catch (e) {
+              Alert.alert("Error", "Failed to delete profile. Please try again later.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <TopNav />
@@ -87,6 +110,11 @@ export default function SettingsPage() {
           </View>
           {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
         </View>
+        <Button
+          title="Delete Profile"
+          onPress={handleDeleteProfile}
+          color="red"
+        />
       </View>
       <VersionInfoComponent />
     </SafeAreaView>
