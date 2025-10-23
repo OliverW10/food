@@ -4,18 +4,19 @@ import Constants from "expo-constants";
 import type { AppRouter } from "../../server/src/main";
 
 export function getTrpcServerUrl(): string {
-  const configuredServerUrl =
-    Constants.expoConfig?.extra?.apiUrl ??
+  return getServerUrl() + "/trpc";
+}
+
+export function getServerUrl() {
+  const configuredServerUrl = Constants.expoConfig?.extra?.apiUrl ??
     process.env.API_URL ??
     "http://localhost:3000";
 
   const expoServerIp = Constants.expoConfig?.hostUri?.split(":")[0];
-  const expoServerUrl =
-    expoServerIp !== undefined ? `http://${expoServerIp}:3000` : undefined;
+  const expoServerUrl = expoServerIp !== undefined ? `http://${expoServerIp}:3000` : undefined;
 
-  const serverUrl =
-    configuredServerUrl ?? expoServerUrl ?? "http://localhost:3000";
-  return serverUrl + "/trpc";
+  const serverUrl = configuredServerUrl ?? expoServerUrl ?? "http://localhost:3000";
+  return serverUrl;
 }
 
 const trpc = createTRPCReact<AppRouter>();
