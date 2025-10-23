@@ -76,7 +76,7 @@ export default function PostPage() {
 
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
-        setRemoteImageUri(`http://${getServerUrl()}` + created.image.storageUrl);
+        setRemoteImageUri(getServerUrl() + created.image.storageUrl);
         setLoadingRemote(false);
         setImageUri(null);
         setRemoteImageUri(null);
@@ -106,7 +106,7 @@ export default function PostPage() {
       const token = await getStorageStateAsync("session");
       const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
-      const uploadResponse = await fetch("http://localhost:3000/api/upload", {
+      const uploadResponse = await fetch(getServerUrl() + "/api/upload", {
         method: "POST",
         body: formData,
         headers,

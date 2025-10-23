@@ -1,4 +1,4 @@
-import trpc from "@/services/trpc";
+import trpc, { getServerUrl } from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -101,9 +101,9 @@ export function FoodPost({
     },
   });
 
-  // console.log(
+    // console.log(
   //   review.imageUrl?.startsWith("/uploads/")
-  //     ? "http://localhost:3000" + review.imageUrl
+  //     ? getServerUrl() + review.imageUrl
   //     : review.imageUrl
   // );
 
@@ -124,7 +124,7 @@ export function FoodPost({
         <Image
           source={
             (review.imageUrl?.startsWith("/uploads/")
-              ? "http://localhost:3000" + review.imageUrl
+              ? getServerUrl() + review.imageUrl
               : review.imageUrl) as ImageSourcePropType
           }
           style={{ width: "100%", height: "100%" }}
@@ -179,7 +179,7 @@ export function FoodPost({
         <Image
           source={
             (review.imageUrl?.startsWith("/uploads/")
-              ? "http://localhost:3000" + review.imageUrl
+              ? getServerUrl() + review.imageUrl
               : review.imageUrl) as ImageSourcePropType
           }
           style={imageStyle.my_image}
