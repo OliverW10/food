@@ -259,7 +259,7 @@ export default function PostPage() {
                 }}
               >
                 <Text style={{ color: "#fff", fontWeight: "600" }}>
-                  {isValid && !validationMessage ? "Post" : "Fill required fields"}
+                  {isValid ? "Post" : "Fill required fields"}
                 </Text>
               </TouchableOpacity>
             )}
