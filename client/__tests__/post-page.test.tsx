@@ -1,8 +1,8 @@
-process.env.API_URL = "http://localhost:3000";
-
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import PostPage from "../app/create-post";
+
+process.env.API_URL = "http://localhost:3000";
 
 jest.mock("../hooks/user-context", () => ({
   useSession: () => ({
@@ -75,7 +75,7 @@ describe("PostPage", () => {
     const titleInput = getByPlaceholderText("E.g. Homemade ramen");
     fireEvent.changeText(titleInput, "My Dish");
 
-    const descriptionInput = getByPlaceholderText("");
+    const descriptionInput = getByTestId("description-input");
     fireEvent.changeText(descriptionInput, "Great food");
 
     fireEvent.press(getByTestId("pick-image"));
@@ -92,9 +92,34 @@ describe("PostPage", () => {
     );
   });
 
-  it("prevents submission when required fields missing", async () => {
+  it("shows combined validation message when both fields missing", () => {
     const { getByText } = render(<PostPage />);
-    const button = getByText("Fill required fields");
-    expect(button).toBeTruthy();
+    expect(getByText("Please provide a title and description")).toBeTruthy();
+  });
+
+  it("updates validation message when only description missing", () => {
+    const { getByPlaceholderText, getByText } = render(<PostPage />);
+    const titleInput = getByPlaceholderText("E.g. Homemade ramen");
+    fireEvent.changeText(titleInput, "Just a title");
+    expect(getByText("Please provide a description")).toBeTruthy();
+  });
+
+  it("updates validation message when only title missing", () => {
+    const { getByTestId, getByText } = render(<PostPage />);
+    const descriptionInput = getByTestId("description-input");
+    fireEvent.changeText(descriptionInput, "Just a description");
+    expect(getByText("Please provide a title")).toBeTruthy();
+  });
+
+  it("shows Post when both fields provided", () => {
+    const { getByPlaceholderText, getByTestId, getByText } = render(<PostPage />);
+    fireEvent.changeText(getByPlaceholderText("E.g. Homemade ramen"), "My Dish");
+    fireEvent.changeText(getByTestId("description-input"), "Great food");
+    expect(getByText("Post")).toBeTruthy();
+  });
+
+  it("prevents submission when required fields missing", () => {
+    const { getByText } = render(<PostPage />);
+    expect(getByText("Please provide a title and description")).toBeTruthy();
   });
 });

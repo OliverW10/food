@@ -5,7 +5,7 @@ import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { useSession } from "@/hooks/user-context";
 import trpc from "@/services/trpc";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -38,13 +38,27 @@ export default function PostPage() {
 
   const isValid = title.trim().length > 0 && description.trim().length > 0;
 
+  const validationMessage = useMemo(() => {
+    const missing: string[] = [];
+    if (title.trim().length === 0) missing.push("title");
+    if (description.trim().length === 0) missing.push("description");
+    if (!missing.length) return null;
+    if (missing.length === 1) return `Please provide a ${missing[0]}`;
+    return `Please provide a ${missing[0]} and ${missing[1]}`;
+  }, [title, description]);
+
   const handleSubmit = async () => {
     setTouched(true);
     if (!user) {
       Alert.alert("Not signed in", "Please log in first.");
       return;
     }
-    if (!isValid) return;
+    if (!isValid) {
+      if (validationMessage) {
+        Alert.alert("Missing Info", validationMessage);
+      }
+      return;
+    }
 
     try {
       const imageId = await uploadImage();
@@ -157,6 +171,7 @@ export default function PostPage() {
               placeholderTextColor="#6b7280"
               multiline
               numberOfLines={5}
+              testID="description-input"
               style={{
                 borderWidth: 1,
                 borderColor: "#374151",
@@ -244,9 +259,14 @@ export default function PostPage() {
                 }}
               >
                 <Text style={{ color: "#fff", fontWeight: "600" }}>
-                  {isValid ? "Post" : "Fill required fields"}
+                  {isValid && !validationMessage ? "Post" : "Fill required fields"}
                 </Text>
               </TouchableOpacity>
+            )}
+            {!isValid && validationMessage && (
+              <Text style={{ marginTop: 8, color: "#f87171", fontSize: 12 }}>
+                {validationMessage}
+              </Text>
             )}
           </View>
         </ScrollView>
