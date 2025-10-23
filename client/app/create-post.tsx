@@ -3,7 +3,7 @@ import { TopNav } from "@/components/TopNav";
 import { SimplePreset, TypeSelect } from "@/components/type-select";
 import { getStorageStateAsync } from "@/hooks/use-storage-state";
 import { useSession } from "@/hooks/user-context";
-import trpc from "@/services/trpc";
+import trpc, { getServerUrl } from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -76,7 +76,7 @@ export default function PostPage() {
 
       if (created?.image?.storageUrl) {
         setLoadingRemote(true);
-        setRemoteImageUri("http://localhost:3000" + created.image.storageUrl);
+        setRemoteImageUri(`http://${getServerUrl()}` + created.image.storageUrl);
         setLoadingRemote(false);
         setImageUri(null);
         setRemoteImageUri(null);
