@@ -29,7 +29,7 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Hello! I'm your friendly food connoisseur Joshua Roy. Ask me anything!",
+      text: "Hello! I'm your friendly neighbourhood monkey and food connoisseur, Joshua Roy. Ask me anything!",
       isUser: false,
       timestamp: new Date(),
     },
