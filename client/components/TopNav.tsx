@@ -25,11 +25,11 @@ export function TopNav() {
           alignItems: "center",
           paddingHorizontal: 12,
           paddingVertical: 10,
-          backgroundColor: "#0b0f16",
+          backgroundColor: "#ff0f16",
         }}
       >
         <Pressable onPress={() => setOpen(true)}>
-          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 20 }}>
+          <Text style={{ color: "#00f", fontWeight: "700", fontSize: 20 }}>
             {username}&apos;s{space}▼
           </Text>
         </Pressable>
