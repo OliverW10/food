@@ -10,22 +10,28 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileView() {
+  // Extract username from the URL parameters
   let username = useLocalSearchParams()?.username;
 
+  // Convert userId from string to number; default to -1 if not found
   const targetUserId = Number.parseInt(
     useLocalSearchParams()?.userId?.toString() ?? "-1"
   );
+
+  // If no valid userId is found yet, show a temporary loading message
   if (targetUserId === -1) {
     return <Text>Loading</Text>;
   }
 
   return (
     <>
+      {/* Dynamically set the screen title based on username */}
       <Stack.Screen
         options={{
           title: (username as string) || "Profile",
         }}
       />
+      {/* Render the internal profile view once the userId is known */}
       <ProfileViewInternal userId={targetUserId} />
     </>
   );
@@ -35,6 +41,7 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
   const router = useRouter();
   const { user, session, signOut } = useSession();
 
+  // Fetch profile data for the given userId from the backend using TRPC
   const {
     data: profile,
     isLoading,
@@ -44,7 +51,6 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
   } = trpc.profile.get.useQuery(
     { id: userId },
     {
-      // enabled: !!session && !!userId,
       staleTime: 0,
       refetchOnMount: "always",
       refetchOnReconnect: true,
@@ -52,11 +58,13 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     }
   );
 
+  // Handle user logout and redirect to the authentication screen
   const handleLogout = async () => {
     signOut();
     router.replace("/auth");
   };
 
+  // If the user is not signed in, prompt them to log in
   if (!session) {
     return (
       <SafeAreaView
@@ -72,6 +80,8 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
       </SafeAreaView>
     );
   }
+
+  // Show loading indicator while fetching profile data
   if (isLoading || isFetching) {
     return (
       <SafeAreaView
@@ -87,6 +97,8 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
       </SafeAreaView>
     );
   }
+
+  // Display error message if the query fails
   if (isError) {
     return (
       <Text style={{ color: "#fff" }}>
@@ -94,6 +106,8 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
       </Text>
     );
   }
+
+  // Handle case where profile data is empty or user not found
   if (!profile) {
     return (
       <SafeAreaView
@@ -109,6 +123,7 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     );
   }
 
+  // Map backend post data into UI-friendly structure
   const posts: PostUI[] = (profile?.posts ?? []).map((p) => ({
     id: p.id,
     title: p.title ?? "",
@@ -116,18 +131,21 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
     author: {
       id: userId,
       email: profile?.email ?? "",
-      name:
-        profile?.name ?? (profile?.email ? profile.email.split("@")[0] : ""),
+      name: profile?.name ?? (profile?.email ? profile.email.split("@")[0] : ""),
     },
     likesCount: p.likesCount ?? 0,
     likedByMe: p.likedByMe ?? false,
     commentsCount: p.commentsCount ?? 0,
     imageUrl: p.imageUrl,
   }));
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
+      {/* Display top bar with username */}
       <ProfileTopBar username={profile?.email ?? user?.email ?? ""} />
+
       <View style={{ flex: 1 }}>
+        {/* Display user's profile info and posts grid */}
         <ProfilePostsGrid
           reviews={posts}
           header={
@@ -141,6 +159,7 @@ export function ProfileViewInternal({ userId }: { userId: number }) {
           }
         />
 
+        {/* Logout button */}
         <TouchableOpacity
           onPress={handleLogout}
           style={{

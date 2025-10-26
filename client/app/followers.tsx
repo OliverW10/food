@@ -17,6 +17,7 @@ export default function FollowersPage() {
   const { session } = useSession();
   const utils = trpc.useUtils();
 
+  // Fetch followers list in pages (infinite scroll) only when user is logged in
   const { data, isLoading, isFetching, hasNextPage, fetchNextPage, refetch } =
     trpc.search.followers.useInfiniteQuery(
       { limit: 20 },
@@ -30,9 +31,12 @@ export default function FollowersPage() {
       }
     );
 
+  // Flatten paginated data into a single array of user items
   const rows = useMemo(() => (data?.pages ?? []).flatMap((p) => p.items), [data?.pages]);
 
+  // Mutation for toggling follow/unfollow state with optimistic updates
   const followMutation = trpc.search.followToggle.useMutation({
+    // Immediately update UI before server response
     onMutate: async ({ targetUserId, follow }) => {
       await utils.search.followers.cancel();
       const key = { limit: 20 };
@@ -48,11 +52,13 @@ export default function FollowersPage() {
         } as typeof cur;
         return next;
       });
-      return { previous, key };
+      return { previous, key }; // store previous state in case rollback is needed
     },
+    // Revert to previous state if mutation fails
     onError: (_e, _v, ctx) => {
       if (ctx?.previous) utils.search.followers.setInfiniteData(ctx.key, ctx.previous);
     },
+    // Refresh all related cached queries after mutation completes
     onSettled: async (_d, _e, vars) => {
       await utils.search.followers.invalidate({ limit: 20 });
       try { await utils.profile?.get?.invalidate({ id: vars.targetUserId } as any); } catch {}
@@ -61,34 +67,66 @@ export default function FollowersPage() {
     },
   });
 
+  // Component to render either the user's avatar or a fallback initial
   const Avatar = ({ u }: { u: UserItem }) => {
     const letter = (u.name?.[0] || u.email?.[0] || "?").toUpperCase();
     return u.avatarUrl ? (
       <Image source={{ uri: u.avatarUrl }} style={{ width: 36, height: 36, borderRadius: 18 }} />
     ) : (
-      <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#374151", alignItems: "center", justifyContent: "center" }}>
+      <View
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 18,
+          backgroundColor: "#374151",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Text style={{ color: "#fff", fontWeight: "700" }}>{letter}</Text>
       </View>
     );
   };
 
+  // Component for displaying a single follower row with avatar, name, and follow button
   const Row = ({ u }: { u: UserItem }) => {
     const followed = !!u.followedByMe;
     return (
-      <View style={{ paddingVertical: 10, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderColor: "#1f2937" }}>
+      <View
+        style={{
+          paddingVertical: 10,
+          paddingHorizontal: 12,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottomWidth: 1,
+          borderColor: "#1f2937",
+        }}
+      >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           <Avatar u={u} />
           <View>
-            <Text style={{ color: "#fff", fontWeight: "700" }}>{u.name?.trim() || u.email.split("@")[0]}</Text>
+            <Text style={{ color: "#fff", fontWeight: "700" }}>
+              {u.name?.trim() || u.email.split("@")[0]}
+            </Text>
             <Text style={{ color: "#9ca3af", fontSize: 12 }}>{u.email}</Text>
           </View>
         </View>
+        {/* Follow/Unfollow button with loading state */}
         <TouchableOpacity
           onPress={() => followMutation.mutate({ targetUserId: u.id, follow: !followed })}
-          style={{ paddingVertical: 6, paddingHorizontal: 12, borderRadius: 999, backgroundColor: followed ? "#374151" : "#2563eb", opacity: followMutation.status === "pending" ? 0.7 : 1 }}
+          style={{
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderRadius: 999,
+            backgroundColor: followed ? "#374151" : "#2563eb",
+            opacity: followMutation.status === "pending" ? 0.7 : 1,
+          }}
           disabled={followMutation.status === "pending"}
         >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>{followed ? "Following" : "Follow"}</Text>
+          <Text style={{ color: "#fff", fontWeight: "600" }}>
+            {followed ? "Following" : "Follow"}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -96,15 +134,19 @@ export default function FollowersPage() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
+      {/* Page title */}
       <View style={{ padding: 16 }}>
         <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>Followers</Text>
       </View>
+
+      {/* Loading indicator while fetching initial data */}
       {isLoading ? (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <ActivityIndicator color="#fff" />
           <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading…</Text>
         </View>
       ) : (
+        // Scrollable list of followers with infinite scroll and pull-to-refresh
         <FlatList
           data={rows}
           keyExtractor={(u) => String(u.id)}
