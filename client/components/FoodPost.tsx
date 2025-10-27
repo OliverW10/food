@@ -1,3 +1,4 @@
+// Olivia
 import trpc, { getServerUrl } from "@/services/trpc";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -101,7 +102,7 @@ export function FoodPost({
     },
   });
 
-    // console.log(
+  // console.log(
   //   review.imageUrl?.startsWith("/uploads/")
   //     ? getServerUrl() + review.imageUrl
   //     : review.imageUrl

@@ -1,3 +1,4 @@
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import { useSession } from "@/hooks/user-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -53,7 +54,6 @@ export function TopNav() {
         </View>
       </View>
 
-      {/* Dropdown menu as modal */}
       <Modal visible={open} transparent animationType="fade">
         <Pressable
           onPress={() => setOpen(false)}

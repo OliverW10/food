@@ -1,3 +1,4 @@
+// Oliver
 import { TopNav } from "@/components/TopNav";
 import { VersionInfoComponent } from "@/components/version-info";
 import { useSession } from "@/hooks/user-context";
@@ -16,7 +17,10 @@ export default function SettingsPage() {
   const [error, setError] = useState("");
 
   // Fetch user profile data (including post count)
-  const profileQuery = trpc.profile.get.useQuery({ id: Number(user?.id) }, { enabled: !!user });
+  const profileQuery = trpc.profile.get.useQuery(
+    { id: Number(user?.id) },
+    { enabled: !!user }
+  );
   const updateNameMutation = trpc.auth.updateName?.useMutation?.();
 
   useEffect(() => {
@@ -30,14 +34,16 @@ export default function SettingsPage() {
 
   if (!user || profileQuery.isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <ActivityIndicator size="large" />
       </SafeAreaView>
     );
   }
 
   const handleSaveName = async () => {
-    console.log("saving")
+    console.log("saving");
     setSaving(true);
     setError("");
     try {
@@ -45,7 +51,10 @@ export default function SettingsPage() {
       setEditMode(false);
       profileQuery.refetch();
     } catch (e: any) {
-      if (typeof e?.message === "string" && e.message.includes("Name is already taken")) {
+      if (
+        typeof e?.message === "string" &&
+        e.message.includes("Name is already taken")
+      ) {
         setError("That name is already taken. Please choose another.");
       } else {
         setError("Invalid name. Name cannot be empty or too long.");
@@ -63,14 +72,21 @@ export default function SettingsPage() {
         <View style={{ gap: 8 }}>
           <Text style={{ fontSize: 16 }}>ID: {user.id}</Text>
           <Text style={{ fontSize: 16 }}>Email: {user.email}</Text>
-          <Text style={{ fontSize: 16 }}>Posts: {profileQuery.data?.posts?.length ?? 0}</Text>
+          <Text style={{ fontSize: 16 }}>
+            Posts: {profileQuery.data?.posts?.length ?? 0}
+          </Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Text style={{ fontSize: 16 }}>Name:</Text>
             {editMode ? (
               <TextInput
                 value={name}
                 onChangeText={setName}
-                style={{ borderWidth: 1, borderColor: "#ccc", padding: 6, minWidth: 120 }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  padding: 6,
+                  minWidth: 120,
+                }}
                 editable={!saving}
               />
             ) : (
@@ -82,7 +98,13 @@ export default function SettingsPage() {
               disabled={saving}
             />
             {editMode && (
-              <Button title="Cancel" onPress={() => { setEditMode(false); setName(profileQuery.data?.name ?? ""); }} />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setEditMode(false);
+                  setName(profileQuery.data?.name ?? "");
+                }}
+              />
             )}
           </View>
           {error ? <Text style={{ color: "red" }}>{error}</Text> : null}

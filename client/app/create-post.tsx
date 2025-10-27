@@ -1,3 +1,4 @@
+// Olivia
 import PostImagePicker from "@/components/PostImagePicker";
 import { TopNav } from "@/components/TopNav";
 import { SimplePreset, TypeSelect } from "@/components/type-select";
@@ -143,12 +144,23 @@ export default function PostPage() {
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={{ fontSize: 24, fontWeight: "700", marginBottom: 20, color: "#fff" }}>
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: "700",
+              marginBottom: 20,
+              color: "#fff",
+            }}
+          >
             Create Post
           </Text>
 
           <View style={{ marginBottom: 18, zIndex: 10 }}>
-            <Text style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}>Title</Text>
+            <Text
+              style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}
+            >
+              Title
+            </Text>
             <TypeSelect
               value={title}
               onChange={setTitleAndPreset}
@@ -156,12 +168,16 @@ export default function PostPage() {
               placeholder="E.g. Homemade ramen"
             />
             {touched && title.trim().length === 0 && (
-              <Text style={{ color: "#f87171", marginTop: 4 }}>Title is required.</Text>
+              <Text style={{ color: "#f87171", marginTop: 4 }}>
+                Title is required.
+              </Text>
             )}
           </View>
 
           <View style={{ marginBottom: 18 }}>
-            <Text style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}>
+            <Text
+              style={{ fontWeight: "600", marginBottom: 6, color: "#e5e7eb" }}
+            >
               Description
             </Text>
             <TextInput
@@ -186,14 +202,24 @@ export default function PostPage() {
               onBlur={() => setTouched(true)}
             />
             {touched && description.trim().length === 0 && (
-              <Text style={{ color: "#f87171", marginTop: 4 }}>Description is required.</Text>
+              <Text style={{ color: "#f87171", marginTop: 4 }}>
+                Description is required.
+              </Text>
             )}
           </View>
 
-          <View style={{ height: 1, backgroundColor: "#1f2937", marginVertical: 20 }} />
+          <View
+            style={{
+              height: 1,
+              backgroundColor: "#1f2937",
+              marginVertical: 20,
+            }}
+          />
 
           <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontWeight: "600", marginBottom: 8, color: "#e5e7eb" }}>
+            <Text
+              style={{ fontWeight: "600", marginBottom: 8, color: "#e5e7eb" }}
+            >
               Image
             </Text>
             <PostImagePicker
@@ -233,7 +259,13 @@ export default function PostPage() {
           )}
 
           {loadingRemote && (
-            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
               <ActivityIndicator size="small" color="#fff" />
               <Text style={{ marginLeft: 8, fontSize: 12, color: "#9ca3af" }}>
                 Loading uploaded image…
@@ -245,7 +277,9 @@ export default function PostPage() {
             {createPostMutation.isPending ? (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <ActivityIndicator color="#fff" />
-                <Text style={{ marginLeft: 12, color: "#e5e7eb" }}>Posting…</Text>
+                <Text style={{ marginLeft: 12, color: "#e5e7eb" }}>
+                  Posting…
+                </Text>
               </View>
             ) : (
               <TouchableOpacity

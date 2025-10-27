@@ -1,13 +1,16 @@
+// Rianna
 import { z } from "zod";
 import { db } from "../db";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const commentsApi = router({
   add: protectedProcedure
-    .input(z.object({
-      postId: z.number(),
-      text: z.string().min(1),
-    }))
+    .input(
+      z.object({
+        postId: z.number(),
+        text: z.string().min(1),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       const userId = Number(ctx.user?.sub);
       if (!userId) throw new Error("Unauthenticated");

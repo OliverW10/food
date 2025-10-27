@@ -1,3 +1,4 @@
+// Oliver
 // server/src/routers/searchApi.ts
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -41,7 +42,10 @@ export const searchApi = router({
         orderBy: { id: "asc" },
         take: input.limit + 1,
         include: {
-          Followers: { where: { followerId: me.id }, select: { followerId: true } },
+          Followers: {
+            where: { followerId: me.id },
+            select: { followerId: true },
+          },
         },
       });
 
@@ -55,24 +59,37 @@ export const searchApi = router({
           name: u.name,
           email: u.email,
           avatarUrl: null, // TODO: profile pictures
-          followedByMe: u.Followers.length > 0,    // ← drives “Follow/Following”
+          followedByMe: u.Followers.length > 0, // ← drives “Follow/Following”
         })),
         nextCursor,
       };
     }),
 
   followToggle: protectedProcedure
-    .input(z.object({ targetUserId: z.number().int().positive(), follow: z.boolean() }))
+    .input(
+      z.object({
+        targetUserId: z.number().int().positive(),
+        follow: z.boolean(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const email = (ctx.user as { email?: string })?.email;
       if (!email) throw new Error("Unauthorized");
 
-      const me = await db.user.findUnique({ where: { email }, select: { id: true } });
+      const me = await db.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
       if (!me) throw new Error("Unauthorized");
       if (me.id === input.targetUserId) return { ok: true }; // ignore self
       if (input.follow) {
         await db.follow.upsert({
-          where: { followerId_followingId: { followerId: me.id, followingId: input.targetUserId } },
+          where: {
+            followerId_followingId: {
+              followerId: me.id,
+              followingId: input.targetUserId,
+            },
+          },
           update: {},
           create: { followerId: me.id, followingId: input.targetUserId },
         });
@@ -86,17 +103,25 @@ export const searchApi = router({
       return { ok: true, follow: input.follow };
     }),
 
-    followers: protectedProcedure
-    .input(z.object({ limit: z.number().int().min(1).max(50).default(20), cursor: z.number().int().nullable().optional() }))
+  followers: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().int().min(1).max(50).default(20),
+        cursor: z.number().int().nullable().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const email = (ctx.user as { email?: string })?.email;
       if (!email) throw new Error("Unauthorized");
 
-      const me = await db.user.findUnique({ where: { email }, select: { id: true } });
+      const me = await db.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
       if (!me) throw new Error("Unauthorized");
 
       const where: Prisma.UserWhereInput = {
-        Following: { some: { followingId: me.id } },           // users who follow ME
+        Following: { some: { followingId: me.id } }, // users who follow ME
         ...(input.cursor ? { id: { gt: input.cursor } } : {}),
       };
 
@@ -105,7 +130,10 @@ export const searchApi = router({
         orderBy: { id: "asc" },
         take: input.limit + 1,
         include: {
-          Followers: { where: { followerId: me.id }, select: { followerId: true } }, // do I follow them back?
+          Followers: {
+            where: { followerId: me.id },
+            select: { followerId: true },
+          }, // do I follow them back?
         },
       });
 
@@ -126,16 +154,24 @@ export const searchApi = router({
     }),
 
   following: protectedProcedure
-    .input(z.object({ limit: z.number().int().min(1).max(50).default(20), cursor: z.number().int().nullable().optional() }))
+    .input(
+      z.object({
+        limit: z.number().int().min(1).max(50).default(20),
+        cursor: z.number().int().nullable().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const email = (ctx.user as { email?: string })?.email;
       if (!email) throw new Error("Unauthorized");
 
-      const me = await db.user.findUnique({ where: { email }, select: { id: true } });
+      const me = await db.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
       if (!me) throw new Error("Unauthorized");
 
       const where: Prisma.UserWhereInput = {
-        Followers: { some: { followerId: me.id } },            // users I FOLLOW
+        Followers: { some: { followerId: me.id } }, // users I FOLLOW
         ...(input.cursor ? { id: { gt: input.cursor } } : {}),
       };
 
@@ -144,7 +180,10 @@ export const searchApi = router({
         orderBy: { id: "asc" },
         take: input.limit + 1,
         include: {
-          Followers: { where: { followerId: me.id }, select: { followerId: true } }, // always true but keep shape
+          Followers: {
+            where: { followerId: me.id },
+            select: { followerId: true },
+          }, // always true but keep shape
         },
       });
 
@@ -164,5 +203,3 @@ export const searchApi = router({
       };
     }),
 });
-
-

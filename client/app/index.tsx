@@ -1,9 +1,9 @@
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import { useSession } from "@/hooks/user-context";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { session, isLoading } = useSession();
@@ -21,10 +21,12 @@ export default function Index() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <ActivityIndicator />
       </SafeAreaView>
-    )
+    );
   }
 
   return null;

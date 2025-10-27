@@ -1,3 +1,4 @@
+// Josh
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, TextStyle, ViewStyle } from "react-native";
@@ -11,7 +12,14 @@ type Props = {
   textStyle?: TextStyle;
 };
 
-export function ProfileButton({ label, onPress, icon, variant = "primary", style, textStyle }: Props) {
+export function ProfileButton({
+  label,
+  onPress,
+  icon,
+  variant = "primary",
+  style,
+  textStyle,
+}: Props) {
   const bg = variant === "primary" ? "#1f2937" : "transparent";
   const border = variant === "primary" ? "transparent" : "#374151";
   const color = "#fff";

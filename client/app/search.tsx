@@ -1,8 +1,17 @@
 // app/search/index.tsx
 import { useSession } from "@/hooks/user-context";
+// Oliver
 import trpc from "@/services/trpc";
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type UserRow = {
@@ -44,7 +53,7 @@ export default function SearchPage() {
     [data?.pages]
   );
 
-const followMutation = trpc.search.followToggle.useMutation({
+  const followMutation = trpc.search.followToggle.useMutation({
     onMutate: async ({ targetUserId, follow }) => {
       await utils.search.search.cancel();
       const key = { q: debounced || undefined, limit: 20 };
@@ -67,14 +76,22 @@ const followMutation = trpc.search.followToggle.useMutation({
       return { previous, key, targetUserId };
     },
     onError: (_e, _v, ctx) => {
-      if (ctx?.previous) utils.search.search.setInfiniteData(ctx.key, ctx.previous);
+      if (ctx?.previous)
+        utils.search.search.setInfiniteData(ctx.key, ctx.previous);
     },
     onSettled: async (_data, _err, vars) => {
       await Promise.all([
-        utils.search.search.invalidate({ q: debounced || undefined, limit: 20 }),
-        utils.profile?.get?.invalidate?.({ id: vars.targetUserId } as any).catch(() => {}),
+        utils.search.search.invalidate({
+          q: debounced || undefined,
+          limit: 20,
+        }),
+        utils.profile?.get
+          ?.invalidate?.({ id: vars.targetUserId } as any)
+          .catch(() => {}),
         utils.profile?.get?.invalidate?.().catch(() => {}),
-        utils.post?.getFeed?.invalidate?.({ mode: "following" } as any).catch(() => {}),
+        utils.post?.getFeed
+          ?.invalidate?.({ mode: "following" } as any)
+          .catch(() => {}),
       ]);
     },
   });
@@ -82,7 +99,10 @@ const followMutation = trpc.search.followToggle.useMutation({
   const renderAvatar = (u: UserRow) => {
     const letter = (u.name?.[0] || u.email?.[0] || "?").toUpperCase();
     return u.avatarUrl ? (
-      <Image source={{ uri: u.avatarUrl }} style={{ width: 36, height: 36, borderRadius: 18 }} />
+      <Image
+        source={{ uri: u.avatarUrl }}
+        style={{ width: 36, height: 36, borderRadius: 18 }}
+      />
     ) : (
       <View
         style={{
@@ -127,7 +147,9 @@ const followMutation = trpc.search.followToggle.useMutation({
 
         {!isSelf && (
           <TouchableOpacity
-            onPress={() => followMutation.mutate({ targetUserId: u.id, follow: !followed })}
+            onPress={() =>
+              followMutation.mutate({ targetUserId: u.id, follow: !followed })
+            }
             style={{
               paddingVertical: 6,
               paddingHorizontal: 12,
@@ -149,7 +171,9 @@ const followMutation = trpc.search.followToggle.useMutation({
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0b0f16" }}>
       <View style={{ padding: 16, gap: 12 }}>
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>Search</Text>
+        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>
+          Search
+        </Text>
         <TextInput
           placeholder="Search users by name or email"
           placeholderTextColor="#6b7280"
@@ -168,7 +192,9 @@ const followMutation = trpc.search.followToggle.useMutation({
       </View>
 
       {isLoading ? (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
           <ActivityIndicator color="#fff" />
           <Text style={{ color: "#9ca3af", marginTop: 8 }}>Loading users…</Text>
         </View>
@@ -186,8 +212,12 @@ const followMutation = trpc.search.followToggle.useMutation({
           onRefresh={() => refetch()}
           ListEmptyComponent={
             <View style={{ padding: 24, alignItems: "center" }}>
-              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>No users</Text>
-              <Text style={{ color: "#9ca3af", marginTop: 6 }}>Try a different search.</Text>
+              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
+                No users
+              </Text>
+              <Text style={{ color: "#9ca3af", marginTop: 6 }}>
+                Try a different search.
+              </Text>
             </View>
           }
         />
