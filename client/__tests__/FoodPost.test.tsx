@@ -2,14 +2,12 @@ import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import { FoodPost } from "../components/FoodPost";
 
-// Mock expo-router
 jest.mock("expo-router", () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
 }));
 
-// Mock trpc
 jest.mock("../services/trpc", () => ({
   __esModule: true,
   default: {
@@ -61,7 +59,6 @@ describe("FoodPost Component", () => {
     );
 
     expect(getByText("Test Post")).toBeTruthy();
-    // The description is rendered together with author name in the same text element
     expect(getByText("Test User This is a test post description")).toBeTruthy();
   });
 
@@ -70,8 +67,7 @@ describe("FoodPost Component", () => {
       <FoodPost review={mockPost} onOpenComments={mockOnOpenComments} />
     );
 
-    // Heart and count are in the same text element with newline
-    expect(getByText("♡\n\n            5")).toBeTruthy(); // Unlike state with count
+    expect(getByText("♡\n\n            5")).toBeTruthy();
   });
 
   it("shows liked state when post is liked", () => {
@@ -110,7 +106,6 @@ describe("FoodPost Component", () => {
     const likeButton = getByLabelText("Like post");
     fireEvent.press(likeButton);
 
-    // The mutation should be called (we can't easily test the exact parameters without more complex mocking)
     expect(likeButton).toBeTruthy();
   });
 
@@ -119,7 +114,6 @@ describe("FoodPost Component", () => {
       <FoodPost review={mockPost} gridView={true} testID="grid-post" />
     );
 
-    // In grid view, it should render as a simple touchable with image
     const touchable = getByTestId("grid-post");
     expect(touchable).toBeTruthy();
   });
@@ -132,7 +126,6 @@ describe("FoodPost Component", () => {
     const postButton = getByRole("button");
     fireEvent.press(postButton);
 
-    // Should navigate to post (router.push is mocked)
     expect(postButton).toBeTruthy();
   });
 });

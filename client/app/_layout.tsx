@@ -1,3 +1,4 @@
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import "@/global.css";
 import { SessionProvider } from "@/hooks/user-context";
 import { fetchWithAuthRaw } from "@/services/fetch-with-auth";

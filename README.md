@@ -1,6 +1,74 @@
 # Choppd
 
-Expo client app, tRPC backend with prisma and postgreSql
+## Instructions to run:
+
+To run this app (basic, web mode), you'll need Node.js (22+ recommended), Docker/Podman for PostgreSQL, and npm.
+
+- First, install dependencies with `npm i` in the project roots (frontend and backend)
+- Start the database with `podman compose -f docker-compose.yaml up -d` (or use Docker)
+- Run `npx prisma migrate dev` in `server/src/prisma/` to set up the database schema
+- Run `npm run dev` in both the `server` and `client` directories to start the backend and frontend
+- For AI use, place an open AI API key in the .env file in the server
+
+## What is Choppd?
+
+Choppd is a social media platform for people to connect over what they make and eat.
+
+Choppd is a full-stack food social media where users can share their food experiences, follow other users, and discover new recipes and restaurants. It is built with Expo/React Native for the mobile client and a tRPC backend with Prisma and Postgres.
+
+## Features
+
+### Food Sharing
+
+- Share your food experiences with posts
+- Upload food photos with automatic processing
+- Write descriptions about your cooking or dining experiences
+
+### Social Features
+
+- View profiles with post counts, followers, and following statistics
+- Follow people and build your network
+- For your feed, you can switch between "Following" (posts from users you follow) and "Explore" (discover new content)
+- Search and discover new users by name or email
+- View your social connections (followers/following)
+
+### Engagement
+
+- Like and unlike posts with counter updates
+- Comment on posts and start discussions
+- Infinite scroll feed
+
+### AI Assistant Chatbot Josh
+
+- Built-in AI chatbot powered by OpenAI
+- Get food advice and cooking tips and recommendations
+
+### Authentication/Security Features
+
+- Secure registration and login
+- Authenticated endpoints with proper authorization
+- Persistent login sessions with refresh tokens
+- Bcrypt password hashing and validation
+
+## Technology Stack
+
+### Frontend (Client)
+
+- Expo
+- Typescript
+- tRPC
+- Expo Router
+
+### Backend (Server)
+
+- Node + Express
+- tRPC
+- Prisma ORM
+- Postgres
+
+### Database Schema
+
+- see prisma.client
 
 ## General setup
 
@@ -38,21 +106,67 @@ It looks like its possible to setup a github action to create an ios build (`xco
 - when the db is not up to date with the schema and you don't care about the data: `npx prisma db push --force-reset` or `npx prisma migrate reset`
 - for viewing db in web: `npx prisma studio`
 
+## App Structure
+
+### Client (`/client`)
+
+- Authentication, home feed, create post, profile, search, settings
+- Tests: Component testing with Jest and React Native
+
+### Server (`/server`)
+
+- API endpoints (auth, posts, profiles, search, comments, chat)
+- Prisma schema with migrations and seeding
+
 # TODOS:
 
 - authorized routes reject when not signed in, send to auth page
-
 - auto refresh access token when api call fails with 401
 - decode and store user info from jwt in fe so i can access user id and email without extra api calls
 - mfa setup
 - store jwt in db, and revoke on logout
 - email verification after signup
 - logout of all devices slay
+- profile pictures/avatars
+- push notifications for likes and comments
+- advanced search and filtering
+- food categories and tagging system
+- restaurant/location tagging
+- recipe sharing with ingredients and instructions
+- meal planning features
+- dietary restriction filters
 
 # Group Member Feature Breakdown
 
-Rianna: Comments (validate empty), Feed
-Josh: Profile Page, Followers/Following
-Olivia: Posting page, Post view page (validate post contents)
-Mukund: Login, Likes (validate password creation)
-Oliver: Search, Settings page (validate new name)
+Rianna -> Comments (validate empty), Feed
+
+- [`client/components/CommentsSheet.tsx`](client/components/CommentsSheet.tsx)
+- [`server/src/controllers/comments-api.ts`](server/src/controllers/comments-api.ts)
+- [`client/app/home.tsx`](client/app/home.tsx)
+
+Josh -> Profile Page, Followers/Following
+
+- [`client/app/profile/[userId].tsx`](client/app/profile/[userId].tsx)
+- [`client/components/profile/`](client/components/profile/)
+- [`client/app/followers.tsx`](client/app/followers.tsx)
+- [`client/app/following.tsx`](client/app/following.tsx)
+
+Olivia -> Posting page, Post view page (validate post contents)
+
+- [`client/app/create-post.tsx`](client/app/create-post.tsx)
+- [`client/app/post/[postId].tsx`](client/app/post/[postId].tsx)
+- [`client/components/FoodPost.tsx`](client/components/FoodPost.tsx)
+
+Mukund :D -> Signup, Login, Likes (validate password creation), Chatbot
+
+- [`client/app/auth.tsx`](client/app/auth.tsx)
+- [`server/src/controllers/auth-api.ts`](server/src/controllers/auth-api.ts)
+- [`server/src/controllers/post-api.ts`](server/src/controllers/post-api.ts) (likeToggle)
+- [`client/components/ChatBot.tsx`](client/components/ChatBot.tsx)
+- [`server/src/controllers/chat-api.ts`](server/src/controllers/chat-api.ts)
+
+Oliver -> Search, Settings page (validate new name) (oliver also set up the repo which was a huge help to our team, even though it is not recognized here)
+
+- [`client/app/search.tsx`](client/app/search.tsx)
+- [`server/src/controllers/search-api.ts`](server/src/controllers/search-api.ts)
+- [`client/app/settings.tsx`](client/app/settings.tsx)

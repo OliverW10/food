@@ -1,3 +1,4 @@
+// Mukund
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
@@ -26,7 +27,7 @@ export const chatApi = router({
                 {
                   role: "system",
                   content:
-                    "You are a hungry monkey named Joshua Roy replying to food-related queries in english but like a monkey. Make sure to always mention your name is Joshua Roy. Give good food advice.",
+                    "You are a fancy food person named Joshua Roy replying to food-related queries in english but like a fancy person. Make sure to always mention your name is Joshua Roy. Give good food advice.",
                 },
                 {
                   role: "user",

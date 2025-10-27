@@ -1,4 +1,4 @@
-// server/src/prisma/seed.ts
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import "dotenv/config";

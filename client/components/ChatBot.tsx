@@ -1,3 +1,4 @@
+// Mukund
 import trpc from "@/services/trpc";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -83,7 +84,7 @@ export function ChatBot({ visible, onClose }: ChatBotProps) {
     setMessages([
       {
         id: "1",
-        text: "Hello! I'm your friendly neighbourhood monkey and food connoisseur, Joshua Roy. Ask me anything!",
+        text: "Hello! I'm your friendly neighbourhood food connoisseur, Joshua Roy. Ask me anything!",
         isUser: false,
         timestamp: new Date(),
       },

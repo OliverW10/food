@@ -1,5 +1,6 @@
-import trpc from '@/services/trpc';
-import React, { useMemo, useState } from 'react';
+// Rianna
+import trpc from "@/services/trpc";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -8,7 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
 
 export function CommentsSheet({
   postId,
@@ -19,7 +20,7 @@ export function CommentsSheet({
   visible: boolean;
   onClose: () => void;
 }) {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
@@ -74,7 +75,7 @@ export function CommentsSheet({
                     {
                       id: Date.now(), // temp ID
                       text: vars.text,
-                      author: { name: 'You', email: '' },
+                      author: { name: "You", email: "" },
                     },
                     ...pg.items,
                   ],
@@ -85,7 +86,7 @@ export function CommentsSheet({
       });
     },
     onSuccess: () => {
-      setText('');
+      setText("");
       setError(null);
       // ensure server truth
       utils.comments.list.invalidate();
@@ -98,18 +99,23 @@ export function CommentsSheet({
   const items = (commentsListQ.data?.pages ?? []).flatMap((p) => p.items);
 
   return (
-    <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
+    <Modal
+      animationType="slide"
+      transparent
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <View
         style={{
           flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          justifyContent: 'flex-end',
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "flex-end",
         }}
       >
         <View
           style={{
-            maxHeight: '75%',
-            backgroundColor: '#0b0f16',
+            maxHeight: "75%",
+            backgroundColor: "#0b0f16",
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
             padding: 16,
@@ -117,10 +123,10 @@ export function CommentsSheet({
         >
           <View
             style={{
-              alignSelf: 'center',
+              alignSelf: "center",
               width: 40,
               height: 4,
-              backgroundColor: '#374151',
+              backgroundColor: "#374151",
               borderRadius: 4,
               marginBottom: 8,
             }}
@@ -128,16 +134,16 @@ export function CommentsSheet({
           <Text
             style={{
               fontSize: 18,
-              fontWeight: '700',
+              fontWeight: "700",
               marginBottom: 12,
-              color: '#fff',
+              color: "#fff",
             }}
           >
             Comments
           </Text>
 
           {commentsListQ.isLoading ? (
-            <View style={{ alignItems: 'center', padding: 16 }}>
+            <View style={{ alignItems: "center", padding: 16 }}>
               <ActivityIndicator color="#fff" />
             </View>
           ) : (
@@ -148,13 +154,15 @@ export function CommentsSheet({
                   style={{
                     paddingVertical: 8,
                     borderBottomWidth: 1,
-                    borderColor: '#1f2937',
+                    borderColor: "#1f2937",
                   }}
                 >
-                  <Text style={{ fontWeight: '600', color: '#fff' }}>
-                    {c.author?.name ?? c.author?.email?.split?.('@')[0] ?? 'user'}
+                  <Text style={{ fontWeight: "600", color: "#fff" }}>
+                    {c.author?.name ??
+                      c.author?.email?.split?.("@")[0] ??
+                      "user"}
                   </Text>
-                  <Text style={{ color: '#9ca3af' }}>{c.text}</Text>
+                  <Text style={{ color: "#9ca3af" }}>{c.text}</Text>
                 </View>
               ))}
             </ScrollView>
@@ -168,27 +176,27 @@ export function CommentsSheet({
               onChangeText={setText}
               style={{
                 borderWidth: 1,
-                borderColor: '#374151',
+                borderColor: "#374151",
                 borderRadius: 8,
                 padding: 10,
                 marginBottom: 8,
-                color: '#fff',
-                backgroundColor: '#1f2937',
+                color: "#fff",
+                backgroundColor: "#1f2937",
               }}
             />
             {error && (
-              <Text style={{ color: '#ef4444', marginBottom: 8 }}>{error}</Text>
+              <Text style={{ color: "#ef4444", marginBottom: 8 }}>{error}</Text>
             )}
             <TouchableOpacity
               style={{
                 padding: 12,
-                backgroundColor: '#2563eb',
+                backgroundColor: "#2563eb",
                 borderRadius: 8,
-                alignItems: 'center',
+                alignItems: "center",
               }}
               onPress={() => {
                 if (!text.trim()) {
-                  setError('Comment cannot be empty.');
+                  setError("Comment cannot be empty.");
                   return;
                 }
                 if (postId) {
@@ -196,19 +204,19 @@ export function CommentsSheet({
                 }
               }}
             >
-              <Text style={{ color: '#fff', fontWeight: '600' }}>Post</Text>
+              <Text style={{ color: "#fff", fontWeight: "600" }}>Post</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
                 marginTop: 8,
                 padding: 12,
-                backgroundColor: '#374151',
+                backgroundColor: "#374151",
                 borderRadius: 8,
-                alignItems: 'center',
+                alignItems: "center",
               }}
               onPress={onClose}
             >
-              <Text style={{ color: '#9ca3af' }}>Close</Text>
+              <Text style={{ color: "#9ca3af" }}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>

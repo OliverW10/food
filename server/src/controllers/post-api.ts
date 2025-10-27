@@ -1,3 +1,4 @@
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";

@@ -1,3 +1,4 @@
+// This file was created by Oliver/Mukund on setup and was worked on by a few people
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import crypto from "crypto";
@@ -51,13 +52,10 @@ const uploadsDir =
 mkdirSync(uploadsDir, { recursive: true });
 app.use("/uploads", express.static(uploadsDir));
 
-// tRPC endpoint
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({ router: appRouter, createContext })
 );
-
-// Multer storage config
 
 const storage = multer.diskStorage({
   destination: (

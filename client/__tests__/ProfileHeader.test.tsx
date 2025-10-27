@@ -2,7 +2,6 @@ import { render } from "@testing-library/react-native";
 import React from "react";
 import { ProfileHeader } from "../components/profile/profile-header";
 
-// Mock expo-router
 jest.mock("expo-router", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -14,7 +13,6 @@ jest.mock("expo-router", () => ({
   },
 }));
 
-// Mock user context
 jest.mock("../hooks/user-context", () => ({
   useSession: () => ({
     user: { id: 1, name: "Test User", email: "test@test.com" },
@@ -54,21 +52,20 @@ describe("ProfileHeader Component", () => {
   it("renders with default values when props are not provided", () => {
     const { getByText, getAllByText } = render(<ProfileHeader />);
 
-    // Component shows 'U' as initial when no name provided
     expect(getByText("U")).toBeTruthy();
-    expect(getAllByText("0")).toHaveLength(3); // Default follower/following/posts count
+    expect(getAllByText("0")).toHaveLength(3);
   });
 
   it("generates correct initials from name", () => {
     const { getByText } = render(<ProfileHeader name="Jane Smith Wilson" />);
 
-    expect(getByText("JS")).toBeTruthy(); // Should show first 2 initials
+    expect(getByText("JS")).toBeTruthy(); // Should show first 2 initials? Check with Josh
   });
 
   it("shows default initial when no name provided", () => {
     const { getByText } = render(<ProfileHeader />);
 
-    expect(getByText("U")).toBeTruthy(); // Default "U" initial
+    expect(getByText("U")).toBeTruthy(); // Default "U" initial? Check with Josh
   });
 
   it("renders action buttons", () => {
