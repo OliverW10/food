@@ -1,5 +1,17 @@
 # Choppd
 
+## Instructions to run:
+
+To run this app (basic, web mode), you'll need Node.js (22+ recommended), Docker/Podman for PostgreSQL, and npm.
+
+- First, install dependencies with `npm i` in the project roots (frontend and backend)
+- Start the database with `podman compose -f docker-compose.yaml up -d` (or use Docker)
+- Run `npx prisma migrate dev` in `server/src/prisma/` to set up the database schema
+- Run `npm run dev` in both the `server` and `client` directories to start the backend and frontend
+- For AI use, place an open AI API key in the .env file in the server
+
+## What is Choppd?
+
 Choppd is a social media platform for people to connect over what they make and eat.
 
 Choppd is a full-stack food social media where users can share their food experiences, follow other users, and discover new recipes and restaurants. It is built with Expo/React Native for the mobile client and a tRPC backend with Prisma and Postgres.
@@ -126,8 +138,35 @@ It looks like its possible to setup a github action to create an ios build (`xco
 
 # Group Member Feature Breakdown
 
-Rianna: Comments (validate empty), Feed
-Josh: Profile Page, Followers/Following
-Olivia: Posting page, Post view page (validate post contents)
-Mukund: Login, Likes (validate password creation)
-Oliver: Search, Settings page (validate new name)
+Rianna -> Comments (validate empty), Feed
+
+- [`client/components/CommentsSheet.tsx`](client/components/CommentsSheet.tsx)
+- [`server/src/controllers/comments-api.ts`](server/src/controllers/comments-api.ts)
+- [`client/app/home.tsx`](client/app/home.tsx)
+
+Josh -> Profile Page, Followers/Following
+
+- [`client/app/profile/[userId].tsx`](client/app/profile/[userId].tsx)
+- [`client/components/profile/`](client/components/profile/)
+- [`client/app/followers.tsx`](client/app/followers.tsx)
+- [`client/app/following.tsx`](client/app/following.tsx)
+
+Olivia -> Posting page, Post view page (validate post contents)
+
+- [`client/app/create-post.tsx`](client/app/create-post.tsx)
+- [`client/app/post/[postId].tsx`](client/app/post/[postId].tsx)
+- [`client/components/FoodPost.tsx`](client/components/FoodPost.tsx)
+
+Mukund :D -> Signup, Login, Likes (validate password creation), Chatbot
+
+- [`client/app/auth.tsx`](client/app/auth.tsx)
+- [`server/src/controllers/auth-api.ts`](server/src/controllers/auth-api.ts)
+- [`server/src/controllers/post-api.ts`](server/src/controllers/post-api.ts) (likeToggle)
+- [`client/components/ChatBot.tsx`](client/components/ChatBot.tsx)
+- [`server/src/controllers/chat-api.ts`](server/src/controllers/chat-api.ts)
+
+Oliver -> Search, Settings page (validate new name) (oliver also set up the repo which was a huge help to our team, even though it is not recognized here)
+
+- [`client/app/search.tsx`](client/app/search.tsx)
+- [`server/src/controllers/search-api.ts`](server/src/controllers/search-api.ts)
+- [`client/app/settings.tsx`](client/app/settings.tsx)
