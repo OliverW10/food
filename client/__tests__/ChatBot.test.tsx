@@ -3,7 +3,6 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { ChatBot } from "../components/ChatBot";
 
-// Mock trpc
 jest.mock("../services/trpc", () => ({
   __esModule: true,
   default: {
@@ -12,7 +11,7 @@ jest.mock("../services/trpc", () => ({
         useMutation: () => ({
           mutateAsync: jest.fn().mockResolvedValue({
             success: true,
-            message: "Hello! I'm Joshua Roy, your friendly food monkey!",
+            message: "Hello! I'm Joshua Roy, your friendly food man!",
           }),
         }),
       },
@@ -33,9 +32,6 @@ describe("ChatBot Component", () => {
     );
 
     expect(getByText("Talk To Joshua Roy")).toBeTruthy();
-    // Component is simplified, so we just check it renders
-    // Simplified component, just check that it renders basic structure
-    // expect(getByText("AI Assistant")).toBeTruthy(); // Already checked above
   });
 
   it("does not render when not visible", () => {
@@ -51,9 +47,7 @@ describe("ChatBot Component", () => {
       <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    // Find TouchableOpacity elements (close and refresh buttons)
     const touchables = UNSAFE_getAllByType(TouchableOpacity);
-    // The second TouchableOpacity should be the close button
     const closeButton = touchables[1];
     fireEvent.press(closeButton);
 
@@ -65,7 +59,6 @@ describe("ChatBot Component", () => {
       <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    // Just verify the component structure
     expect(getByText("Talk To Joshua Roy")).toBeTruthy();
     expect(
       getByText(
@@ -79,7 +72,6 @@ describe("ChatBot Component", () => {
       <ChatBot visible={true} onClose={mockOnClose} />
     );
 
-    // Verify modal content exists
     expect(getByText("Talk To Joshua Roy")).toBeTruthy();
   });
 });

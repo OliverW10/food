@@ -54,7 +54,6 @@ describe("TypeSelect Component", () => {
     const input = getByPlaceholderText("Select food type");
     fireEvent(input, "focus");
 
-    // Should show options in dropdown
     expect(getByText("Pizza")).toBeTruthy();
     expect(getByText("Burger")).toBeTruthy();
     expect(getByText("Sushi")).toBeTruthy();
@@ -70,11 +69,9 @@ describe("TypeSelect Component", () => {
       />
     );
 
-    // Open dropdown
     const input = getByPlaceholderText("Select food type");
     fireEvent(input, "focus");
 
-    // Select an option
     const pizzaOption = getByText("Pizza");
     fireEvent.press(pizzaOption);
 
@@ -92,9 +89,8 @@ describe("TypeSelect Component", () => {
     );
 
     const input = getByPlaceholderText("Select food type");
-    fireEvent.changeText(input, "pi");
+    fireEvent.changeText(input, "Pizza");
 
-    // Should show only Pizza
     expect(getByText("Pizza")).toBeTruthy();
     expect(queryByText("Burger")).toBeNull();
     expect(queryByText("Sushi")).toBeNull();

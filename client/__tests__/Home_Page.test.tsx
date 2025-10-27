@@ -22,7 +22,7 @@ jest.mock("../services/trpc", () => {
   const mockUseCommentMutation = () => ({
     mutate: (vars: any, opts?: any) => {
       mockCommentMutate(vars, opts);
-      // Simulate server success immediately
+      // TODO figure out why we need this
       opts?.onSuccess?.();
       mockCurrentCommentsCount++;
     },
@@ -99,7 +99,7 @@ jest.mock("../services/trpc", () => {
           useMutation: () => ({
             mutateAsync: jest.fn().mockResolvedValue({
               success: true,
-              message: "Hello! I'm Joshua Roy, your friendly food monkey!",
+              message: "Hello! I'm Joshua Roy, your friendly food man!",
             }),
           }),
         },

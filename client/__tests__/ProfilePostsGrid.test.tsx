@@ -3,7 +3,6 @@ import React from "react";
 import { Text, View } from "react-native";
 import { ProfilePostsGrid } from "../components/profile/profile-posts-grid";
 
-// Mock the FoodPost component
 jest.mock("../components/FoodPost", () => {
   const MockFoodPost = ({ review, ...props }: any) => {
     const { View: MockView, Text: MockText } =
@@ -15,7 +14,6 @@ jest.mock("../components/FoodPost", () => {
     );
   };
 
-  // Set displayName for the mock component
   MockFoodPost.displayName = "FoodPost";
 
   return {

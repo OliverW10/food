@@ -2,7 +2,6 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { CommentsSheet } from "../components/CommentsSheet";
 
-// Mock trpc
 jest.mock("../services/trpc", () => ({
   __esModule: true,
   default: {

@@ -2,7 +2,6 @@ import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import { ProfileTopBar } from "../components/profile/profile-top-bar";
 
-// Mock expo-router
 jest.mock("expo-router", () => ({
   router: {
     push: jest.fn(),
@@ -27,7 +26,6 @@ describe("ProfileTopBar Component", () => {
   it("does not render username when not provided", () => {
     const { queryByText } = render(<ProfileTopBar />);
 
-    // Should not crash and should not show any email
     expect(queryByText("@")).toBeNull();
   });
 
@@ -37,7 +35,6 @@ describe("ProfileTopBar Component", () => {
     const homeButton = getByText("Home");
     fireEvent.press(homeButton);
 
-    // Should call router.push (mocked)
     expect(homeButton).toBeTruthy();
   });
 
