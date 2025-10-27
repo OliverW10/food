@@ -1,6 +1,62 @@
 # Choppd
 
-Expo client app, tRPC backend with prisma and postgreSql
+Choppd is a social media platform for people to connect over what they make and eat.
+
+Choppd is a full-stack food social media where users can share their food experiences, follow other users, and discover new recipes and restaurants. It is built with Expo/React Native for the mobile client and a tRPC backend with Prisma and Postgres.
+
+## Features
+
+### Food Sharing
+
+- Share your food experiences with posts
+- Upload food photos with automatic processing
+- Write descriptions about your cooking or dining experiences
+
+### Social Features
+
+- View profiles with post counts, followers, and following statistics
+- Follow people and build your network
+- For your feed, you can switch between "Following" (posts from users you follow) and "Explore" (discover new content)
+- Search and discover new users by name or email
+- View your social connections (followers/following)
+
+### Engagement
+
+- Like and unlike posts with counter updates
+- Comment on posts and start discussions
+- Infinite scroll feed
+
+### AI Assistant Chatbot Josh
+
+- Built-in AI chatbot powered by OpenAI
+- Get food advice and cooking tips and recommendations
+
+### Authentication/Security Features
+
+- Secure registration and login
+- Authenticated endpoints with proper authorization
+- Persistent login sessions with refresh tokens
+- Bcrypt password hashing and validation
+
+## Technology Stack
+
+### Frontend (Client)
+
+- Expo
+- Typescript
+- tRPC
+- Expo Router
+
+### Backend (Server)
+
+- Node + Express
+- tRPC
+- Prisma ORM
+- Postgres
+
+### Database Schema
+
+- see prisma.client
 
 ## General setup
 
@@ -38,16 +94,35 @@ It looks like its possible to setup a github action to create an ios build (`xco
 - when the db is not up to date with the schema and you don't care about the data: `npx prisma db push --force-reset` or `npx prisma migrate reset`
 - for viewing db in web: `npx prisma studio`
 
+## App Structure
+
+### Client (`/client`)
+
+- Authentication, home feed, create post, profile, search, settings
+- Tests: Component testing with Jest and React Native
+
+### Server (`/server`)
+
+- API endpoints (auth, posts, profiles, search, comments, chat)
+- Prisma schema with migrations and seeding
+
 # TODOS:
 
 - authorized routes reject when not signed in, send to auth page
-
 - auto refresh access token when api call fails with 401
 - decode and store user info from jwt in fe so i can access user id and email without extra api calls
 - mfa setup
 - store jwt in db, and revoke on logout
 - email verification after signup
 - logout of all devices slay
+- profile pictures/avatars
+- push notifications for likes and comments
+- advanced search and filtering
+- food categories and tagging system
+- restaurant/location tagging
+- recipe sharing with ingredients and instructions
+- meal planning features
+- dietary restriction filters
 
 # Group Member Feature Breakdown
 
